@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>RhythmosGS PV</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+
+body{
+
+    width:100vw;
+    height:100vh;
+
+    overflow:hidden;
+
+    background:#02030a;
+
+    color:white;
+
+    font-family:
+    "Yu Mincho",
+    serif;
+
+}
+
+
+/* 朝焼け */
+
+.sky{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+    linear-gradient(
+        to top,
+        #050817,
+        #392650,
+        #d97963,
+        #ffe7a0
+    );
+
+}
+
+
+
+/* 太陽 */
+
+.sun{
+
+    position:absolute;
+
+    width:220px;
+
+    height:220px;
+
+    border-radius:50%;
+
+
+    background:#fff1a8;
+
+
+    box-shadow:
+
+    0 0 50px gold,
+
+    0 0 120px orange;
+
+
+    top:20%;
+
+    left:50%;
+
+
+    transform:translateX(-50%);
+
+}
+
+
+
+/* 霧 */
+
+.fog{
+
+    position:absolute;
+
+    width:150%;
+
+    height:40%;
+
+
+    left:-25%;
+
+    bottom:10%;
+
+
+    background:
+
+    rgba(255,255,255,0.15);
+
+
+    filter:blur(40px);
+
+
+    animation:
+
+    fogMove 10s infinite alternate;
+
+}
+
+
+
+@keyframes fogMove{
+
+    from{
+
+        transform:translateX(-50px);
+
+    }
+
+
+    to{
+
+        transform:translateX(50px);
+
+    }
+
+}
+
+
+
+/* 粒子 */
+
+.particle{
+
+    position:absolute;
+
+    width:8px;
+
+    height:8px;
+
+    border-radius:50%;
+
+
+    background:white;
+
+
+    opacity:0;
+
+
+}
+
+
+.playing .particle{
+
+    animation:
+
+    particleMove 8s infinite;
+
+}
+
+
+
+@keyframes particleMove{
+
+
+    from{
+
+        opacity:0;
+
+        transform:
+        translateY(300px);
+
+    }
+
+
+    30%{
+
+        opacity:1;
+
+    }
+
+
+    to{
+
+        opacity:0;
+
+        transform:
+        translateY(-300px);
+
+    }
+
+}
+
+
+
+/* ロゴ */
+
+.logo{
+
+    position:absolute;
+
+    top:40%;
+
+    width:100%;
+
+    text-align:center;
+
+
+    font-size:90px;
+
+    letter-spacing:15px;
+
+
+    opacity:0;
+
+
+    text-shadow:
+
+    0 0 20px white,
+
+    0 0 60px gold;
+
+}
+
+
+
+.showLogo{
+
+    animation:
+
+    logoShow 3s forwards;
+
+}
+
+
+
+@keyframes logoShow{
+
+
+    from{
+
+        opacity:0;
+
+        transform:scale(1.3);
+
+        filter:blur(15px);
+
+    }
+
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+
+        filter:blur(0);
+
+    }
+
+}
+
+
+
+/* バージョン */
+
+.version{
+
+    position:absolute;
+
+    top:55%;
+
+    width:100%;
+
+
+    text-align:center;
+
+
+    font-size:45px;
+
+    letter-spacing:10px;
+
+
+    opacity:0;
+
+}
+
+
+
+.guri{
+
+    color:#ffd700;
+
+    text-shadow:
+
+    0 0 30px gold;
+
+}
+
+
+
+.sym{
+
+    color:#00f2ff;
+
+    text-shadow:
+
+    0 0 30px cyan;
+
+}
+
+
+
+.showVersion{
+
+    animation:
+
+    fade 3s forwards;
+
+}
+
+
+
+.info{
+
+    position:absolute;
+
+    bottom:15%;
+
+    width:100%;
+
+
+    text-align:center;
+
+
+    font-size:30px;
+
+
+    opacity:0;
+
+}
+
+
+
+.showInfo{
+
+    animation:
+
+    fade 3s forwards;
+
+}
+
+
+
+@keyframes fade{
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+
+
+/* 開始画面 */
+
+#notice{
+
+    position:fixed;
+
+    inset:0;
+
+
+    background:
+
+    rgba(0,0,0,0.85);
+
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+
+    z-index:10;
+
+}
+
+
+
+.box{
+
+    padding:40px;
+
+    background:#111;
+
+
+    text-align:center;
+
+
+    border:2px solid gold;
+
+
+    box-shadow:
+
+    0 0 30px gold;
+
+}
+
+
+
+button{
+
+    margin-top:25px;
+
+    padding:15px 70px;
+
+
+    font-size:22px;
+
+    cursor:pointer;
+
+}
+
+
+
+/* カウント */
+
+#count{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+
+    justify-content:center;
+
+    align-items:center;
+
+
+    font-size:80px;
+
+
+    z-index:20;
+
+}
+
+#sakura-container{
+
+    position:absolute;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:3;
+
+}
+
+
+.sakura{
+
+    position:absolute;
+
+    top:-50px;
+
+    width:20px;
+
+    height:20px;
+
+    background:#ffb7c5;
+
+    clip-path:
+    polygon(
+    50% 0%,
+    65% 35%,
+    100% 50%,
+    65% 65%,
+    50% 100%,
+    35% 65%,
+    0% 50%,
+    35% 35%
+    );
+
+
+    animation:
+    sakuraFall 10s linear infinite;
+
+}
+
+
+
+@keyframes sakuraFall{
+
+
+    from{
+
+        transform:
+        translate(0,0)
+        rotate(0deg);
+
+        opacity:0;
+
+    }
+
+
+    10%{
+
+        opacity:1;
+
+    }
+
+
+    to{
+
+        transform:
+        translate(-1000px,100vh)
+        rotate(720deg);
+
+        opacity:0;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+
+<body>
+
+<div id="sakura-container"></div>
+
+<div id="notice">
+
+<div class="box">
+
+<h2>
+RhythmosGS PV
+</h2>
+
+
+<p>
+この映像はPV用です
+</p>
+
+
+<button id="start">
+
+把握
+
+</button>
+
+
+</div>
+
+</div>
+
+
+
+<div id="count"></div>
+
+
+
+<audio id="theme" src="オープニングテーマ.mp3"></audio>
+
+
+
+<div class="sky"></div>
+
+<div class="sun"></div>
+
+<div class="fog"></div>
+
+
+
+<div class="particle" style="left:20%"></div>
+
+<div class="particle" style="left:40%"></div>
+
+<div class="particle" style="left:60%"></div>
+
+<div class="particle" style="left:80%"></div>
+
+
+
+<div id="logo" class="logo">
+
+RhythmosGS
+
+</div>
+
+
+
+<div id="version" class="version">
+
+</div>
+
+
+
+<div id="info" class="info">
+
+21 TRACKS<br>
+NEXT GENERATION RHYTHM GAME
+
+</div>
+
+
+
+
+<script>
+
+alert('RhythmosGS PV試運転を開始します');
+
+const start =
+document.getElementById("start");
+
+
+const notice =
+document.getElementById("notice");
+
+
+const count =
+document.getElementById("count");
+
+
+const music =
+document.getElementById("theme");
+
+
+const logo =
+document.getElementById("logo");
+
+
+const version =
+document.getElementById("version");
+
+
+const info =
+document.getElementById("info");
+
+alert('関数の設定を完了しました');
+
+start.onclick=()=>{
+
+
+    notice.style.display="none";
+
+
+    count.style.display="flex";
+
+
+    let sec=3;
+
+
+    count.innerText=sec;
+
+
+
+    const timer=setInterval(()=>{
+
+
+        sec--;
+
+
+        count.innerText=sec;
+
+
+
+        if(sec<=0){
+
+
+            clearInterval(timer);
+
+
+            count.style.display="none";
+
+
+            beginPV();
+
+            createSakura();
+
+
+        }
+
+
+    },1000);
+
+
+
+};
+
+
+function createSakura(){
+
+    const container =
+    document.getElementById("sakura-container");
+
+
+    for(let i=0;i<60;i++){
+
+        const petal =
+        document.createElement("div");
+
+
+        petal.className="sakura";
+
+
+        petal.style.left=
+        (50 + Math.random()*70)+"%";
+
+
+        petal.style.animationDuration=
+        (5 + Math.random()*5)+"s";
+
+
+        petal.style.animationDelay=
+        Math.random()*5+"s";
+
+
+        container.appendChild(petal);
+
+    }
+
+}
+
+
+function beginPV(){
+
+
+    document.body.classList.add("playing");
+
+
+
+    music.volume=0.7;
+
+
+    music.play();
+
+
+
+    setTimeout(()=>{
+
+        logo.classList.add("showLogo");
+
+    },1000);
+
+
+
+    setTimeout(()=>{
+
+        version.innerText=
+        "GURIFONN";
+
+        version.className=
+        "version guri showVersion";
+
+
+    },12000);
+
+
+
+    setTimeout(()=>{
+
+        version.innerText=
+        "SYMPHONIA";
+
+        version.className=
+        "version sym showVersion";
+
+
+    },30000);
+
+
+
+    setTimeout(()=>{
+
+        info.classList.add("showInfo");
+
+
+    },45000);
+
+
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>

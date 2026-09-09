@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta charset="UTF-8">
+<title>RESULT</title>
+
+<style>
+
+:root {
+    --pink:#ffb7c5;
+    --cyan:#00f2ff;
+}
+
+
+body {
+
+    margin:0;
+
+    height:100vh;
+
+    background:#050505;
+
+    color:white;
+
+    font-family:'Share Tech Mono', monospace;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
+}
+
+
+
+/* 背景グリッド */
+
+.grid {
+
+    position:absolute;
+
+    width:200%;
+
+    height:200%;
+
+    background:
+    linear-gradient(
+        rgba(0,242,255,0.15) 1px,
+        transparent 1px
+    ),
+    linear-gradient(
+        90deg,
+        rgba(0,242,255,0.15) 1px,
+        transparent 1px
+    );
+
+    background-size:50px 50px;
+
+    transform:
+    perspective(500px)
+    rotateX(60deg);
+
+    top:40%;
+
+    animation:gridMove 5s linear infinite;
+
+}
+
+
+
+@keyframes gridMove {
+
+    from {
+        transform:
+        perspective(500px)
+        rotateX(60deg)
+        translateY(0);
+    }
+
+    to {
+        transform:
+        perspective(500px)
+        rotateX(60deg)
+        translateY(50px);
+    }
+
+}
+
+
+
+.result-box {
+
+    position:relative;
+
+    z-index:2;
+
+    width:400px;
+
+    padding:30px;
+
+    text-align:center;
+
+    background:rgba(0,0,0,0.8);
+
+    border:3px solid var(--pink);
+
+    border-radius:15px;
+
+    box-shadow:
+    0 0 20px var(--pink);
+
+}
+
+
+
+h1 {
+
+    font-size:45px;
+
+    letter-spacing:8px;
+
+    margin:0 0 30px;
+
+}
+
+
+
+.score {
+
+    font-size:40px;
+
+    color:var(--cyan);
+
+    text-shadow:
+    0 0 15px var(--cyan);
+
+}
+
+
+
+.data {
+
+    margin-top:25px;
+
+    font-size:24px;
+
+}
+
+
+
+.data p {
+
+    margin:12px;
+
+}
+
+
+
+button {
+
+    margin-top:35px;
+
+    padding:15px 50px;
+
+    font-size:20px;
+
+    color:white;
+
+    background:#111;
+
+    border:2px solid var(--cyan);
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 0 15px var(--cyan);
+
+}
+
+
+
+button:hover {
+
+    transform:scale(1.05);
+
+}
+
+
+
+</style>
+
+</head>
+
+
+
+<body>
+
+
+<div class="grid"></div>
+
+
+
+<div class="result-box">
+
+
+<h1>
+RESULT
+</h1>
+
+
+
+<div class="score" id="score">
+000000
+</div>
+
+
+
+<div class="data">
+
+
+<p>
+PERFECT:
+<span id="perfect">0</span>
+</p>
+
+
+<p>
+GREAT:
+<span id="great">0</span>
+</p>
+
+
+<p>
+MISS:
+<span id="miss">0</span>
+</p>
+
+
+
+</div>
+
+
+
+<button onclick="backSelect()">
+SELECT TRACK
+</button>
+
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+const score =
+localStorage.getItem("score") || 0;
+
+
+const perfect =
+localStorage.getItem("perfect") || 0;
+
+
+const great =
+localStorage.getItem("great") || 0;
+
+
+const miss =
+localStorage.getItem("miss") || 0;
+
+
+
+document.getElementById("score").innerText =
+String(score).padStart(6,"0");
+
+
+document.getElementById("perfect").innerText =
+perfect;
+
+
+document.getElementById("great").innerText =
+great;
+
+
+document.getElementById("miss").innerText =
+miss;
+
+
+
+
+function backSelect(){
+
+    location.href="gfgame.html";
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>

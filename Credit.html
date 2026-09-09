@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>RhythmosOCEAN Credits</title>
+
+<style>
+
+* {
+  box-sizing:border-box;
+}
+
+
+body {
+
+  margin:0;
+
+  min-height:100vh;
+
+  overflow-y:auto;
+
+  background:#050505;
+
+  color:white;
+
+  font-family:
+  "Share Tech Mono",
+  monospace;
+
+}
+
+
+
+/* メイン */
+
+.credit-container {
+
+  width:80%;
+
+  max-width:900px;
+
+  margin:50px auto;
+
+  padding:40px;
+
+  border:2px solid #dc143c;
+
+  box-shadow:
+    0 0 20px #dc143c;
+
+  background:rgba(0,0,0,0.8);
+
+}
+
+
+
+/* 見出し */
+
+h1 {
+
+  text-align:center;
+
+  font-size:60px;
+
+  letter-spacing:10px;
+
+  text-shadow:
+
+    0 0 15px #dc143c,
+
+    0 0 40px #ffd700;
+
+}
+
+
+
+h2 {
+
+  margin-top:50px;
+
+  border-bottom:2px solid #dc143c;
+
+  padding-bottom:10px;
+
+  text-shadow:
+
+    0 0 10px #dc143c;
+
+}
+
+
+
+/* 内容 */
+
+.credit-item {
+
+  margin:20px 0;
+
+  line-height:1.8;
+
+}
+
+
+
+/* 戻るボタン */
+
+button {
+
+  display:block;
+
+  margin:40px auto;
+
+  padding:15px 60px;
+
+  font-size:25px;
+
+  color:white;
+
+  background:transparent;
+
+  border:2px solid #dc143c;
+
+  border-radius:10px;
+
+  cursor:pointer;
+
+  box-shadow:
+
+    0 0 10px #dc143c;
+
+}
+
+
+
+button:hover {
+
+  background:rgba(220,20,60,0.3);
+
+}
+
+
+
+</style>
+
+</head>
+
+
+<body>
+<div id="warning">
+    <p>このページでは音声が流れます</p>
+    <button id="startButton">OK</button>
+</div>
+
+<audio id="credit-bgm" src="credit.mp3" loop></audio>
+
+<div class="credit-container">
+
+
+<h1>
+Credits
+</h1>
+
+
+
+<h2>
+Developer
+</h2>
+
+<div class="credit-item">
+
+RhythmosOCEAN<br>
+
+Developed by nio_games
+
+</div>
+
+
+
+
+<h2>
+Music
+</h2>
+
+<div class="credit-item">
+
+自作曲<br>
+
+<br>
+
+楽曲提供:siL4only<br>
+
+<br>
+
+音楽素材:<br>
+
+・甘茶の音楽工房<br>
+
+・魔王魂<br>
+
+・BGMer
+<br>
+
+※各楽曲の利用規約に従って使用しています。
+
+</div>
+
+
+
+
+<h2>
+Special Thanks
+</h2>
+
+<div class="credit-item">
+
+制作協力者:<br>
+夜空闇奈<br>
+夜空ノエル<br>
+制作者:朝凪仁緒<br>
+使用言語:
+HTML<br>
+JavaScript<br>
+CSS
+</div>
+
+<h2>
+From the author
+</h2>
+
+<div class="credit-item">
+    こんにちは<br><br>
+    itch.ioにて、Rhythmos Studioとして活動をしています。<br><br>
+    nio_asanagi3232です。<br><br>
+    今作は2柱のタイプとして制作しています。<br><br>
+    今作では、GURIFONNという『聖なる動物』と、<br><br>
+    SYMPHONIAという『聖なる響』をモチーフとして<br><br>
+    制作を進めています。<br><br>
+    変更点については、この後で説明します。<br><br>
+    まず、今作で今現在手こずっていることは、<br><br>
+    想像以上にストレージの容量を喰うことです。<br><br>
+    まあ、主犯は音楽なのですが、<br><br>
+    音楽がなければリズムゲームは始まりませんので。<br><br>
+    では、変更点についてご説明します。
+</div>
+<button onclick="back()">
+
+BACK
+
+</button>
+
+
+
+</div>
+
+
+
+<script>
+
+function back(){
+
+  location.href="title.html";
+
+}
+const warning =
+document.getElementById("warning");
+
+const button =
+document.getElementById("startButton");
+
+const bgm =
+document.getElementById("credit-bgm");
+
+
+button.addEventListener("click",()=>{
+
+    warning.style.display="none";
+
+    bgm.volume = 0.5;
+
+    bgm.play();
+
+});
+</script>
+
+
+</body>
+
+</html>

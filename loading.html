@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Loading...</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+
+  background: #050510;
+  color: white;
+
+  font-family: Arial, sans-serif;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* 3Dグリッド */
+.grid {
+
+  position: fixed;
+
+  bottom: -20%;
+  left: -50%;
+
+  width: 200%;
+  height: 70%;
+
+
+  background:
+    linear-gradient(
+      transparent 95%,
+      rgba(0,255,255,0.5) 96%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 95%,
+      rgba(0,255,255,0.5) 96%
+    );
+
+
+  background-size: 50px 50px;
+
+
+  transform:
+    perspective(500px)
+    rotateX(65deg);
+
+
+  animation:
+    moveGrid 2s linear infinite;
+
+
+  opacity: 0.5;
+
+}
+
+
+@keyframes moveGrid {
+
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 50px;
+  }
+
+}
+
+
+
+.container {
+
+  z-index: 2;
+
+  text-align: center;
+
+}
+
+
+
+h1 {
+
+  font-size: 55px;
+
+  text-shadow:
+    0 0 10px cyan,
+    0 0 30px cyan,
+    0 0 60px blue;
+
+}
+
+
+
+#bar {
+
+  width: 420px;
+
+  height: 22px;
+
+  border:
+
+  2px solid cyan;
+
+
+  margin: 30px auto 0;
+
+
+  box-shadow:
+
+    0 0 15px cyan;
+
+}
+
+
+
+#progress {
+
+  height: 100%;
+
+  width: 0%;
+
+
+  background: cyan;
+
+
+  box-shadow:
+
+    0 0 25px cyan;
+
+}
+
+
+
+#text {
+
+  margin-top: 20px;
+
+  font-size: 22px;
+
+}
+
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="grid"></div>
+
+
+
+<div class="container">
+
+
+<h1>
+LOADING...
+</h1>
+
+
+
+<div id="bar">
+
+  <div id="progress"></div>
+
+</div>
+
+
+
+<div id="text">
+0%
+</div>
+
+
+
+</div>
+
+
+
+
+<script>
+
+
+let progress = 0;
+
+
+const bar =
+document.getElementById("progress");
+
+
+const text =
+document.getElementById("text");
+
+
+
+/*
+約12秒ロード演出
+0.83%ずつ100msごと
+*/
+
+let timer = setInterval(()=>{
+
+
+  progress += 0.83;
+
+
+  if(progress > 100){
+
+    progress = 100;
+
+  }
+
+
+  bar.style.width =
+  progress + "%";
+
+
+  text.textContent =
+  Math.floor(progress) + "%";
+
+
+
+  if(progress >= 100){
+
+
+    clearInterval(timer);
+
+
+
+    setTimeout(()=>{
+
+
+      location.href = "game.html";
+
+
+    },300);
+
+
+
+  }
+
+
+
+},100);
+
+
+
+</script>
+
+
+</body>
+</html>

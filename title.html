@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>RhythmosGS</title>
+
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+
+body{
+
+    width:100vw;
+    height:100vh;
+
+    overflow:hidden;
+
+    color:white;
+
+    font-family:
+    Arial,
+    sans-serif;
+
+
+    background:
+    linear-gradient(
+        to top,
+        #081a3a 0%,
+        #4b3c66 35%,
+        #ff8c69 70%,
+        #ffe7a0 100%
+    );
+
+}
+
+
+/* 太陽 */
+
+.sun{
+
+    position:absolute;
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    background:#fff2b0;
+
+    box-shadow:
+    0 0 40px #ffd700,
+    0 0 100px #ffb347;
+
+
+    top:20%;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    opacity:0.8;
+
+}
+
+
+
+/* 雲 */
+
+.cloud{
+
+    position:absolute;
+
+    width:350px;
+
+    height:80px;
+
+    background:
+    rgba(255,255,255,0.25);
+
+    border-radius:50%;
+
+    filter:blur(15px);
+
+}
+
+
+.cloud1{
+
+    top:25%;
+
+    left:-50px;
+
+}
+
+
+.cloud2{
+
+    top:45%;
+
+    right:-80px;
+
+}
+
+
+
+.cloud3{
+
+    top:65%;
+
+    left:20%;
+
+}
+
+
+
+/* タイトル */
+
+.menu{
+
+    position:relative;
+
+    z-index:5;
+
+    height:100vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+
+
+h1{
+
+    font-size:70px;
+
+    letter-spacing:10px;
+
+
+    text-shadow:
+
+    0 0 15px white,
+
+    0 0 40px #00f2ff;
+
+}
+
+
+
+.subtitle{
+
+    margin-top:10px;
+
+    font-size:24px;
+
+    letter-spacing:8px;
+
+}
+
+
+
+/* ボタン */
+
+button{
+
+    margin-top:50px;
+
+    width:350px;
+
+    padding:20px;
+
+
+    font-size:30px;
+
+    color:white;
+
+
+    background:
+    rgba(0,0,0,0.25);
+
+
+    border:
+
+    2px solid white;
+
+
+    border-radius:15px;
+
+
+    cursor:pointer;
+
+
+    backdrop-filter:blur(5px);
+
+
+    transition:0.3s;
+
+
+}
+
+
+
+button:hover{
+
+
+    transform:scale(1.08);
+
+
+    background:
+    rgba(255,255,255,0.25);
+
+
+    box-shadow:
+
+    0 0 30px white;
+
+}
+
+
+
+/* GURIFONN */
+
+#guri{
+
+    border-color:#ffd700;
+
+}
+
+
+
+#guri:hover{
+
+    box-shadow:
+    0 0 30px #ffd700;
+
+}
+
+
+
+/* SYMPHONIA */
+
+#sym{
+
+    border-color:#00f2ff;
+
+}
+
+
+
+#sym:hover{
+
+    box-shadow:
+    0 0 30px #00f2ff;
+
+}
+
+
+
+/* 浮遊アニメ */
+
+@keyframes float{
+
+    from{
+
+        transform:translateY(0);
+
+    }
+
+    to{
+
+        transform:translateY(-20px);
+
+    }
+
+}
+
+
+
+.sun{
+
+    animation:float 5s infinite alternate;
+
+}
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+<div class="sun"></div>
+
+
+<div class="cloud cloud1"></div>
+
+<div class="cloud cloud2"></div>
+
+<div class="cloud cloud3"></div>
+
+
+
+<div class="menu">
+
+
+<h1>
+RhythmosGS
+</h1>
+
+
+<div class="subtitle">
+GURIFONN & SYMPHONIA
+</div>
+
+
+
+<button id="guri"
+onclick="location.href='gfgame.html'">
+
+GURIFONN
+
+</button>
+
+
+
+<button id="sym"
+onclick="location.href='spgame.html'">
+
+SYMPHONIA
+
+</button>
+
+
+
+</div>
+
+
+
+</body>
+
+</html>

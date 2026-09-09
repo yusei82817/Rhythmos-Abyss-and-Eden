@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>RhythmosGS OP</title>
+
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+
+body{
+
+    width:100vw;
+    height:100vh;
+
+    overflow:hidden;
+
+    background:#02030a;
+
+    color:white;
+
+    font-family:
+    "Yu Mincho",
+    serif;
+
+}
+
+
+
+/* 朝焼け背景 */
+
+.sky{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+    linear-gradient(
+        to top,
+        #050817,
+        #392650,
+        #d97963,
+        #ffe7a0
+    );
+
+    opacity:0;
+
+    animation:
+    sunrise 8s forwards;
+
+}
+
+
+
+@keyframes sunrise{
+
+    from{
+        opacity:0;
+    }
+
+    to{
+        opacity:1;
+    }
+
+}
+
+
+
+/* 太陽 */
+
+.light{
+
+    position:absolute;
+
+    width:250px;
+
+    height:250px;
+
+    border-radius:50%;
+
+
+    background:#fff0b0;
+
+
+    box-shadow:
+
+    0 0 50px #ffd700,
+
+    0 0 120px #ff9900;
+
+
+    top:25%;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+
+    opacity:0;
+
+
+    animation:
+
+    sunAppear 5s 3s forwards;
+
+}
+
+
+
+@keyframes sunAppear{
+
+    to{
+
+        opacity:0.8;
+
+    }
+
+}
+
+
+
+/* 霧 */
+
+.fog{
+
+    position:absolute;
+
+    width:150%;
+
+    height:40%;
+
+    left:-25%;
+
+    bottom:10%;
+
+
+    background:
+
+    rgba(255,255,255,0.15);
+
+
+    filter:blur(40px);
+
+
+    animation:
+
+    fogMove 10s infinite alternate;
+
+}
+
+
+
+@keyframes fogMove{
+
+
+    from{
+
+        transform:translateX(-50px);
+
+    }
+
+
+    to{
+
+        transform:translateX(50px);
+
+    }
+
+}
+
+
+
+/* ロゴ */
+
+.logo{
+
+    position:absolute;
+
+    width:100%;
+
+    top:45%;
+
+    text-align:center;
+
+
+    opacity:0;
+
+
+    font-size:80px;
+
+    letter-spacing:15px;
+
+
+    text-shadow:
+
+    0 0 15px white,
+
+    0 0 40px gold;
+
+
+    animation:
+
+    logoShow 4s 9s forwards;
+
+}
+
+
+
+.sub{
+
+    position:absolute;
+
+    width:100%;
+
+    top:58%;
+
+    text-align:center;
+
+
+    opacity:0;
+
+
+    font-size:28px;
+
+    letter-spacing:10px;
+
+
+    animation:
+
+    subShow 3s 12s forwards;
+
+}
+
+
+
+@keyframes logoShow{
+
+
+    from{
+
+        opacity:0;
+
+        transform:scale(1.3);
+
+        filter:blur(10px);
+
+    }
+
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+
+        filter:blur(0);
+
+    }
+
+}
+
+
+
+@keyframes subShow{
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+
+
+/* 終了フラッシュ */
+
+.flash{
+
+    position:absolute;
+
+    inset:0;
+
+    background:white;
+
+    opacity:0;
+
+
+    animation:
+
+    endFlash 1s 18.5s forwards;
+
+}
+
+
+
+@keyframes endFlash{
+
+
+    0%{
+        opacity:0;
+    }
+
+
+    50%{
+        opacity:1;
+    }
+
+
+    100%{
+        opacity:0;
+    }
+
+}
+
+
+
+/* 音声確認 */
+
+#notice{
+
+    position:fixed;
+
+    inset:0;
+
+
+    background:
+
+    rgba(0,0,0,0.8);
+
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+
+    z-index:100;
+
+}
+
+
+
+.box{
+
+    padding:40px;
+
+    text-align:center;
+
+
+    background:#111;
+
+
+    border:
+
+    2px solid gold;
+
+
+    box-shadow:
+
+    0 0 30px gold;
+
+}
+
+
+
+button{
+
+    margin-top:25px;
+
+    padding:12px 60px;
+
+
+    font-size:22px;
+
+
+    color:white;
+
+
+    background:#222;
+
+
+    border:2px solid white;
+
+
+    cursor:pointer;
+
+
+}
+
+
+button:hover{
+
+    background:#555;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+
+<div id="notice">
+
+<div class="box">
+
+<h2>
+RhythmosGS
+</h2>
+
+<p>
+このゲームは音声が流れます。<br>
+音量に注意してください。
+</p>
+
+
+<button id="start">
+OK
+</button>
+
+
+</div>
+
+</div>
+
+
+
+<audio id="op-bgm" src="オープニングテーマ.mp3"></audio>
+
+
+
+<div class="sky"></div>
+
+
+<div class="light"></div>
+
+
+<div class="fog"></div>
+
+
+
+<div class="logo">
+RhythmosGS
+</div>
+
+
+
+<div class="sub">
+GURIFONN & SYMPHONIA
+</div>
+
+
+
+<div class="flash"></div>
+
+
+
+
+<script>
+
+
+const button =
+document.getElementById("start");
+
+
+const notice =
+document.getElementById("notice");
+
+
+const bgm =
+document.getElementById("op-bgm");
+
+
+
+button.addEventListener("click",()=>{
+
+
+    notice.style.display="none";
+
+
+    bgm.volume=0.7;
+
+
+    bgm.play();
+
+
+    startOP();
+
+
+});
+
+
+
+
+function startOP(){
+
+
+    setTimeout(()=>{
+
+
+        location.href="title.html";
+
+
+    },20000);
+
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>
