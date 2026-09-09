@@ -3,1507 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <title>RhythmosOCEAN - 21 Tracks Collection</title>
+<link rel="stylesheet" href="spstyle.css">
 </head>
 <body>
-<style>
-    <style>
-:root {
 
-    --kc: #4169e1;
-
-    --neon-blue: #00f2ff;
-
-    --yuragi-purple: #c084fc;
-
-    --king-crimson: #4169e1;
-
-    --the-world: #e6f7ff;
-
-}
-
-
-
-body {
-
-    background:#020617;
-
-    color:white;
-
-
-    font-family:'Cinzel', serif;
-
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-
-    height:100vh;
-
-    margin:0;
-
-
-    overflow:hidden;
-
-}
-
-
-
-
-
-/* セレクト画面 */
-
-
-#select-screen {
-
-
-    position:absolute;
-
-
-    width:100%;
-
-    height:100%;
-
-
-
-    background:
-
-
-    radial-gradient(
-
-        circle at top,
-
-        #1e3a8a 0%,
-
-        #111827 35%,
-
-        #020617 85%
-
-    );
-
-
-
-    display:flex;
-
-
-    flex-direction:column;
-
-
-    align-items:center;
-
-
-
-    z-index:20;
-
-
-
-    padding-top:50px;
-
-
-
-}
-
-
-
-
-
-#select-screen::before {
-
-
-    content:"";
-
-
-    position:absolute;
-
-
-    inset:0;
-
-
-
-    background:
-
-
-    radial-gradient(
-
-        circle at 50% 20%,
-
-        rgba(255,255,255,0.2),
-
-        transparent 40%
-
-    );
-
-
-
-    pointer-events:none;
-
-
-}
-
-
-
-
-
-
-#song-list {
-
-
-    width:100%;
-
-
-    max-width:400px;
-
-
-
-    height:75vh;
-
-
-
-    overflow-y:auto;
-
-
-
-    padding:20px;
-
-
-
-    box-sizing:border-box;
-
-
-
-}
-
-
-
-
-
-#song-list::-webkit-scrollbar {
-
-
-    width:5px;
-
-
-
-}
-
-
-
-
-#song-list::-webkit-scrollbar-thumb {
-
-
-    background:
-
-    var(--neon-blue);
-
-
-
-    border-radius:10px;
-
-
-
-}
-
-
-
-
-#song-list::-webkit-scrollbar-track {
-
-
-    background:#020617;
-
-
-
-}
-
-
-
-
-
-
-
-.song-card {
-
-
-    background:
-
-
-    linear-gradient(
-
-        145deg,
-
-        #111827,
-
-        #020617
-
-    );
-
-
-
-    border:2px solid var(--the-world);
-
-
-
-    border-radius:10px;
-
-
-
-    padding:15px;
-
-
-
-    text-align:center;
-
-
-
-    cursor:pointer;
-
-
-
-    transition:0.3s;
-
-
-
-    margin-bottom:15px;
-
-
-
-    color:white;
-
-
-
-    box-shadow:
-
-
-    0 0 15px rgba(0,242,255,0.25),
-
-
-    inset 0 0 20px rgba(192,132,252,0.15);
-
-
-
-}
-
-
-
-
-
-
-
-.song-card:hover {
-
-
-    transform:scale(1.03);
-
-
-
-    box-shadow:
-
-
-    0 0 30px var(--neon-blue),
-
-
-    inset 0 0 20px var(--yuragi-purple);
-
-
-
-}
-
-
-
-
-
-
-.song-card.bug {
-
-
-    border-color:
-
-    var(--king-crimson);
-
-
-
-    color:
-
-    var(--the-world);
-
-
-
-}
-
-
-
-
-
-.song-card.plazma {
-
-
-    border-color:
-
-    var(--neon-blue);
-
-
-
-    color:
-
-    var(--neon-blue);
-
-
-
-}
-
-
-
-
-
-.song-card.yuragi {
-
-
-    border-color:
-
-    var(--yuragi-purple);
-
-
-
-    color:
-
-    var(--yuragi-purple);
-
-
-
-}
-
-
-
-
-
-.song-card.whitelight {
-
-
-    border-color:white;
-
-
-
-    color:white;
-
-
-
-}
-
-
-/* ゲーム画面 */
-
-
-#game-container {
-
-    position:relative;
-
-
-    width:440px;
-
-
-    height:600px;
-
-
-
-    background:
-
-
-    radial-gradient(
-
-        circle at center,
-
-        #164e63 0%,
-
-        #0f172a 45%,
-
-        #020617 100%
-
-    );
-
-
-
-    border:
-
-    4px solid var(--the-world);
-
-
-
-    border-radius:15px;
-
-
-
-    overflow:hidden;
-
-
-
-    box-shadow:
-
-
-    0 0 30px rgba(0,242,255,0.8),
-
-
-    inset 0 0 40px rgba(192,132,252,0.3);
-
-
-
-}
-
-
-
-
-
-
-#game-bg {
-
-
-    position:absolute;
-
-
-
-    top:0;
-
-
-
-    left:0;
-
-
-
-    width:100%;
-
-
-
-    height:100%;
-
-
-
-    background-size:cover;
-
-
-
-    background-position:center;
-
-
-
-    opacity:0;
-
-
-
-    transition:1s;
-
-
-
-    z-index:0;
-
-
-
-}
-
-
-
-
-
-
-
-.white-style #game-bg {
-
-
-
-    opacity:0.5;
-
-
-
-    filter:brightness(1.3);
-
-
-
-}
-
-
-
-
-
-
-
-
-.lane-container {
-
-
-
-    display:flex;
-
-
-
-    height:100%;
-
-
-
-    position:relative;
-
-
-
-    z-index:1;
-
-
-
-    background:
-
-
-    rgba(2,6,23,0.35);
-
-
-
-}
-
-
-
-
-
-
-
-.lane {
-
-
-
-    flex:1;
-
-
-
-    border-right:
-
-
-    2px solid rgba(0,242,255,0.45);
-
-
-
-
-    background:
-
-
-    linear-gradient(
-
-        to bottom,
-
-        #172554,
-
-        #020617
-
-    );
-
-
-
-    position:relative;
-
-
-
-}
-
-
-
-
-
-
-
-.judgment-line {
-
-
-
-    position:absolute;
-
-
-
-    bottom:80px;
-
-
-
-    width:100%;
-
-
-
-    height:6px;
-
-
-
-    background:
-
-
-    linear-gradient(
-
-        90deg,
-
-        #4169e1,
-
-        white,
-
-        #00f2ff
-
-    );
-
-
-
-    z-index:2;
-
-
-
-    box-shadow:
-
-
-    0 0 20px white,
-
-
-    0 0 40px #00f2ff;
-
-
-
-}
-
-
-
-
-
-
-
-.white-style .judgment-line {
-
-
-    background:white;
-
-
-
-    box-shadow:
-
-
-    0 0 20px white;
-
-
-
-}
-
-
-
-
-
-
-
-
-.note {
-
-
-    position:absolute;
-
-
-
-    width:90%;
-
-
-
-    left:5%;
-
-
-
-    height:14px;
-
-
-
-    background:
-
-
-    linear-gradient(
-
-        90deg,
-
-        #00f2ff,
-
-        white,
-
-        #c084fc
-
-    );
-
-
-
-    border-radius:5px;
-
-
-
-    box-shadow:
-
-
-    0 0 20px white,
-
-
-    0 0 40px #00f2ff,
-
-
-    0 0 60px #c084fc;
-
-
-
-    z-index:3;
-
-
-
-}
-
-
-
-
-
-
-
-
-.white-style .note {
-
-
-    box-shadow:
-
-
-    0 0 20px white;
-
-
-
-    border-radius:5px;
-
-
-
-}
-
-
-
-
-
-
-
-
-#ui {
-
-
-
-    position:absolute;
-
-
-
-    top:50px;
-
-
-
-    width:100%;
-
-
-
-    text-align:center;
-
-
-
-    font-size:1.8rem;
-
-
-
-    font-weight:bold;
-
-
-
-    z-index:5;
-
-
-
-    text-shadow:
-
-
-    0 0 10px #00f2ff;
-
-
-
-}
-
-
-
-
-
-
-
-
-#combo-container {
-
-
-
-    position:absolute;
-
-
-
-    top:38%;
-
-
-
-    width:100%;
-
-
-
-    text-align:center;
-
-
-
-    pointer-events:none;
-
-
-
-    z-index:5;
-
-
-
-}
-
-
-
-
-
-
-
-
-#combo-num {
-
-
-
-    font-size:70px;
-
-
-
-    font-weight:bold;
-
-
-
-    margin:0;
-
-
-
-    color:white;
-
-
-
-    text-shadow:
-
-
-    0 0 20px #00f2ff,
-
-
-    0 0 40px #c084fc;
-
-
-
-}
-
-
-/* ジャケット */
-
-
-.jacket {
-
-    width:100%;
-
-
-    aspect-ratio:1 / 1;
-
-
-    object-fit:cover;
-
-
-    border-radius:10px;
-
-
-    margin-bottom:10px;
-
-
-
-    box-shadow:
-
-
-    0 0 20px #00f2ff,
-
-
-    0 0 40px #c084fc;
-
-
-
-}
-
-
-
-
-
-
-/* 判定波紋 */
-
-
-.wave-effect {
-
-
-    position:absolute;
-
-
-    width:60px;
-
-
-    height:60px;
-
-
-
-    border:
-
-
-    3px solid var(--neon-blue);
-
-
-
-    border-radius:50%;
-
-
-
-    transform:
-
-
-    translate(-50%,-50%);
-
-
-
-    animation:
-
-
-    wave 0.5s forwards;
-
-
-
-    pointer-events:none;
-
-
-
-    z-index:10;
-
-
-
-    box-shadow:
-
-
-    0 0 20px #00f2ff,
-
-
-    0 0 40px #c084fc;
-
-
-
-}
-
-
-
-
-
-
-@keyframes wave {
-
-
-    from {
-
-
-        transform:
-
-
-        translate(-50%,-50%)
-
-
-        scale(0);
-
-
-
-        opacity:1;
-
-
-    }
-
-
-
-    to {
-
-
-        transform:
-
-
-        translate(-50%,-50%)
-
-
-        scale(3);
-
-
-
-        opacity:0;
-
-
-    }
-
-
-}
-
-
-
-
-
-
-
-
-/* フラッシュ */
-
-
-#flash-overlay {
-
-
-    position:absolute;
-
-
-
-    width:100%;
-
-
-
-    height:100%;
-
-
-
-    background:
-
-
-    radial-gradient(
-
-        circle,
-
-        rgba(255,255,255,0.9),
-
-
-        rgba(0,242,255,0.4),
-
-
-        transparent
-
-    );
-
-
-
-    opacity:0;
-
-
-
-    pointer-events:none;
-
-
-
-    z-index:15;
-
-
-
-}
-
-
-
-
-
-
-
-
-/* グリッチ */
-
-
-#glitch {
-
-
-
-    position:absolute;
-
-
-
-    inset:0;
-
-
-
-    pointer-events:none;
-
-
-
-    opacity:0;
-
-
-
-    z-index:100;
-
-
-
-    background:
-
-
-    repeating-linear-gradient(
-
-        0deg,
-
-
-        rgba(0,242,255,0.12) 0px,
-
-
-        rgba(0,242,255,0.12) 2px,
-
-
-        transparent 2px,
-
-
-        transparent 6px
-
-    );
-
-
-
-}
-
-
-
-
-
-
-
-
-.glitch-on {
-
-
-    animation:
-
-
-    glitch 0.5s;
-
-
-
-}
-
-
-
-
-
-
-
-
-@keyframes glitch {
-
-
-
-    0% {
-
-
-
-        opacity:0;
-
-
-
-        transform:
-
-
-        translateX(0);
-
-
-
-    }
-
-
-
-
-
-    20% {
-
-
-
-        opacity:1;
-
-
-
-        transform:
-
-
-        translateX(-6px);
-
-
-
-    }
-
-
-
-
-
-    40% {
-
-
-
-        transform:
-
-
-        translateX(6px);
-
-
-
-    }
-
-
-
-
-
-    60% {
-
-
-
-        transform:
-
-
-        translateX(-3px);
-
-
-
-    }
-
-
-
-
-
-    100% {
-
-
-
-        opacity:0;
-
-
-
-        transform:
-
-
-        translateX(0);
-
-
-
-    }
-
-
-}
-
-</style>
-    
 <div id="select-screen">
 
 <h1 style="letter-spacing:5px; margin-bottom:10px;">
 SELECT TRACK
 </h1>
 
-
 <div id="song-list">
-
-
-
-
-
 
 <div class="song-card plazma"
 onclick="initGame('Il tempo sta accelerando.mp3','Il tempo sta accelerando')">
-
 <img src="Jacket.png" class="jacket">
 <h3>Il tempo sta accelerando</h3>
 <p>朝凪 仁緒</p>
-
 </div>
-
-
 
 <div class="song-card yuragi"
 onclick="initGame('揺 by jjhs3213.wav','揺')">
-
 <img src="Jacket.png" class="jacket">
 <h3>揺</h3>
 <p>jjhs3213</p>
-
 </div>
-
-
 
 <div class="song-card whitelight"
 onclick="initGame('bossnekonoteshita.mp3','ボス猫の手下')">
-
 <img src="Jacket.png" class="jacket">
 <h3>ボス猫の手下</h3>
 <p>甘茶の音楽工房</p>
-
 </div>
-
-
 
 <div class="song-card"
 onclick="initGame('track5.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>ボス猫の登場</h3>
 <p>甘茶の音楽工房</p>
-
 </div>
 
 <div class="song-card"
 onclick="initGame('shoujorei.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>少女霊</h3>
 <p>Unknown</p>
-
 </div>
 
 <div class="song-card"
 onclick="initGame('yume.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>夢</h3>
 <p>甘茶の音楽工房</p>
-
 </div>
 
 <div class="song-card yuragi"
 onclick="initGame('1950danosekkin.mp3','揺')">
-
 <img src="Jacket.png" class="jacket">
 <h3>[不明]の接近</h3>
 <p>Unknown</p>
-
 </div>
 
 <div class="song-card"
 onclick="initGame('ES.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>Endless Sunshine</h3>
 <p>伊昇奏多</p>
-
 </div>
 
 <div class="song-card"
 onclick="initGame('空に響け.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>空に響け</h3>
 <p>夜空闇奈</p>
-
 </div>
 
 <div class="song-card"
 onclick="initGame('闇に咲く花.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>闇に咲く花</h3>
 <p>SiL4only</p>
-
 </div>
 
 <div class="song-card"
 onclick="initGame('遊園地.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>8bit 真夜中の遊園地</h3>
 <p>BGMer</p>
-
 </div>
-
 
 <div class="song-card"
 onclick="initGame('オープニングテーマFull.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>オープニングテーマ</h3>
 <p>BGMer</p>
-
 </div>
 
 <div class="song-card"
 onclick="initGame('電気街の悪魔.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>電気街の悪魔</h3>
 <p>BGMer</p>
-
 </div>
 
 <div class="song-card"
 onclick="initGame('刹那フィーバー.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>刹那フィーバー</h3>
 <p>BGMer</p>
-
 </div>
 
 <div class="song-card"
 onclick="initGame('観劇のお誘い.mp3','桜雨')">
-
 <img src="Jacket.png" class="jacket">
 <h3>観劇のお誘い</h3>
 <p>BGMer</p>
-
 </div>
 
 </div>
-
 </div>
-
-
 
 <div id="game-container">
-
-
 <div id="game-bg"></div>
-
-
 <div id="flash-overlay"></div>
-
-
 
 <div id="ui">
 SCORE:
 <span id="score">000000</span>
 </div>
 
-
-
 <div id="combo-container">
-
 <p id="combo-num"></p>
-
 <div id="judge-text"></div>
-
 </div>
-
-
 
 <div class="lane-container">
-
 <div class="lane" id="lane-0"></div>
-
 <div class="lane" id="lane-1"></div>
-
 <div class="lane" id="lane-2"></div>
-
 <div class="lane" id="lane-3"></div>
-
-
-<div id="judge-line"
-class="judgment-line"></div>
-
-
+<div id="judge-line" class="judgment-line"></div>
 </div>
-
-
 </div>
-
-
 
 <audio id="bgm"></audio>
 
-
-
-<!-- 今まで HTML に直接書いていた箇所をこれに変えるだけ！ -->
 <script src="game.js"></script>
 
 <div id="glitch"></div>
