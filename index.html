@@ -509,17 +509,9 @@ button.addEventListener("click",()=>{
 
 
 function startOP(){
-
-
-    setTimeout(()=>{
-
-
+    window.addEventListener("keydown",()=>{
         location.href="title.html";
-
-
-    },20000);
-
-
+    }, { once:true });
 }
 
 
