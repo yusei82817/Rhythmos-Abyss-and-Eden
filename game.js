@@ -101,7 +101,7 @@ function generateChart(mode) {
     const bpm = (mode === 'ボス猫の手下') ? 160 : 120;
     const secPerBeat = 60 / bpm;
 
-    // 💡 ここで毎回ランダムに譜面を作っています！
+    // ここで毎回ランダムに譜面を作っています！
     for (let beat = 0; beat <= (endSeconds / secPerBeat); beat += 0.25) {
         const time = beat * secPerBeat + 0.8;
         if (Math.random() < 0.25) {
@@ -191,7 +191,11 @@ bgm.addEventListener('ended', () => {
     judgeEl.innerText = "";
 
     // リザルト画面へ遷移
-    location.href = "spresult.html";
+    if (location.pathname.toLowerCase().endsWith('gfgame.html')) {
+        location.href = "gfresult.html";
+    } else {
+        location.href = "spresult.html";
+    }
 });
 
 window.addEventListener('keydown', (e) => {
