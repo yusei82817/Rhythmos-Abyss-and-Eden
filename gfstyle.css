@@ -385,3 +385,26 @@ body {
         translateX(0);
     }
 }
+
+.gold-text {
+  /* 文字のサイズと太さ */
+  font-size: 3rem;
+  font-weight: bold;
+  
+  /* グラデーションの設定 */
+  background: linear-gradient(
+    45deg,
+    #b38728 0%,
+    #fbf5b7 25%,
+    #da1b60 50%, /* 少し赤みを入れて深みを出します */
+    #fbf5b7 75%,
+    #aa771c 100%
+  );
+
+  /* 背景のグラデーションを文字でくり抜く */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* 視認性を上げるための軽い影（お好みで） */
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
