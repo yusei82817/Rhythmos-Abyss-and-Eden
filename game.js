@@ -172,7 +172,7 @@ bgm.addEventListener('ended', () => {
 });
 
 window.addEventListener('keydown', (e) => {
-    const keys = { 'f': 0, 'g': 1, 'j': 2, 'k': 3 };
+    const keys = { 'a': 0, 'd': 1, 'j': 2, 'l': 3 };
     const lane = keys[e.key.toLowerCase()];
 
     if (lane !== undefined && isPlaying) {
