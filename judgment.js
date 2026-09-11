@@ -8,7 +8,7 @@ const JUDGMENT_WINDOWS = {
     miss: 0.15
 };
 
-function judgeNote(note, currentTime) {
+export function judgeNote(note, currentTime) {
     const diff = Math.abs(note.targetTime - currentTime);
 
     if (diff < JUDGMENT_WINDOWS.perfect) {
