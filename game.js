@@ -12,6 +12,7 @@ const judgeEl = document.getElementById('judge-text');
 let score = 0;
 let combo = 0;
 let perfect = 0;
+let success = 0;
 let great = 0;
 let miss = 0;
 let isPlaying = false;
@@ -50,6 +51,7 @@ function initGame(src, mode, bgImage = '') {
     score = 0;
     combo = 0;
     perfect = 0;
+    success = 0;
     great = 0;
     miss = 0;
     activeNotes = [];
@@ -155,6 +157,7 @@ bgm.addEventListener('ended', () => {
 
     localStorage.setItem("score", score);
     localStorage.setItem("perfect", perfect);
+    localStorage.setItem("success", success);
     localStorage.setItem("great", great);
     localStorage.setItem("miss", miss);
 
@@ -192,6 +195,16 @@ window.addEventListener('keydown', (e) => {
                 comboEl.innerText = combo;
                 judgeEl.innerText = "PERFECT";
                 judgeEl.style.color = "#fff";
+            } else if (result === 'SUCCESS') {
+                note.hit = true;
+                note.el.style.display = "none";
+                combo++;
+                score += 100;
+                success++;
+                scoreEl.innerText = score.toString().padStart(6, '0');
+                comboEl.innerText = combo;
+                judgeEl.innerText = "SUCCESS";
+                judgeEl.style.color = "#fff";
             } else if (result === 'GREAT') {
                 note.hit = true;
                 note.el.style.display = "none";
@@ -211,7 +224,7 @@ window.addEventListener('keydown', (e) => {
                 judgeEl.style.color = "#888";
             }
 
-            if ((result === 'PERFECT' || result === 'GREAT') && currentMode === 'ボス猫の手下') {
+            if ((result === 'PERFECT' || result === 'SUCCESS' || result === 'GREAT') && currentMode === 'ボス猫の手下') {
                 flash.style.opacity = 0.4;
                 setTimeout(() => flash.style.opacity = 0, 40);
             }
