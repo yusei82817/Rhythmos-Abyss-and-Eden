@@ -189,7 +189,7 @@ window.addEventListener('keydown', (e) => {
                 note.hit = true;
                 note.el.style.display = "none";
                 combo++;
-                score += 100;
+                score += 150;
                 perfect++;
                 scoreEl.innerText = score.toString().padStart(6, '0');
                 comboEl.innerText = combo;
@@ -209,7 +209,7 @@ window.addEventListener('keydown', (e) => {
                 note.hit = true;
                 note.el.style.display = "none";
                 combo++;
-                score += 100;
+                score += 50;
                 great++;
                 scoreEl.innerText = score.toString().padStart(6, '0');
                 comboEl.innerText = combo;
