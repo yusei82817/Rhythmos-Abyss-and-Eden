@@ -22,6 +22,32 @@ let currentMode = '';
 let noteSpeed = 500;
 let judgmentY = 520;
 
+const timerEl = document.createElement('div');
+timerEl.id = 'song-timer';
+timerEl.innerText = '00:00.00';
+Object.assign(timerEl.style, {
+    position: 'fixed',
+    top: '20px',
+    right: '20px',
+    zIndex: '9999',
+    fontSize: '24px',
+    fontFamily: 'monospace',
+    color: '#fff',
+    background: 'rgba(0, 0, 0, 0.55)',
+    padding: '6px 10px',
+    borderRadius: '4px',
+    pointerEvents: 'none'
+});
+document.body.appendChild(timerEl);
+
+function updateTimer() {
+    const time = bgm.currentTime || 0;
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    const hundredths = Math.floor((time % 1) * 100);
+    timerEl.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${hundredths.toString().padStart(2, '0')}`;
+}
+
 function glitchEffect() {
     if (!glitch) return;
     glitch.classList.add("glitch-on");
@@ -58,6 +84,7 @@ function initGame(src, mode, bgImage = '') {
     scoreEl.innerText = "000000";
     comboEl.innerText = "";
     judgeEl.innerText = "";
+    timerEl.innerText = '00:00.00';
 
     bgm.src = src;
     currentMode = mode;
@@ -106,6 +133,7 @@ function generateChart(mode) {
 function update() {
     if (!isPlaying) return;
     const now = bgm.currentTime;
+    updateTimer();
 
     while (chart.length > 0 && chart[0].time <= now + 1.2) {
         const data = chart.shift();
@@ -154,6 +182,7 @@ bgm.addEventListener('ended', () => {
     isPlaying = false;
     activeNotes.forEach(note => note.el.remove());
     activeNotes = [];
+    updateTimer();
 
     localStorage.setItem("score", score);
     localStorage.setItem("perfect", perfect);
