@@ -4,7 +4,8 @@
 
 const JUDGMENT_WINDOWS = {
     perfect: 0.05,
-    great: 0.10,
+    success: 0.08,
+    great: 0.12,
     miss: 0.15
 };
 
@@ -13,6 +14,10 @@ export function judgeNote(note, currentTime) {
 
     if (diff < JUDGMENT_WINDOWS.perfect) {
         return 'PERFECT';
+    }
+
+    if (diff < JUDGMENT_WINDOWS.success) {
+        return 'SUCCESS';
     }
 
     if (diff < JUDGMENT_WINDOWS.great) {
