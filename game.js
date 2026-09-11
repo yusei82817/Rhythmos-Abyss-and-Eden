@@ -1,4 +1,4 @@
-import { judgeNote } from './judgment.js';
+import { judgeNote } from './judgment.js?v=2';
 
 const glitch = document.getElementById("glitch");
 const bgm = document.getElementById('bgm');
