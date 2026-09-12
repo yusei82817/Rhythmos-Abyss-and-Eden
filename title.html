@@ -17,18 +17,48 @@ h1{font-size:70px;letter-spacing:10px;color:#e8eeff;text-shadow:0 0 12px rgba(17
 button{margin-top:30px;width:350px;padding:20px;font-size:30px;color:#eaf0ff;background:rgba(4,8,25,.58);border:2px solid rgba(190,205,255,.75);border-radius:15px;cursor:pointer;backdrop-filter:blur(7px);transition:.3s;}
 button:hover{transform:scale(1.08);background:rgba(75,95,160,.3);box-shadow:0 0 30px rgba(150,180,255,.65);}
 #guri{border-color:#8da8ff;}#guri:hover{box-shadow:0 0 30px #6f8fff;}#sym{border-color:#70d9ff;}#sym:hover{box-shadow:0 0 30px #4dcfff;}#credit{border-color:#b68cff;}#credit:hover{box-shadow:0 0 30px #9d6cff;}
-.shooting-star{position:fixed;width:4px;height:4px;border-radius:50%;background:white;box-shadow:0 0 6px white,0 0 14px #bcd4ff;pointer-events:none;z-index:2;animation:shoot .8s linear forwards;}
-.shooting-star::after{content:"";position:absolute;width:100px;height:2px;right:2px;top:1px;background:linear-gradient(to left,rgba(190,215,255,.8),transparent);}
-@keyframes shoot{from{opacity:0;transform:translate(0,0) rotate(-35deg);}15%{opacity:1;}to{opacity:0;transform:translate(260px,180px) rotate(-35deg);}}
+.shooting-star{position:fixed;width:150px;height:12px;pointer-events:none;z-index:2;transform-origin:calc(100% - 3px) 50%;animation:meteorMove .9s cubic-bezier(.18,.7,.3,1) forwards;}
+.shooting-star-tail{position:absolute;right:5px;top:4px;width:145px;height:4px;border-radius:999px;background:linear-gradient(to left,rgba(255,255,255,.95),rgba(190,215,255,.7) 30%,rgba(140,180,255,.28) 65%,transparent);filter:blur(1px);transform-origin:right center;animation:meteorTail .9s ease-out forwards;}
+.shooting-star-head{position:absolute;right:0;top:2px;width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 5px #fff,0 0 14px #dbe8ff,0 0 28px rgba(150,190,255,.8);animation:meteorHead .9s ease-out forwards;}
+@keyframes meteorMove{0%{opacity:0;transform:translate(0,0) rotate(var(--angle)) scale(.35);}8%{opacity:1;}18%{transform:translate(calc(var(--dx)*.12),calc(var(--dy)*.12)) rotate(var(--angle)) scale(1);}72%{opacity:1;transform:translate(calc(var(--dx)*.72),calc(var(--dy)*.72)) rotate(var(--angle)) scale(1.03);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--angle)) scale(.72);}}
+@keyframes meteorTail{0%{opacity:0;transform:scaleX(.05);}12%{opacity:1;transform:scaleX(1);}60%{opacity:.78;transform:scaleX(.82);}100%{opacity:0;transform:scaleX(.18);}}
+@keyframes meteorHead{0%{transform:scale(.35);opacity:0;}12%{transform:scale(1.1);opacity:1;}72%{transform:scale(1);opacity:1;}100%{transform:scale(.7);opacity:0;}}
 @keyframes float{from{transform:translateX(-50%) translateY(0);}to{transform:translateX(-50%) translateY(-14px);}}
 </style>
 </head>
 <body>
+<audio id="title-bgm" src="title.mp3" loop preload="auto"></audio>
 <div class="sun"></div>
 <div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div>
 <div class="menu"><h1>RhythmosAE</h1><div class="subtitle">Abyss and Eden</div><button id="guri" onclick="location.href='gfgame.html'">Abyss</button><button id="sym" onclick="location.href='spgame.html'">Eden</button><button id="credit" onclick="location.href='Credit.html'">Credits</button></div>
 <script>
-function createShootingStar(){const star=document.createElement('div');star.className='shooting-star';star.style.left=(Math.random()*80+5)+'vw';star.style.top=(Math.random()*45+5)+'vh';document.body.appendChild(star);star.addEventListener('animationend',()=>star.remove());}
+const titleBgm=document.getElementById('title-bgm');
+function startTitleBgm(){titleBgm.currentTime=0;titleBgm.play().catch(()=>{document.addEventListener('click',()=>titleBgm.play(),{once:true});});}
+startTitleBgm();
+
+function createShootingStar(){
+    const star=document.createElement('div');
+    const tail=document.createElement('div');
+    const head=document.createElement('div');
+    star.className='shooting-star';
+    tail.className='shooting-star-tail';
+    head.className='shooting-star-head';
+    star.append(tail,head);
+
+    const angle=18+Math.random()*30;
+    const distance=300+Math.random()*320;
+    const rad=angle*Math.PI/180;
+    const dx=Math.cos(rad)*distance;
+    const dy=Math.sin(rad)*distance;
+
+    star.style.left=(Math.random()*78+7)+'vw';
+    star.style.top=(Math.random()*42+6)+'vh';
+    star.style.setProperty('--angle',angle+'deg');
+    star.style.setProperty('--dx',dx+'px');
+    star.style.setProperty('--dy',dy+'px');
+    document.body.appendChild(star);
+    star.addEventListener('animationend',()=>star.remove(),{once:true});
+}
 function scheduleShootingStar(){const delay=7000+Math.random()*13000;setTimeout(()=>{createShootingStar();scheduleShootingStar();},delay);}
 scheduleShootingStar();
 </script>
