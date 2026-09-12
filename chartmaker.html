@@ -127,39 +127,6 @@
 </div>
 
 <script>
-const songs = [
-    'odysseia.mp3',
-    '143_BPM120.mp3',
-    'betelgeuse.mp3',
-    '120_BPM124.mp3',
-    'sabakuwoiku.mp3',
-    'borghesenokaze.mp3',
-    'kiheisen.mp3',
-    'ryuukihei.mp3',
-    '1950danosekkin.mp3',
-    'maou_bgm_orchestra17.mp3',
-    'オープニングテーマFull.mp3',
-    '天命転折.mp3',
-    '電気街の悪魔.mp3',
-    'amenisuteraretaningyou.mp3',
-    '魔王交響曲シンフォニア第1番.mp3',
-    '荒波の海戦.mp3',
-    'Il tempo sta accelerando.mp3',
-    '揺 by jjhs3213.wav',
-    'bossnekonoteshita.mp3',
-    'track5.mp3',
-    'shoujorei.mp3',
-    'yume.mp3',
-    'ES.mp3',
-    '空に響け.mp3',
-    '闇に咲く花.mp3',
-    '220_BPM86.mp3',
-    '353_BPM124.mp3',
-    '165_BPM100.mp3',
-    '刹那フィーバー.mp3',
-    '観劇のお誘い.mp3'
-];
-
 const song = document.getElementById('song');
 const bgm = document.getElementById('bgm');
 const timer = document.getElementById('timer');
@@ -171,15 +138,50 @@ const filenameEl = document.getElementById('filename');
 const lanes = [...document.querySelectorAll('.lane')];
 
 let notes = [];
+let songs = [];
 
-songs.forEach((name, index) => {
-    const option = document.createElement('option');
-    option.value = name;
-    option.textContent = name;
-    song.appendChild(option);
-});
+async function loadSongsFromGamePages() {
+    const pages = ['gfgame.html', 'spgame.html'];
+    const songMap = new Map();
+
+    for (const page of pages) {
+        try {
+            const response = await fetch(page);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            const html = await response.text();
+            const regex = /initGame\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]\s*\)/g;
+            let match;
+
+            while ((match = regex.exec(html)) !== null) {
+                const filename = match[1];
+                const mode = match[2];
+                if (!songMap.has(filename)) {
+                    songMap.set(filename, { filename, mode, source: page });
+                }
+            }
+        } catch (error) {
+            console.warn(`曲一覧を読み込めませんでした: ${page}`, error);
+        }
+    }
+
+    songs = [...songMap.values()];
+    songs.forEach((item) => {
+        const option = document.createElement('option');
+        option.value = item.filename;
+        option.textContent = `${item.filename} [${item.mode}]`;
+        song.appendChild(option);
+    });
+
+    if (songs.length > 0) {
+        setSong();
+    } else {
+        console.warn('gfgame.html / spgame.html から曲を取得できませんでした。');
+    }
+}
 
 function setSong() {
+    if (!song.value) return;
     bgm.src = song.value;
     bgm.load();
     bgm.currentTime = 0;
@@ -292,7 +294,7 @@ bgm.addEventListener('timeupdate', () => {
 
 bgm.addEventListener('play', updateTimer);
 
-setSong();
+loadSongsFromGamePages();
 renderNotes();
 </script>
 </body>
