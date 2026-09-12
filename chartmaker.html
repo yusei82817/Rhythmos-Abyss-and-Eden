@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rhythmos AE - Chart Maker</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: #111;
+        color: #eee;
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        padding: 20px;
+    }
+    h1 { margin: 0 0 16px; }
+    .top {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+    select, input, button {
+        background: #222;
+        color: #eee;
+        border: 1px solid #555;
+        border-radius: 6px;
+        padding: 9px 12px;
+        font-size: 14px;
+    }
+    button { cursor: pointer; }
+    button:hover { background: #333; }
+    .timer {
+        position: fixed;
+        top: 16px;
+        right: 20px;
+        font: 700 28px monospace;
+        background: #000c;
+        padding: 8px 12px;
+        border-radius: 8px;
+        z-index: 10;
+    }
+    .lanes {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 760px;
+        height: 260px;
+        margin: 20px auto;
+        border: 2px solid #666;
+    }
+    .lane {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        border-right: 1px solid #555;
+        padding-bottom: 15px;
+        font-size: 30px;
+        font-weight: bold;
+        transition: background .08s;
+    }
+    .lane:last-child { border-right: 0; }
+    .lane.flash { background: #fff; color: #111; }
+    .controls { text-align: center; margin: 12px 0; }
+    .controls button { margin: 4px; }
+    .info {
+        max-width: 760px;
+        margin: 0 auto;
+        background: #191919;
+        padding: 14px;
+        border-radius: 8px;
+    }
+    .notes {
+        margin-top: 12px;
+        max-height: 260px;
+        overflow-y: auto;
+        font-family: monospace;
+        line-height: 1.6;
+        border-top: 1px solid #444;
+        padding-top: 8px;
+    }
+    .hint { color: #aaa; }
+</style>
+</head>
+<body>
+<h1>Rhythmos AE - Chart Maker</h1>
+<div class="timer" id="timer">00:00.000</div>
+
+<div class="top">
+    <label>曲:
+        <select id="song"></select>
+    </label>
+    <label>BPM:
+        <input id="bpm" type="number" value="120" min="1" step="1">
+    </label>
+    <label>Offset:
+        <input id="offset" type="number" value="0" step="0.001">
+    </label>
+    <label>出力名:
+        <input id="filename" type="text" value="chart.json">
+    </label>
+</div>
+
+<audio id="bgm" preload="metadata"></audio>
+
+<div class="lanes">
+    <div class="lane" data-lane="0">A</div>
+    <div class="lane" data-lane="1">D</div>
+    <div class="lane" data-lane="2">J</div>
+    <div class="lane" data-lane="3">L</div>
+</div>
+
+<div class="controls">
+    <button id="play">▶ 再生</button>
+    <button id="pause">⏸ 一時停止</button>
+    <button id="restart">↺ 最初から</button>
+    <button id="undo">↩ 直前削除</button>
+    <button id="clear">🗑 全削除</button>
+    <button id="export">JSON出力</button>
+</div>
+
+<div class="info">
+    <div>記録済みノーツ: <strong id="count">0</strong></div>
+    <div class="hint">曲を再生し、ノーツを置きたい瞬間に A / D / J / L を押す。</div>
+    <div class="notes" id="notes">まだノーツはありません。</div>
+</div>
+
+<script>
+const songs = [
+    'odysseia.mp3',
+    '143_BPM120.mp3',
+    'betelgeuse.mp3',
+    '120_BPM124.mp3',
+    'sabakuwoiku.mp3',
+    'borghesenokaze.mp3',
+    'kiheisen.mp3',
+    'ryuukihei.mp3',
+    '1950danosekkin.mp3',
+    'maou_bgm_orchestra17.mp3',
+    'オープニングテーマFull.mp3',
+    '天命転折.mp3',
+    '電気街の悪魔.mp3',
+    'amenisuteraretaningyou.mp3',
+    '魔王交響曲シンフォニア第1番.mp3',
+    '荒波の海戦.mp3',
+    'Il tempo sta accelerando.mp3',
+    '揺 by jjhs3213.wav',
+    'bossnekonoteshita.mp3',
+    'track5.mp3',
+    'shoujorei.mp3',
+    'yume.mp3',
+    'ES.mp3',
+    '空に響け.mp3',
+    '闇に咲く花.mp3',
+    '220_BPM86.mp3',
+    '353_BPM124.mp3',
+    '165_BPM100.mp3',
+    '刹那フィーバー.mp3',
+    '観劇のお誘い.mp3'
+];
+
+const song = document.getElementById('song');
+const bgm = document.getElementById('bgm');
+const timer = document.getElementById('timer');
+const count = document.getElementById('count');
+const notesEl = document.getElementById('notes');
+const bpmEl = document.getElementById('bpm');
+const offsetEl = document.getElementById('offset');
+const filenameEl = document.getElementById('filename');
+const lanes = [...document.querySelectorAll('.lane')];
+
+let notes = [];
+
+songs.forEach((name, index) => {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    song.appendChild(option);
+});
+
+function setSong() {
+    bgm.src = song.value;
+    bgm.load();
+    bgm.currentTime = 0;
+    updateTimer();
+}
+
+function formatTime(seconds) {
+    const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+    const ms = Math.floor((seconds % 1) * 1000).toString().padStart(3, '0');
+    return `${min}:${sec}.${ms}`;
+}
+
+function updateTimer() {
+    timer.textContent = formatTime(bgm.currentTime || 0);
+    if (!bgm.paused) requestAnimationFrame(updateTimer);
+}
+
+function renderNotes() {
+    count.textContent = notes.length;
+    if (notes.length === 0) {
+        notesEl.textContent = 'まだノーツはありません。';
+        return;
+    }
+    notesEl.innerHTML = notes.map((note, index) =>
+        `${String(index + 1).padStart(3, '0')} | ${note.time.toFixed(3)} | lane ${note.lane}`
+    ).join('<br>');
+    notesEl.scrollTop = notesEl.scrollHeight;
+}
+
+function flashLane(lane) {
+    const el = lanes[lane];
+    if (!el) return;
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 80);
+}
+
+song.addEventListener('change', () => {
+    bgm.pause();
+    notes = [];
+    renderNotes();
+    setSong();
+});
+
+document.getElementById('play').addEventListener('click', async () => {
+    try {
+        await bgm.play();
+        updateTimer();
+    } catch (err) {
+        console.error(err);
+    }
+});
+
+document.getElementById('pause').addEventListener('click', () => {
+    bgm.pause();
+    updateTimer();
+});
+
+document.getElementById('restart').addEventListener('click', () => {
+    bgm.currentTime = 0;
+    updateTimer();
+});
+
+document.getElementById('undo').addEventListener('click', () => {
+    if (notes.length === 0) return;
+    notes.pop();
+    renderNotes();
+});
+
+document.getElementById('clear').addEventListener('click', () => {
+    notes = [];
+    renderNotes();
+});
+
+document.getElementById('export').addEventListener('click', () => {
+    const data = {
+        bpm: Number(bpmEl.value) || 120,
+        offset: Number(offsetEl.value) || 0,
+        notes: [...notes].sort((a, b) => a.time - b.time)
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filenameEl.value.trim() || 'chart.json';
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
+window.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
+    const keyMap = { a: 0, d: 1, j: 2, l: 3 };
+    const lane = keyMap[e.key.toLowerCase()];
+    if (lane === undefined) return;
+
+    e.preventDefault();
+    if (bgm.paused || bgm.ended) return;
+
+    notes.push({
+        time: Number(bgm.currentTime.toFixed(3)),
+        lane
+    });
+    flashLane(lane);
+    renderNotes();
+});
+
+bgm.addEventListener('timeupdate', () => {
+    timer.textContent = formatTime(bgm.currentTime);
+});
+
+bgm.addEventListener('play', updateTimer);
+
+setSong();
+renderNotes();
+</script>
+</body>
+</html>
