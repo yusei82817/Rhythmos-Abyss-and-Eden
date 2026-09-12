@@ -45,7 +45,20 @@
 </div>
 
 <audio id="bgm"></audio>
+<audio id="menu-bgm" src="Eden%20menu.mp3" loop preload="auto"></audio>
 <script type="module" src="game.js"></script>
 <div id="glitch"></div>
+<script>
+const menuBgm = document.getElementById('menu-bgm');
+
+function startMenuBgm() {
+    menuBgm.currentTime = 0;
+    menuBgm.play().catch(() => {
+        document.addEventListener('click', () => menuBgm.play(), { once: true });
+    });
+}
+
+startMenuBgm();
+</script>
 </body>
 </html>
