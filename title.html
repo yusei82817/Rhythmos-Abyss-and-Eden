@@ -1,210 +1,36 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
 <meta charset="UTF-8">
 <title>RhythmosAE</title>
-
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    width:100vw;
-    height:100vh;
-    overflow:hidden;
-    color:white;
-    font-family:Arial,sans-serif;
-    background:
-        radial-gradient(circle at 50% 20%, rgba(55,72,130,0.45) 0%, transparent 38%),
-        linear-gradient(to bottom, #02040d 0%, #070d24 45%, #111936 100%);
-}
-
-/* 星 */
-body::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    background-image:
-        radial-gradient(circle at 8% 15%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
-        radial-gradient(circle at 18% 72%, rgba(180,205,255,0.8) 0 1px, transparent 2px),
-        radial-gradient(circle at 31% 28%, rgba(255,255,255,0.8) 0 1px, transparent 2px),
-        radial-gradient(circle at 44% 82%, rgba(180,205,255,0.75) 0 1px, transparent 2px),
-        radial-gradient(circle at 58% 12%, rgba(255,255,255,0.85) 0 1px, transparent 2px),
-        radial-gradient(circle at 69% 63%, rgba(255,255,255,0.7) 0 1px, transparent 2px),
-        radial-gradient(circle at 79% 25%, rgba(180,205,255,0.8) 0 1px, transparent 2px),
-        radial-gradient(circle at 91% 78%, rgba(255,255,255,0.8) 0 1px, transparent 2px);
-    opacity:0.85;
-}
-
-/* 月 */
-.sun{
-    position:absolute;
-    width:150px;
-    height:150px;
-    border-radius:50%;
-    background:#e8edff;
-    box-shadow:
-        0 0 25px rgba(190,210,255,0.8),
-        0 0 70px rgba(120,155,255,0.35);
-    top:13%;
-    left:50%;
-    transform:translateX(-50%);
-    opacity:0.95;
-    animation:float 6s infinite alternate ease-in-out;
-}
-
-/* 月のクレーター */
-.sun::before,
-.sun::after{
-    content:"";
-    position:absolute;
-    border-radius:50%;
-    background:rgba(125,140,180,0.18);
-}
-
-.sun::before{
-    width:28px;
-    height:28px;
-    top:35px;
-    left:38px;
-}
-
-.sun::after{
-    width:18px;
-    height:18px;
-    top:82px;
-    left:92px;
-}
-
-/* 夜の雲 */
-.cloud{
-    position:absolute;
-    width:380px;
-    height:70px;
-    background:rgba(45,58,100,0.28);
-    border-radius:50%;
-    filter:blur(18px);
-    pointer-events:none;
-}
-
-.cloud1{top:28%;left:-70px;}
-.cloud2{top:48%;right:-100px;}
-.cloud3{top:70%;left:18%;}
-
-.menu{
-    position:relative;
-    z-index:5;
-    height:100vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-}
-
-h1{
-    font-size:70px;
-    letter-spacing:10px;
-    color:#e8eeff;
-    text-shadow:
-        0 0 12px rgba(170,195,255,0.9),
-        0 0 35px rgba(80,120,255,0.55);
-}
-
-.subtitle{
-    margin-top:10px;
-    font-size:24px;
-    letter-spacing:8px;
-    color:#aebce8;
-    text-shadow:0 0 12px rgba(120,160,255,0.45);
-}
-
-button{
-    margin-top:30px;
-    width:350px;
-    padding:20px;
-    font-size:30px;
-    color:#eaf0ff;
-    background:rgba(4,8,25,0.58);
-    border:2px solid rgba(190,205,255,0.75);
-    border-radius:15px;
-    cursor:pointer;
-    backdrop-filter:blur(7px);
-    transition:0.3s;
-}
-
-button:hover{
-    transform:scale(1.08);
-    background:rgba(75,95,160,0.3);
-    box-shadow:0 0 30px rgba(150,180,255,0.65);
-}
-
-#guri{
-    border-color:#8da8ff;
-}
-
-#guri:hover{
-    box-shadow:0 0 30px #6f8fff;
-}
-
-#sym{
-    border-color:#70d9ff;
-}
-
-#sym:hover{
-    box-shadow:0 0 30px #4dcfff;
-}
-
-#credit{
-    border-color:#b68cff;
-}
-
-#credit:hover{
-    box-shadow:0 0 30px #9d6cff;
-}
-
-@keyframes float{
-    from{
-        transform:translateX(-50%) translateY(0);
-    }
-    to{
-        transform:translateX(-50%) translateY(-14px);
-    }
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{width:100vw;height:100vh;overflow:hidden;color:white;font-family:Arial,sans-serif;background:radial-gradient(circle at 50% 20%,rgba(55,72,130,.45) 0%,transparent 38%),linear-gradient(to bottom,#02040d 0%,#070d24 45%,#111936 100%);}
+body::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle at 8% 15%,rgba(255,255,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 18% 72%,rgba(180,205,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 31% 28%,rgba(255,255,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 44% 82%,rgba(180,205,255,.75) 0 1px,transparent 2px),radial-gradient(circle at 58% 12%,rgba(255,255,255,.85) 0 1px,transparent 2px),radial-gradient(circle at 69% 63%,rgba(255,255,255,.7) 0 1px,transparent 2px),radial-gradient(circle at 79% 25%,rgba(180,205,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 91% 78%,rgba(255,255,255,.8) 0 1px,transparent 2px);opacity:.85;}
+.sun{position:absolute;width:150px;height:150px;border-radius:50%;background:#e8edff;box-shadow:0 0 25px rgba(190,210,255,.8),0 0 70px rgba(120,155,255,.35);top:13%;left:50%;transform:translateX(-50%);opacity:.95;animation:float 6s infinite alternate ease-in-out;}
+.sun::before,.sun::after{content:"";position:absolute;border-radius:50%;background:rgba(125,140,180,.18);}
+.sun::before{width:28px;height:28px;top:35px;left:38px;}.sun::after{width:18px;height:18px;top:82px;left:92px;}
+.cloud{position:absolute;width:380px;height:70px;background:rgba(45,58,100,.28);border-radius:50%;filter:blur(18px);pointer-events:none;}.cloud1{top:28%;left:-70px;}.cloud2{top:48%;right:-100px;}.cloud3{top:70%;left:18%;}
+.menu{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+h1{font-size:70px;letter-spacing:10px;color:#e8eeff;text-shadow:0 0 12px rgba(170,195,255,.9),0 0 35px rgba(80,120,255,.55);}
+.subtitle{margin-top:10px;font-size:24px;letter-spacing:8px;color:#aebce8;text-shadow:0 0 12px rgba(120,160,255,.45);}
+button{margin-top:30px;width:350px;padding:20px;font-size:30px;color:#eaf0ff;background:rgba(4,8,25,.58);border:2px solid rgba(190,205,255,.75);border-radius:15px;cursor:pointer;backdrop-filter:blur(7px);transition:.3s;}
+button:hover{transform:scale(1.08);background:rgba(75,95,160,.3);box-shadow:0 0 30px rgba(150,180,255,.65);}
+#guri{border-color:#8da8ff;}#guri:hover{box-shadow:0 0 30px #6f8fff;}#sym{border-color:#70d9ff;}#sym:hover{box-shadow:0 0 30px #4dcfff;}#credit{border-color:#b68cff;}#credit:hover{box-shadow:0 0 30px #9d6cff;}
+.shooting-star{position:fixed;width:4px;height:4px;border-radius:50%;background:white;box-shadow:0 0 6px white,0 0 14px #bcd4ff;pointer-events:none;z-index:2;animation:shoot .8s linear forwards;}
+.shooting-star::after{content:"";position:absolute;width:100px;height:2px;right:2px;top:1px;background:linear-gradient(to left,rgba(190,215,255,.8),transparent);}
+@keyframes shoot{from{opacity:0;transform:translate(0,0) rotate(-35deg);}15%{opacity:1;}to{opacity:0;transform:translate(260px,180px) rotate(-35deg);}}
+@keyframes float{from{transform:translateX(-50%) translateY(0);}to{transform:translateX(-50%) translateY(-14px);}}
 </style>
 </head>
-
 <body>
-
 <div class="sun"></div>
-
-<div class="cloud cloud1"></div>
-<div class="cloud cloud2"></div>
-<div class="cloud cloud3"></div>
-
-<div class="menu">
-
-<h1>RhythmosAE</h1>
-
-<div class="subtitle">Abyss and Eden</div>
-
-<button id="guri" onclick="location.href='gfgame.html'">
-Abyss
-</button>
-
-<button id="sym" onclick="location.href='spgame.html'">
-Eden
-</button>
-
-<button id="credit" onclick="location.href='Credit.html'">
-Credits
-</button>
-
-</div>
-
+<div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div>
+<div class="menu"><h1>RhythmosAE</h1><div class="subtitle">Abyss and Eden</div><button id="guri" onclick="location.href='gfgame.html'">Abyss</button><button id="sym" onclick="location.href='spgame.html'">Eden</button><button id="credit" onclick="location.href='Credit.html'">Credits</button></div>
+<script>
+function createShootingStar(){const star=document.createElement('div');star.className='shooting-star';star.style.left=(Math.random()*80+5)+'vw';star.style.top=(Math.random()*45+5)+'vh';document.body.appendChild(star);star.addEventListener('animationend',()=>star.remove());}
+function scheduleShootingStar(){const delay=7000+Math.random()*13000;setTimeout(()=>{createShootingStar();scheduleShootingStar();},delay);}
+scheduleShootingStar();
+</script>
 </body>
 </html>
