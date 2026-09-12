@@ -5,6 +5,26 @@
 <title>Rhythmos Abyss</title>
 <link rel="stylesheet" href="gfstyle.css">
 <style>
+#top-button{
+    position:fixed;
+    top:16px;
+    left:16px;
+    z-index:1000;
+    padding:8px 18px;
+    font-size:16px;
+    color:white;
+    background:rgba(5,2,0,.72);
+    border:2px solid #fff8dc;
+    border-radius:8px;
+    cursor:pointer;
+    box-shadow:0 0 10px rgba(255,215,0,.45);
+    backdrop-filter:blur(5px);
+}
+#top-button:hover{
+    background:rgba(220,20,60,.35);
+    box-shadow:0 0 18px gold;
+    transform:scale(1.04);
+}
 #menu-video-bg {
     position: fixed;
     inset: 0;
@@ -26,6 +46,7 @@
 </head>
 <body>
 
+<button id="top-button" onclick="location.href='title.html'">Top</button>
 <video id="menu-video-bg" autoplay muted playsinline></video>
 <div id="menu-video-overlay"></div>
 
