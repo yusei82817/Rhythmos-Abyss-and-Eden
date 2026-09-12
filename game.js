@@ -74,6 +74,12 @@ async function initGame(src, mode, bgImage = '') {
         return;
     }
 
+    const menuBgm = document.getElementById('menu-bgm');
+    if (menuBgm) {
+        menuBgm.pause();
+        menuBgm.currentTime = 0;
+    }
+
     score = 0;
     combo = 0;
     perfect = 0;
