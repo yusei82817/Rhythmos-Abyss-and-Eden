@@ -57,6 +57,98 @@ body {
 
 
 
+/* 音量確認 */
+
+#warning {
+
+  position:fixed;
+
+  inset:0;
+
+  z-index:1000;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  background:rgba(0,0,0,0.75);
+
+  backdrop-filter:blur(4px);
+
+}
+
+
+.warning-box {
+
+  width:min(420px,85vw);
+
+  padding:30px 26px 26px;
+
+  text-align:center;
+
+  background:rgba(10,10,10,0.97);
+
+  border:2px solid #dc143c;
+
+  border-radius:14px;
+
+  box-shadow:
+    0 0 15px #dc143c,
+    0 0 35px rgba(220,20,60,0.35);
+
+}
+
+
+.warning-box p {
+
+  margin:0;
+
+  font-size:20px;
+
+  line-height:1.7;
+
+  text-shadow:0 0 8px rgba(255,255,255,0.35);
+
+}
+
+
+#startButton {
+
+  display:block;
+
+  margin:24px auto 0;
+
+  padding:11px 50px;
+
+  font-size:20px;
+
+  color:white;
+
+  background:transparent;
+
+  border:2px solid #dc143c;
+
+  border-radius:8px;
+
+  cursor:pointer;
+
+  box-shadow:0 0 10px rgba(220,20,60,0.7);
+
+}
+
+
+#startButton:hover {
+
+  background:rgba(220,20,60,0.3);
+
+  box-shadow:0 0 18px #dc143c;
+
+}
+
+
+
 /* 見出し */
 
 h1 {
@@ -150,8 +242,10 @@ button:hover {
 
 <body>
 <div id="warning">
-    <p>このページでは音声が流れます</p>
-    <button id="startButton">OK</button>
+    <div class="warning-box">
+        <p>このページでは音声が流れます</p>
+        <button id="startButton">OK</button>
+    </div>
 </div>
 
 <audio id="credit-bgm" src="credit.mp3" loop></audio>
