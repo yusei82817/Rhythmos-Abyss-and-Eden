@@ -15,11 +15,12 @@ body::before{content:"";position:absolute;inset:0;pointer-events:none;background
 .sun::before{width:28px;height:28px;top:35px;left:38px;}.sun::after{width:18px;height:18px;top:82px;left:92px;}
 .cloud{position:absolute;width:380px;height:70px;background:rgba(45,58,100,.28);border-radius:50%;filter:blur(18px);pointer-events:none;}.cloud1{top:28%;left:-70px;}.cloud2{top:48%;right:-100px;}.cloud3{top:70%;left:18%;}
 .menu{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;}
-h1{font-family:'Great Vibes',cursive;font-size:100px;font-weight:400;letter-spacing:2px;color:#f3f6ff;text-shadow:0 0 10px rgba(220,230,255,.95),0 0 28px rgba(130,165,255,.7),0 0 55px rgba(90,130,255,.35);}
-.subtitle{margin-top:2px;font-family:'Great Vibes',cursive;font-size:34px;letter-spacing:3px;color:#c8d4f5;text-shadow:0 0 12px rgba(150,180,255,.55);}
-button{margin-top:30px;width:350px;padding:20px;font-size:30px;color:#eaf0ff;background:rgba(4,8,25,.58);border:2px solid rgba(190,205,255,.75);border-radius:15px;cursor:pointer;backdrop-filter:blur(7px);transition:.3s;}
-button:hover{transform:scale(1.08);background:rgba(75,95,160,.3);box-shadow:0 0 30px rgba(150,180,255,.65);}
+h1{font-family:'Great Vibes',cursive;font-size:100px;font-weight:400;letter-spacing:2px;color:#f3f6ff;text-shadow:0 0 10px rgba(220,230,255,.95),0 0 28px rgba(130,165,255,.7),0 0 55px rgba(90,130,255,.35);animation:titleFloat 5s ease-in-out infinite;}
+.subtitle{margin-top:2px;font-family:'Great Vibes',cursive;font-size:34px;letter-spacing:3px;color:#c8d4f5;text-shadow:0 0 12px rgba(150,180,255,.55);animation:subtitleIn 1.4s .9s both;}
+button{margin-top:30px;width:350px;padding:20px;font-size:30px;color:#eaf0ff;background:rgba(4,8,25,.38);border:2px solid rgba(190,205,255,.6);border-radius:15px;cursor:pointer;backdrop-filter:blur(9px);transition:.3s;}
+button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0 30px rgba(150,180,255,.65);}
 #guri{border-color:#8da8ff;}#guri:hover{box-shadow:0 0 30px #6f8fff;}#sym{border-color:#70d9ff;}#sym:hover{box-shadow:0 0 30px #4dcfff;}#credit{border-color:#b68cff;}#credit:hover{box-shadow:0 0 30px #9d6cff;}
+.menu button:nth-of-type(1){animation:menuIn .9s 1.3s both;}.menu button:nth-of-type(2){animation:menuIn .9s 1.55s both;}.menu button:nth-of-type(3){animation:menuIn .9s 1.8s both;}
 .shooting-star{position:fixed;width:150px;height:12px;pointer-events:none;z-index:2;transform-origin:calc(100% - 3px) 50%;animation:meteorMove .9s cubic-bezier(.18,.7,.3,1) forwards;}
 .shooting-star-tail{position:absolute;right:5px;top:4px;width:145px;height:4px;border-radius:999px;background:linear-gradient(to left,rgba(255,255,255,.95),rgba(190,215,255,.7) 30%,rgba(140,180,255,.28) 65%,transparent);filter:blur(1px);transform-origin:right center;animation:meteorTail .9s ease-out forwards;}
 .shooting-star-head{position:absolute;right:0;top:2px;width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 5px #fff,0 0 14px #dbe8ff,0 0 28px rgba(150,190,255,.8);animation:meteorHead .9s ease-out forwards;}
@@ -27,6 +28,9 @@ button:hover{transform:scale(1.08);background:rgba(75,95,160,.3);box-shadow:0 0 
 @keyframes meteorTail{0%{opacity:0;transform:scaleX(.05);}12%{opacity:1;transform:scaleX(1);}60%{opacity:.78;transform:scaleX(.82);}100%{opacity:0;transform:scaleX(.18);}}
 @keyframes meteorHead{0%{transform:scale(.35);opacity:0;}12%{transform:scale(1.1);opacity:1;}72%{transform:scale(1);opacity:1;}100%{transform:scale(.7);opacity:0;}}
 @keyframes float{from{transform:translateX(-50%) translateY(0);}to{transform:translateX(-50%) translateY(-14px);}}
+@keyframes titleFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+@keyframes subtitleIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes menuIn{from{opacity:0;transform:translateY(24px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}
 #sound-notice{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.58);backdrop-filter:blur(4px);}
 #sound-box{width:min(420px,85vw);padding:28px 26px 24px;text-align:center;background:rgba(8,13,35,.96);border:1px solid rgba(205,220,255,.7);border-radius:14px;box-shadow:0 0 35px rgba(100,140,255,.25);}
 #sound-box p{font-size:18px;line-height:1.7;color:#eef3ff;}
