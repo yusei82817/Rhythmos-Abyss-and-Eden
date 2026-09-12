@@ -4,8 +4,30 @@
 <meta charset="UTF-8">
 <title>Rhythmos Abyss-and-Eden</title>
 <link rel="stylesheet" href="spstyle.css">
+<style>
+#menu-video-bg{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-2;
+    pointer-events:none;
+    background:#000;
+}
+#menu-video-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    z-index:-1;
+    pointer-events:none;
+}
+</style>
 </head>
 <body>
+
+<video id="menu-video-bg" autoplay muted playsinline></video>
+<div id="menu-video-overlay"></div>
 
 <div id="select-screen">
 <h1 style="letter-spacing:5px; margin-bottom:10px;">SELECT TRACK</h1>
@@ -60,6 +82,32 @@ function startMenuBgm() {
 }
 
 startMenuBgm();
+
+const menuVideo = document.getElementById('menu-video-bg');
+const menuVideos = [
+    'video/171682-845775813_medium.mp4',
+    'video/189457-885804464_medium.mp4',
+    'video/4-135665514_medium.mp4'
+];
+let menuVideoIndex = -1;
+
+function playRandomMenuVideo() {
+    let nextIndex;
+    do {
+        nextIndex = Math.floor(Math.random() * menuVideos.length);
+    } while (menuVideos.length > 1 && nextIndex === menuVideoIndex);
+
+    menuVideoIndex = nextIndex;
+    menuVideo.src = menuVideos[menuVideoIndex];
+    menuVideo.currentTime = 0;
+    const promise = menuVideo.play();
+    if (promise) promise.catch(() => {
+        document.addEventListener('click', () => menuVideo.play(), { once: true });
+    });
+}
+
+menuVideo.addEventListener('ended', playRandomMenuVideo);
+playRandomMenuVideo();
 </script>
 </body>
 </html>
