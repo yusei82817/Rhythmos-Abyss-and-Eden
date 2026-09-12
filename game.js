@@ -68,7 +68,7 @@ function createWave() {
     setTimeout(() => wave.remove(), 500);
 }
 
-function initGame(src, mode, bgImage = '') {
+async function initGame(src, mode, bgImage = '') {
     if (!src || !mode) {
         console.error('エラー: src または mode が指定されていません。');
         return;
@@ -101,7 +101,7 @@ function initGame(src, mode, bgImage = '') {
     const selectScreen = document.getElementById('select-screen');
     if (selectScreen) selectScreen.style.display = 'none';
 
-    generateChart(mode);
+    await loadChart(src);
     isPlaying = true;
 
     bgm.play()
@@ -111,7 +111,37 @@ function initGame(src, mode, bgImage = '') {
 
 window.initGame = initGame;
 
-function generateChart(mode) {
+async function loadChart(src) {
+    const path = location.pathname.toLowerCase();
+    const folder = path.endsWith('gfgame.html') ? 'abc' : 'edc';
+    const audioName = decodeURIComponent(src.split('/').pop() || '');
+    const chartName = audioName.replace(/\.[^.]+$/, '');
+    const chartPath = `chart/${folder}/${encodeURIComponent(chartName)}.json`;
+
+    try {
+        const response = await fetch(chartPath);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const chartData = await response.json();
+        const offset = Number(chartData.offset) || 0;
+
+        chart = Array.isArray(chartData.notes)
+            ? chartData.notes.map(note => ({
+                time: Number(note.time) + offset,
+                lane: Number(note.lane),
+                type: note.type || 'normal'
+            }))
+            : [];
+
+        chart.sort((a, b) => a.time - b.time);
+        console.log(`固定譜面を読み込みました: ${chartPath} / ${chart.length} notes`);
+    } catch (error) {
+        console.warn(`固定譜面が見つからないため、ランダム譜面を使用します: ${chartPath}`, error);
+        generateRandomChart(currentMode);
+    }
+}
+
+function generateRandomChart(mode) {
     chart = [];
     const endSeconds = 150;
     const bpm = (mode === 'ボス猫の手下') ? 160 : 120;
