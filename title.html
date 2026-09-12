@@ -24,17 +24,35 @@ button:hover{transform:scale(1.08);background:rgba(75,95,160,.3);box-shadow:0 0 
 @keyframes meteorTail{0%{opacity:0;transform:scaleX(.05);}12%{opacity:1;transform:scaleX(1);}60%{opacity:.78;transform:scaleX(.82);}100%{opacity:0;transform:scaleX(.18);}}
 @keyframes meteorHead{0%{transform:scale(.35);opacity:0;}12%{transform:scale(1.1);opacity:1;}72%{transform:scale(1);opacity:1;}100%{transform:scale(.7);opacity:0;}}
 @keyframes float{from{transform:translateX(-50%) translateY(0);}to{transform:translateX(-50%) translateY(-14px);}}
+
+#sound-notice{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.58);backdrop-filter:blur(4px);}
+#sound-box{width:min(420px,85vw);padding:28px 26px 24px;text-align:center;background:rgba(8,13,35,.96);border:1px solid rgba(205,220,255,.7);border-radius:14px;box-shadow:0 0 35px rgba(100,140,255,.25);}
+#sound-box p{font-size:18px;line-height:1.7;color:#eef3ff;}
+#sound-complete{margin:22px auto 0;width:180px;padding:11px 18px;font-size:18px;color:#eef3ff;background:rgba(40,55,100,.75);border:1px solid rgba(205,220,255,.75);border-radius:8px;cursor:pointer;}
+#sound-complete:hover{background:rgba(75,95,160,.85);box-shadow:0 0 20px rgba(150,180,255,.45);transform:scale(1.04);}
 </style>
 </head>
 <body>
 <audio id="title-bgm" src="title.mp3" loop preload="auto"></audio>
+<div id="sound-notice">
+    <div id="sound-box">
+        <p>このゲームでは音が流れます。<br>再度、音量の設定を確認してください</p>
+        <button id="sound-complete">完了</button>
+    </div>
+</div>
 <div class="sun"></div>
 <div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div>
 <div class="menu"><h1>RhythmosAE</h1><div class="subtitle">Abyss and Eden</div><button id="guri" onclick="location.href='gfgame.html'">Abyss</button><button id="sym" onclick="location.href='spgame.html'">Eden</button><button id="credit" onclick="location.href='Credit.html'">Credits</button></div>
 <script>
 const titleBgm=document.getElementById('title-bgm');
-function startTitleBgm(){titleBgm.currentTime=0;titleBgm.play().catch(()=>{document.addEventListener('click',()=>titleBgm.play(),{once:true});});}
-startTitleBgm();
+const soundNotice=document.getElementById('sound-notice');
+const soundComplete=document.getElementById('sound-complete');
+
+soundComplete.addEventListener('click',()=>{
+    soundNotice.remove();
+    titleBgm.currentTime=0;
+    titleBgm.play().catch(()=>{});
+});
 
 function createShootingStar(){
     const star=document.createElement('div');
