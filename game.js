@@ -96,10 +96,8 @@ async function initGame(src, mode, bgImage = '') {
         menuBgm.pause();
         menuBgm.currentTime = 0;
     }
+    
 
-    if (menuVideo) {
-        menuVideo.pause();
-    }
 
     score = 0;
     combo = 0;
