@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rhythmos Abyss-and-Eden - Result</title>
+<link rel="stylesheet" href="srresult.css">
+</head>
+<body>
+<div class="result-bg"></div>
+<div class="rain"></div>
+
+<main class="result-screen">
+    <p class="result-subtitle">SURPASS</p>
+    <h1>RESULT</h1>
+    <div class="quiet-line"></div>
+
+    <section class="score-panel">
+        <p class="score-label">SCORE</p>
+        <div id="score" class="score">000000</div>
+    </section>
+
+    <section class="judgement-panel">
+        <div class="judgement perfect">
+            <span>PERFECT</span>
+            <strong id="perfect">0</strong>
+        </div>
+        <div class="judgement success">
+            <span>SUCCESS</span>
+            <strong id="success">0</strong>
+        </div>
+        <div class="judgement great">
+            <span>GREAT</span>
+            <strong id="great">0</strong>
+        </div>
+        <div class="judgement miss">
+            <span>MISS</span>
+            <strong id="miss">0</strong>
+        </div>
+    </section>
+
+    <p class="farewell">The song has ended.<br>Only the rain remains.</p>
+
+    <div class="buttons">
+        <button onclick="location.href='srgame.html'">BACK TO SELECT</button>
+        <button onclick="location.href='title.html'">TOP</button>
+    </div>
+</main>
+
+<script>
+const score = Number(localStorage.getItem('score')) || 0;
+const perfect = Number(localStorage.getItem('perfect')) || 0;
+const success = Number(localStorage.getItem('success')) || 0;
+const great = Number(localStorage.getItem('great')) || 0;
+const miss = Number(localStorage.getItem('miss')) || 0;
+
+document.getElementById('score').textContent = score.toString().padStart(6, '0');
+document.getElementById('perfect').textContent = perfect;
+document.getElementById('success').textContent = success;
+document.getElementById('great').textContent = great;
+document.getElementById('miss').textContent = miss;
+</script>
+</body>
+</html>
