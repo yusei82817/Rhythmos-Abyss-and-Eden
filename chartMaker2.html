@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rhythmos Chart Maker 2 - 8K</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0712;color:#eee;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+header{padding:14px 18px;background:#151020;border-bottom:1px solid #4b3470;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+h1{font-size:20px;margin:0;color:#d9b7ff}
+button,input{font:inherit}
+button{border:1px solid #7650a8;background:#1d1530;color:#eee;border-radius:7px;padding:7px 11px;cursor:pointer}
+button:hover{background:#2c2045}
+button.active{background:#6c3faf;border-color:#b88cff}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.controls label{font-size:13px;color:#c8bdd5}
+.controls input[type=number]{width:90px;background:#0d0914;color:#fff;border:1px solid #59416f;border-radius:6px;padding:6px}
+main{padding:16px;max-width:1250px;margin:auto}
+.panel{background:#120d1b;border:1px solid #3e2d52;border-radius:10px;padding:12px;margin-bottom:14px}
+.audio-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=file]{max-width:100%}
+#file-name{font-size:13px;color:#aaa}
+#timeline{width:100%;margin:10px 0;accent-color:#a96cff}
+#time{font-family:monospace;min-width:105px;color:#ddd}
+.editor{position:relative;height:620px;border:1px solid #5a4075;border-radius:8px;overflow:hidden;background:#09070d;display:grid;grid-template-columns:repeat(8,1fr)}
+.lane{position:relative;border-right:1px solid #2e2438;cursor:pointer}
+.lane:last-child{border-right:0}
+.lane:nth-child(odd){background:rgba(255,255,255,.015)}
+.lane:hover{background:rgba(160,105,255,.08)}
+.lane-key{position:absolute;top:7px;left:0;right:0;text-align:center;font-weight:700;color:#bfa5d9;pointer-events:none;z-index:3}
+.note{position:absolute;width:74%;left:13%;height:9px;border-radius:5px;background:#c69aff;box-shadow:0 0 9px rgba(198,154,255,.65);transform:translateY(-50%);pointer-events:none}
+.playhead{position:absolute;left:0;right:0;height:2px;background:#fff;box-shadow:0 0 8px #fff;top:50%;z-index:10;pointer-events:none}
+.judgment{position:absolute;left:0;right:0;top:50%;height:1px;background:#ffb45e;opacity:.7;z-index:9;pointer-events:none}
+.help{font-size:12px;color:#aaa;line-height:1.6}
+.stats{display:flex;gap:18px;flex-wrap:wrap;font-family:monospace;color:#d8cbe5}
+textarea{width:100%;min-height:170px;background:#09070d;color:#eee;border:1px solid #4d3a60;border-radius:7px;padding:9px;font-family:monospace;font-size:12px}
+.status{color:#bda7cf;font-size:13px;min-height:20px}
+.danger{border-color:#824747}
+@media(max-width:700px){.editor{height:520px}.lane-key{font-size:11px}.note{width:88%;left:6%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Rhythmos Chart Maker 2 / 8K</h1>
+  <div class="controls">
+    <label>BPM <input id="bpm" type="number" min="1" max="999" step="1" value="120"></label>
+    <label>Offset <input id="offset" type="number" step="0.001" value="0"></label>
+    <button id="play">▶ Play</button>
+    <button id="stop">■ Stop</button>
+    <button id="clear" class="danger">Clear</button>
+    <button id="export">Export JSON</button>
+    <button id="copy">Copy JSON</button>
+  </div>
+</header>
+
+<main>
+  <section class="panel">
+    <div class="audio-row">
+      <input id="audio-file" type="file" accept="audio/*">
+      <span id="file-name">音声ファイル未選択</span>
+    </div>
+    <input id="timeline" type="range" min="0" max="0" step="0.001" value="0">
+    <div class="stats">
+      <span id="time">00:00.000</span>
+      <span id="duration">/ 00:00.000</span>
+      <span id="note-count">Notes: 0</span>
+    </div>
+    <p class="help">音声を読み込み、再生しながら <b>A S D F J K L ;</b> を押すと、その瞬間の位置にノートを配置します。レーンをクリックしても現在時刻に配置できます。配置済みノートをクリックすると削除できます。</p>
+    <audio id="audio" preload="metadata"></audio>
+  </section>
+
+  <section class="panel">
+    <div class="editor" id="editor">
+      <div class="lane" data-lane="0"><div class="lane-key">A</div></div>
+      <div class="lane" data-lane="1"><div class="lane-key">S</div></div>
+      <div class="lane" data-lane="2"><div class="lane-key">D</div></div>
+      <div class="lane" data-lane="3"><div class="lane-key">F</div></div>
+      <div class="lane" data-lane="4"><div class="lane-key">J</div></div>
+      <div class="lane" data-lane="5"><div class="lane-key">K</div></div>
+      <div class="lane" data-lane="6"><div class="lane-key">L</div></div>
+      <div class="lane" data-lane="7"><div class="lane-key">;</div></div>
+      <div class="judgment"></div>
+      <div class="playhead" id="playhead"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="controls">
+      <button id="load-json">JSONを読み込む</button>
+      <button id="download-json">JSONファイルとして保存</button>
+    </div>
+    <textarea id="json" spellcheck="false">{
+  "bpm": 120,
+  "offset": 0,
+  "notes": []
+}</textarea>
+    <div class="status" id="status"></div>
+  </section>
+</main>
+
+<script>
+const KEYS=['a','s','d','f','j','k','l',';'];
+const keyToLane=Object.fromEntries(KEYS.map((key,index)=>[key,index]));
+const audio=document.getElementById('audio');
+const fileInput=document.getElementById('audio-file');
+const fileName=document.getElementById('file-name');
+const timeline=document.getElementById('timeline');
+const timeEl=document.getElementById('time');
+const durationEl=document.getElementById('duration');
+const noteCount=document.getElementById('note-count');
+const editor=document.getElementById('editor');
+const playhead=document.getElementById('playhead');
+const bpmInput=document.getElementById('bpm');
+const offsetInput=document.getElementById('offset');
+const jsonBox=document.getElementById('json');
+const status=document.getElementById('status');
+
+let notes=[];
+let objectUrl='';
+let raf=0;
+
+function formatTime(value){
+  value=Number(value)||0;
+  const m=Math.floor(value/60);
+  const s=Math.floor(value%60);
+  const ms=Math.floor((value%1)*1000);
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(3,'0')}`;
+}
+
+function currentTime(){return Number(audio.currentTime)||0}
+
+function setStatus(text){status.textContent=text}
+
+function sortNotes(){notes.sort((a,b)=>a.time-b.time || a.lane-b.lane)}
+
+function render(){
+  document.querySelectorAll('.note').forEach(el=>el.remove());
+  const duration=Number(audio.duration)||Math.max(1,...notes.map(n=>n.time+1));
+  for(const note of notes){
+    const lane=document.querySelector(`.lane[data-lane="${note.lane}"]`);
+    if(!lane) continue;
+    const el=document.createElement('div');
+    el.className='note';
+    el.title=`${formatTime(note.time)} / lane ${note.lane}`;
+    el.style.top=`${(note.time/duration)*100}%`;
+    el.addEventListener('click',e=>{
+      e.stopPropagation();
+      notes=notes.filter(n=>n!==note);
+      render();
+      syncJson();
+    });
+    lane.appendChild(el);
+  }
+  noteCount.textContent=`Notes: ${notes.length}`;
+  updatePlayhead();
+}
+
+function updatePlayhead(){
+  const duration=Number(audio.duration)||0;
+  const ratio=duration>0 ? currentTime()/duration : 0;
+  playhead.style.top=`${Math.max(0,Math.min(1,ratio))*100}%`;
+  timeline.value=currentTime();
+  timeEl.textContent=formatTime(currentTime());
+  durationEl.textContent=`/ ${formatTime(duration)}`;
+}
+
+function addNote(lane,time=currentTime()){
+  lane=Number(lane);
+  time=Number(time);
+  if(!Number.isFinite(time)||time<0||lane<0||lane>7)return;
+  notes.push({time:Number(time.toFixed(3)),lane});
+  sortNotes();
+  render();
+  syncJson();
+}
+
+function syncJson(){
+  sortNotes();
+  const data={bpm:Number(bpmInput.value)||120,offset:Number(offsetInput.value)||0,notes};
+  jsonBox.value=JSON.stringify(data,null,2);
+}
+
+function loadJsonObject(data){
+  if(!data || !Array.isArray(data.notes)) throw new Error('notes 配列がありません');
+  notes=data.notes.map(n=>({time:Number(n.time),lane:Number(n.lane)})).filter(n=>Number.isFinite(n.time)&&n.time>=0&&n.lane>=0&&n.lane<=7);
+  bpmInput.value=Number(data.bpm)||120;
+  offsetInput.value=Number(data.offset)||0;
+  sortNotes();
+  render();
+  syncJson();
+}
+
+fileInput.addEventListener('change',()=>{
+  const file=fileInput.files?.[0];
+  if(!file)return;
+  if(objectUrl)URL.revokeObjectURL(objectUrl);
+  objectUrl=URL.createObjectURL(file);
+  audio.src=objectUrl;
+  fileName.textContent=file.name;
+  audio.load();
+});
+
+audio.addEventListener('loadedmetadata',()=>{
+  timeline.max=audio.duration||0;
+  durationEl.textContent=`/ ${formatTime(audio.duration)}`;
+  render();
+});
+
+audio.addEventListener('timeupdate',updatePlayhead);
+audio.addEventListener('ended',updatePlayhead);
+
+timeline.addEventListener('input',()=>{audio.currentTime=Number(timeline.value)||0;updatePlayhead()});
+
+document.getElementById('play').addEventListener('click',()=>audio.paused?audio.play():audio.pause());
+document.getElementById('stop').addEventListener('click',()=>{audio.pause();audio.currentTime=0;updatePlayhead()});
+
+document.getElementById('clear').addEventListener('click',()=>{
+  notes=[];
+  render();
+  syncJson();
+  setStatus('ノートを全削除しました。');
+});
+
+document.querySelectorAll('.lane').forEach(lane=>lane.addEventListener('click',()=>addNote(lane.dataset.lane)));
+
+window.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA','BUTTON'].includes(document.activeElement?.tagName))return;
+  const key=e.key.toLowerCase();
+  if(keyToLane[key]!==undefined){
+    e.preventDefault();
+    addNote(keyToLane[key]);
+  }
+  if(e.code==='Space'){
+    e.preventDefault();
+    audio.paused?audio.play():audio.pause();
+  }
+});
+
+function getJsonText(){
+  syncJson();
+  return jsonBox.value;
+}
+
+document.getElementById('export').addEventListener('click',()=>{
+  const blob=new Blob([getJsonText()],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='chart.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  setStatus('chart.json を生成しました。');
+});
+
+document.getElementById('download-json').addEventListener('click',()=>document.getElementById('export').click());
+
+document.getElementById('copy').addEventListener('click',async()=>{
+  try{
+    await navigator.clipboard.writeText(getJsonText());
+    setStatus('JSONをクリップボードへコピーしました。');
+  }catch{
+    jsonBox.select();
+    document.execCommand('copy');
+    setStatus('JSONをコピーしました。');
+  }
+});
+
+document.getElementById('load-json').addEventListener('click',()=>{
+  try{
+    loadJsonObject(JSON.parse(jsonBox.value));
+    setStatus('JSONを読み込みました。8レーン外のノートは除外しています。');
+  }catch(error){
+    setStatus(`JSONエラー: ${error.message}`);
+  }
+});
+
+bpmInput.addEventListener('input',syncJson);
+offsetInput.addEventListener('input',syncJson);
+
+function loop(){
+  updatePlayhead();
+  raf=requestAnimationFrame(loop);
+}
+loop();
+syncJson();
+</script>
+</body>
+</html>
