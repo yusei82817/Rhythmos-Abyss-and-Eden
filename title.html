@@ -9,9 +9,12 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{width:100vw;height:100vh;overflow:hidden;color:white;font-family:Arial,sans-serif;background:radial-gradient(circle at 50% 20%,rgba(55,72,130,.45) 0%,transparent 38%),linear-gradient(to bottom,#02040d 0%,#070d24 45%,#111936 100%);transition:background 1.2s ease;}
-body::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle at 8% 15%,rgba(255,255,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 18% 72%,rgba(180,205,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 31% 28%,rgba(255,255,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 44% 82%,rgba(180,205,255,.75) 0 1px,transparent 2px),radial-gradient(circle at 58% 12%,rgba(255,255,255,.85) 0 1px,transparent 2px),radial-gradient(circle at 69% 63%,rgba(255,255,255,.7) 0 1px,transparent 2px),radial-gradient(circle at 79% 25%,rgba(180,205,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 91% 78%,rgba(255,255,255,.8) 0 1px,transparent 2px);opacity:.85;transition:opacity 1.2s ease;}
+body::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1.2s ease;}
 body.eclipse{background:radial-gradient(circle at 50% 20%,rgba(20,25,48,.22) 0%,transparent 35%),linear-gradient(to bottom,#000105 0%,#01030a 55%,#050817 100%);}
-body.eclipse::before{opacity:.55;}
+body.eclipse::before{opacity:.55;background:rgba(0,0,0,.08);}
+#star-field{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;transition:opacity 1.2s ease;}
+body.eclipse #star-field{opacity:.55;}
+.star{position:absolute;width:2px;height:2px;border-radius:50%;background:white;box-shadow:0 0 5px rgba(255,255,255,.8);animation:twinkle 2s ease-in-out infinite alternate;}
 .sun{position:absolute;width:150px;height:150px;border-radius:50%;background:#e8edff;box-shadow:0 0 25px rgba(190,210,255,.8),0 0 70px rgba(120,155,255,.35);top:13%;left:50%;transform:translateX(-50%);opacity:.95;animation:float 6s infinite alternate ease-in-out;transition:background 1.2s ease,box-shadow 1.2s ease,opacity 1.2s ease;}
 .sun::before,.sun::after{content:"";position:absolute;border-radius:50%;background:rgba(125,140,180,.18);}
 .sun::before{width:28px;height:28px;top:35px;left:38px;}.sun::after{width:18px;height:18px;top:82px;left:92px;}
@@ -21,7 +24,7 @@ body.eclipse .sun::before,body.eclipse .sun::after{background:rgba(55,10,20,.22)
 body.eclipse .cloud{opacity:.3;}
 .menu{position:relative;z-index:5;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;}
 h1{font-family:'Great Vibes',cursive;font-size:100px;font-weight:400;letter-spacing:2px;color:#f3f6ff;text-shadow:0 0 12px rgba(255,255,255,1),0 0 30px rgba(170,195,255,.9),0 0 60px rgba(100,145,255,.65),0 0 100px rgba(70,110,255,.38);animation:titleFloat 5s ease-in-out infinite, titleGlow 3.5s ease-in-out infinite;}
-body.eclipse h1{color:#fff; text-shadow:0 0 15px rgba(255,255,255,1),0 0 38px rgba(200,215,255,1),0 0 75px rgba(120,165,255,.8),0 0 120px rgba(80,125,255,.5);}
+body.eclipse h1{color:#fff;text-shadow:0 0 15px rgba(255,255,255,1),0 0 38px rgba(200,215,255,1),0 0 75px rgba(120,165,255,.8),0 0 120px rgba(80,125,255,.5);}
 .subtitle{margin-top:2px;font-family:'Great Vibes',cursive;font-size:34px;letter-spacing:3px;color:#e4bd62;text-shadow:0 0 7px rgba(255,215,120,.75),0 0 18px rgba(210,155,45,.45);animation:subtitleIn 1.4s .9s both;}
 button{margin-top:30px;width:350px;padding:20px;font-size:30px;color:#eaf0ff;background:rgba(4,8,25,.38);border:2px solid rgba(190,205,255,.6);border-radius:15px;cursor:pointer;backdrop-filter:blur(9px);transition:.3s;}
 button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0 30px rgba(150,180,255,.65);}
@@ -39,6 +42,7 @@ button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0
 @keyframes subtitleIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 @keyframes menuIn{from{opacity:0;transform:translateY(24px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}
 @keyframes surpassIn{from{opacity:0;transform:translateY(24px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes twinkle{from{opacity:.35;transform:scale(.8);}to{opacity:1;transform:scale(1.2);}}
 #sound-notice{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.58);backdrop-filter:blur(4px);}
 #sound-box{width:min(420px,85vw);padding:28px 26px 24px;text-align:center;background:rgba(8,13,35,.96);border:1px solid rgba(205,220,255,.7);border-radius:14px;box-shadow:0 0 35px rgba(100,140,255,.25);}
 #sound-box p{font-size:18px;line-height:1.7;color:#eef3ff;}
@@ -49,6 +53,7 @@ button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0
 <body>
 <audio id="title-bgm" src="title.mp3" loop preload="auto"></audio>
 <div id="sound-notice"><div id="sound-box"><p>このゲームでは音が流れます。<br>再度、音量の設定を確認してください</p><button id="sound-complete">完了</button></div></div>
+<div id="star-field"><div class="star"></div></div>
 <div class="sun"></div>
 <div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div>
 <div class="menu"><h1>RhythmosAE</h1><div class="subtitle">Abyss and Eden</div><button id="guri" onclick="location.href='gfgame.html'">Abyss</button><button id="sym" onclick="location.href='spgame.html'">Eden</button><button id="credit" onclick="location.href='Credit.html'">Credits</button><button id="surpass" onclick="location.href='srgame.html'">S<br>U<br>R<br>P<br>A<br>S<br>S</button></div>
@@ -57,6 +62,24 @@ const titleBgm=document.getElementById('title-bgm');
 const soundNotice=document.getElementById('sound-notice');
 const soundComplete=document.getElementById('sound-complete');
 soundComplete.addEventListener('click',()=>{soundNotice.remove();titleBgm.currentTime=0;titleBgm.play().catch(()=>{});});
+function createStars(count=70){
+    const field=document.getElementById('star-field');
+    const template=field.querySelector('.star');
+    for(let i=0;i<count;i++){
+        const star=template.cloneNode(true);
+        star.style.left=Math.random()*100+'vw';
+        star.style.top=Math.random()*100+'vh';
+        const size=1+Math.random()*2;
+        star.style.width=size+'px';
+        star.style.height=size+'px';
+        star.style.opacity=0.35+Math.random()*0.65;
+        star.style.animationDuration=(1.5+Math.random()*3)+'s';
+        star.style.animationDelay=(-Math.random()*3)+'s';
+        field.appendChild(star);
+    }
+    template.remove();
+}
+createStars(70);
 function alignSurpass(){
     const menu=document.querySelector('.menu');
     const abyss=document.getElementById('guri');
