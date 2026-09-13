@@ -89,15 +89,30 @@
 
 <audio id="bgm"></audio>
 <audio id="menu-bgm" src="Abyss%20menu.mp3" loop preload="auto"></audio>
+
 <script type="module" src="game.js"></script>
+
 <script>
+/*
+ * メニューBGM
+ */
+const menuBgm = document.getElementById('menu-bgm');
+
+if (menuBgm) {
+    document.addEventListener('click', () => {
+        if (menuBgm.paused) {
+            menuBgm.play().catch(err => {
+                console.error('メニューBGMの再生に失敗しました:', err);
+            });
+        }
+    }, { once: true });
+}
+
 /*
  * ソングカード解禁日時設定
  *
- * data-release=""              = 即時解禁
+ * data-release="" = 即時解禁
  * data-release="2026-09-20T00:00:00+09:00" = 指定日時まで非表示
- *
- * 日付は日本時間(+09:00)で設定できます。
  */
 function updateSongUnlocks() {
     const now = new Date();
@@ -111,7 +126,11 @@ function updateSongUnlocks() {
         }
 
         const releaseTime = new Date(release);
-        card.style.display = Number.isNaN(releaseTime.getTime()) || now >= releaseTime ? '' : 'none';
+
+        card.style.display =
+            Number.isNaN(releaseTime.getTime()) || now >= releaseTime
+                ? ''
+                : 'none';
     });
 }
 
