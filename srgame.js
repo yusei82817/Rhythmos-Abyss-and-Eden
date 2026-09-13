@@ -68,6 +68,160 @@ function createWave() {
     setTimeout(() => wave.remove(), 500);
 }
 
+/*
+ * 「母なる海へ」専用の窓ガラス風水滴エフェクト。
+ * 雨粒が真下へ落ちるのではなく、ガラス面をゆっくり伝うように動かす。
+ */
+let rainOverlay = null;
+let rainDrops = [];
+let rainFrame = null;
+let rainLastTime = 0;
+
+function setupRainEffect() {
+    if (rainOverlay) return;
+
+    const style = document.createElement('style');
+    style.id = 'mother-sea-rain-style';
+    style.textContent = `
+        #mother-sea-rain {
+            position:absolute;
+            inset:0;
+            z-index:12;
+            pointer-events:none;
+            overflow:hidden;
+            opacity:0;
+            transition:opacity 1.4s ease;
+        }
+        #mother-sea-rain.active {
+            opacity:1;
+        }
+        .mother-sea-drop {
+            position:absolute;
+            left:0;
+            top:0;
+            width:var(--drop-size);
+            height:var(--drop-size);
+            border-radius:50% 50% 58% 42%;
+            background:radial-gradient(circle at 35% 28%, rgba(255,255,255,.95) 0 9%, rgba(220,245,255,.78) 22%, rgba(150,215,235,.34) 58%, rgba(110,190,220,.08) 100%);
+            box-shadow:0 0 7px rgba(190,235,255,.5), inset -2px -2px 4px rgba(50,120,160,.18);
+            filter:blur(.15px);
+            transform:translate(-50%,-50%);
+        }
+        .mother-sea-drop::after {
+            content:"";
+            position:absolute;
+            left:50%;
+            top:calc(var(--drop-size) * .45);
+            width:calc(var(--drop-size) * .7);
+            height:var(--trail-length);
+            transform:translateX(-50%);
+            border-radius:50%;
+            background:linear-gradient(to bottom, rgba(205,240,255,.24), rgba(150,215,235,.09), transparent);
+            filter:blur(1.2px);
+        }
+    `;
+    document.head.appendChild(style);
+
+    rainOverlay = document.createElement('div');
+    rainOverlay.id = 'mother-sea-rain';
+    container.appendChild(rainOverlay);
+}
+
+function clearRainDrops() {
+    rainDrops.forEach(drop => drop.el.remove());
+    rainDrops = [];
+}
+
+function createRainDrop(startAtTop = true) {
+    if (!rainOverlay) return;
+
+    const el = document.createElement('div');
+    el.className = 'mother-sea-drop';
+
+    const size = 3 + Math.random() * 7;
+    const startX = 5 + Math.random() * 90;
+    const startY = startAtTop ? -8 - Math.random() * 80 : Math.random() * 100;
+    const trail = 12 + Math.random() * 42;
+
+    el.style.setProperty('--drop-size', `${size}px`);
+    el.style.setProperty('--trail-length', `${trail}px`);
+    rainOverlay.appendChild(el);
+
+    rainDrops.push({
+        el,
+        x: startX,
+        y: startY,
+        baseX: startX,
+        progress: startAtTop ? 0 : Math.random(),
+        speed: 0.018 + Math.random() * 0.026,
+        sway: (Math.random() - 0.5) * 3.2,
+        phase: Math.random() * Math.PI * 2,
+        pause: Math.random() * 0.5,
+        size,
+        life: 1
+    });
+}
+
+function startRainDrops() {
+    setupRainEffect();
+    clearRainDrops();
+    rainOverlay.classList.add('active');
+
+    const count = 18;
+    for (let i = 0; i < count; i++) createRainDrop(false);
+    for (let i = 0; i < 7; i++) createRainDrop(true);
+
+    if (!rainFrame) {
+        rainLastTime = performance.now();
+        rainFrame = requestAnimationFrame(updateRainDrops);
+    }
+}
+
+function stopRainDrops() {
+    if (!rainOverlay) return;
+    rainOverlay.classList.remove('active');
+    clearRainDrops();
+}
+
+function updateRainDrops(timestamp) {
+    const dt = Math.min(32, timestamp - rainLastTime);
+    rainLastTime = timestamp;
+
+    if (rainOverlay && rainOverlay.classList.contains('active')) {
+        for (let i = rainDrops.length - 1; i >= 0; i--) {
+            const drop = rainDrops[i];
+            if (drop.pause > 0) {
+                drop.pause -= dt / 1000;
+            } else {
+                drop.progress += drop.speed * (dt / 16.67);
+            }
+
+            const t = drop.progress;
+            drop.y = -5 + t * 112;
+            const curve = Math.sin(t * Math.PI * 2.2 + drop.phase) * drop.sway;
+            const drift = Math.sin(t * Math.PI * 5 + drop.phase) * 0.7;
+            drop.x = drop.baseX + curve + drift;
+
+            const width = container.clientWidth || 640;
+            const height = container.clientHeight || 600;
+            drop.el.style.left = `${(drop.x / 100) * width}px`;
+            drop.el.style.top = `${(drop.y / 100) * height}px`;
+
+            const stretch = 1 + Math.min(0.9, Math.abs(drop.speed) * 18);
+            drop.el.style.transform = `translate(-50%,-50%) scale(1,${stretch})`;
+            drop.el.style.opacity = t < 0.08 ? t / 0.08 : (t > 0.9 ? (1 - t) / 0.1 : 0.5 + Math.sin(t * 18 + drop.phase) * 0.12);
+
+            if (t > 1.05) {
+                drop.el.remove();
+                rainDrops.splice(i, 1);
+                createRainDrop(true);
+            }
+        }
+    }
+
+    rainFrame = requestAnimationFrame(updateRainDrops);
+}
+
 async function initGame(src, mode, bgImage = '') {
     if (!src || !mode) {
         console.error('エラー: src または mode が指定されていません。');
@@ -102,6 +256,12 @@ async function initGame(src, mode, bgImage = '') {
         noteSpeed = 750;
     } else {
         noteSpeed = 550;
+    }
+
+    if (mode === '母なる海へ') {
+        startRainDrops();
+    } else {
+        stopRainDrops();
     }
 
     const selectScreen = document.getElementById('select-screen');
@@ -221,6 +381,7 @@ function update() {
 
 bgm.addEventListener('ended', () => {
     isPlaying = false;
+    stopRainDrops();
     activeNotes.forEach(note => note.el.remove());
     activeNotes = [];
     updateTimer();
