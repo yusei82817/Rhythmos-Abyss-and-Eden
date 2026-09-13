@@ -107,12 +107,19 @@ async function initGame(src, mode, bgImage = '') {
     const selectScreen = document.getElementById('select-screen');
     if (selectScreen) selectScreen.style.display = 'none';
 
-    await loadChart(src);
-    isPlaying = true;
+    // 譜面読み込みを音声再生と並行して開始する。
+    // awaitでユーザー操作の再生許可を失わないようにする。
+    const chartPromise = loadChart(src);
 
-    bgm.play()
-        .then(() => requestAnimationFrame(update))
-        .catch(err => console.error('BGMの再生に失敗しました。ユーザーの操作が必要です:', err));
+    try {
+        await bgm.play();
+        isPlaying = true;
+        requestAnimationFrame(update);
+        await chartPromise;
+    } catch (err) {
+        console.error('BGMの再生に失敗しました。', err);
+        isPlaying = false;
+    }
 }
 
 window.initGame = initGame;
