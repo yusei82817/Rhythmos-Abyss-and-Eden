@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Rhythmos Abyss-and-Eden - surpass</title>
+<link rel="stylesheet" href="srstyle.css">
+</head>
+<body>
+
+<button id="top-button" onclick="location.href='title.html'">Top</button>
+
+<div id="select-screen">
+    <h1>SELECT TRACK</h1>
+    <div id="song-list">
+        <div class="song-card">
+            <img src="Jacket.png" class="jacket">
+            <h3>曲名未設定</h3>
+            <p>Unknown</p>
+        </div>
+    </div>
+</div>
+
+<div id="game-container">
+    <div id="game-bg"></div>
+    <div id="flash-overlay"></div>
+    <div id="ui">SCORE:<span id="score">000000</span></div>
+    <div id="combo-container">
+        <p id="combo-num"></p>
+        <div id="judge-text"></div>
+    </div>
+
+    <div class="lane-container">
+        <div class="lane" id="lane-0"></div>
+        <div class="lane" id="lane-1"></div>
+        <div class="lane" id="lane-2"></div>
+        <div class="lane" id="lane-3"></div>
+        <div class="lane" id="lane-4"></div>
+        <div class="lane" id="lane-5"></div>
+        <div class="lane" id="lane-6"></div>
+        <div class="lane" id="lane-7"></div>
+        <div id="judge-line" class="judgment-line"></div>
+    </div>
+</div>
+
+<audio id="bgm"></audio>
+<audio id="menu-bgm" loop preload="auto"></audio>
+<div id="glitch"></div>
+
+<script type="module" src="srgame.js"></script>
+</body>
+</html>
