@@ -1,4 +1,5 @@
 Rhythmos Abyss and Eden
+ +Surpass Edition
 
 ブラウザ向けリズムゲーム
 
@@ -7,6 +8,11 @@ index.htmlを開いてください。
 
 【操作方法】
 F / G / J / K キーでノーツを叩きます。
+
+[追記]
+Surpassでは、
+A/S/D/F/J/K/L/;キーでノーツを叩く、
+8ライン式になります。
 
 【収録曲について】
 ・オリジナル楽曲
@@ -27,6 +33,8 @@ BGMer
 魔王魂
 甘茶の音楽工房
 youtube 伊昇奏多のNNGtimes(旧：夜空ノエルのRWNtimes)
+H/MIX GALLERY
+ニコニ・コモンズ
 
 【制作協力者】
 匿名Dio
