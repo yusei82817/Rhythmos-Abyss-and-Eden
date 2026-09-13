@@ -9,6 +9,23 @@ const scoreEl = document.getElementById('score');
 const comboEl = document.getElementById('combo-num');
 const judgeEl = document.getElementById('judge-text');
 
+const menuVideo = document.getElementById('menu-video-bg');
+if (menuVideo) {
+    const videos = [
+        'video/115202_640x360.mp4',
+        'video/220170_640x360.mp4'
+    ];
+
+    menuVideo.src = videos[Math.floor(Math.random() * videos.length)];
+    menuVideo.muted = true;
+    menuVideo.loop = true;
+    menuVideo.playsInline = true;
+
+    menuVideo.play().catch(err => {
+        console.error('背景動画の再生に失敗しました:', err);
+    });
+}
+
 let score = 0;
 let combo = 0;
 let perfect = 0;
@@ -78,6 +95,10 @@ async function initGame(src, mode, bgImage = '') {
     if (menuBgm) {
         menuBgm.pause();
         menuBgm.currentTime = 0;
+    }
+
+    if (menuVideo) {
+        menuVideo.pause();
     }
 
     score = 0;
