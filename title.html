@@ -34,6 +34,7 @@ button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0
 #contact-box:hover{background:rgba(75,95,160,.16);box-shadow:0 0 30px rgba(180,200,255,.3);}
 #contact-box h2{font-size:24px;font-weight:400;letter-spacing:2px;color:#eaf0ff;text-shadow:0 0 10px rgba(190,210,255,.45);}
 #contact-content{margin-top:14px;width:100%;font-size:16px;line-height:1.6;color:rgba(234,240,255,.82);text-align:center;}
+.target-element{white-space:pre-wrap;}
 .shooting-star{position:fixed;width:150px;height:12px;pointer-events:none;z-index:2;transform-origin:calc(100% - 3px) 50%;animation:meteorMove .9s cubic-bezier(.18,.7,.3,1) forwards;}
 .shooting-star-tail{position:absolute;right:5px;top:4px;width:145px;height:4px;border-radius:999px;background:linear-gradient(to left,rgba(255,255,255,.95),rgba(190,215,255,.7) 30%,rgba(140,180,255,.28) 65%,transparent);filter:blur(1px);transform-origin:right center;animation:meteorTail .9s ease-out forwards;}
 .shooting-star-head{position:absolute;right:0;top:2px;width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 5px #fff,0 0 14px #dbe8ff,0 0 28px rgba(150,190,255,.8);animation:meteorHead .9s ease-out forwards;}
@@ -60,7 +61,7 @@ button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0
 <div id="star-field"><div class="star"></div></div>
 <div class="sun"></div>
 <div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div>
-<div class="menu"><h1>RhythmosAE</h1><div class="subtitle">Abyss and Eden</div><button id="guri" onclick="location.href='gfgame.html'">Abyss</button><button id="sym" onclick="location.href='spgame.html'">Eden</button><button id="credit" onclick="location.href='Credit.html'">Credits</button><div id="contact-box"><h2>Contact</h2><div id="contact-content">連絡事項をここに表示します。</div></div><button id="surpass" onclick="location.href='srgame.html'">S<br>U<br>R<br>P<br>A<br>S<br>S</button></div>
+<div class="menu"><h1>RhythmosAE</h1><div class="subtitle">Abyss and Eden</div><button id="guri" onclick="location.href='gfgame.html'">Abyss</button><button id="sym" onclick="location.href='spgame.html'">Eden</button><button id="credit" onclick="location.href='Credit.html'">Credits</button><div id="contact-box"><h2>Contact</h2><div id="contact-content" class="target-element">連絡事項をここに表示します。</div></div><button id="surpass" onclick="location.href='srgame.html'">S<br>U<br>R<br>P<br>A<br>S<br>S</button></div>
 <script>
 const titleBgm=document.getElementById('title-bgm');
 const soundNotice=document.getElementById('sound-notice');
