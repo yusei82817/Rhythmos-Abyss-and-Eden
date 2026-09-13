@@ -96,8 +96,6 @@ async function initGame(src, mode, bgImage = '') {
         menuBgm.pause();
         menuBgm.currentTime = 0;
     }
-    
-
 
     score = 0;
     combo = 0;
