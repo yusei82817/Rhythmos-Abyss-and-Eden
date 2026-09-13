@@ -7,7 +7,7 @@ Rhythmos Abyss and Eden
 index.htmlを開いてください。
 
 【操作方法】
-F / G / J / K キーでノーツを叩きます。
+A / D / J / L キーでノーツを叩きます。
 
 [追記]
 Surpassでは、
