@@ -30,6 +30,10 @@ button{margin-top:30px;width:350px;padding:20px;font-size:30px;color:#eaf0ff;bac
 button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0 30px rgba(150,180,255,.65);}
 #guri{border-color:#8da8ff;}#guri:hover{box-shadow:0 0 30px #6f8fff;}#sym{border-color:#70d9ff;}#sym:hover{box-shadow:0 0 30px #4dcfff;}#credit{border-color:#b68cff;}#credit:hover{box-shadow:0 0 30px #9d6cff;}#surpass{border-color:#ffb45e;}#surpass:hover{box-shadow:0 0 30px #ff9f3f;}
 .menu button:nth-of-type(1){animation:menuIn .9s 1.3s both;position:relative;left:clamp(-260px,-22vw,-150px);}.menu button:nth-of-type(2){animation:menuIn .9s 1.55s both;position:relative;left:clamp(-260px,-22vw,-150px);}.menu button:nth-of-type(3){animation:menuIn .9s 1.8s both;position:relative;left:clamp(-260px,-22vw,-150px);}.menu button:nth-of-type(4){animation:surpassIn .9s 2.05s both;position:absolute;right:clamp(40px,8vw,120px);top:0;margin-top:0;width:90px;height:0;writing-mode:initial;text-orientation:initial;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:20px 0;}
+#contact-box{position:absolute;top:0;left:0;width:330px;min-height:0;padding:18px 20px;background:rgba(4,8,25,.38);border:2px solid rgba(255,255,255,.38);border-radius:15px;backdrop-filter:blur(9px);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow:hidden;transition:.3s;}
+#contact-box:hover{background:rgba(75,95,160,.16);box-shadow:0 0 30px rgba(180,200,255,.3);}
+#contact-box h2{font-size:24px;font-weight:400;letter-spacing:2px;color:#eaf0ff;text-shadow:0 0 10px rgba(190,210,255,.45);}
+#contact-content{margin-top:14px;width:100%;font-size:16px;line-height:1.6;color:rgba(234,240,255,.82);text-align:center;}
 .shooting-star{position:fixed;width:150px;height:12px;pointer-events:none;z-index:2;transform-origin:calc(100% - 3px) 50%;animation:meteorMove .9s cubic-bezier(.18,.7,.3,1) forwards;}
 .shooting-star-tail{position:absolute;right:5px;top:4px;width:145px;height:4px;border-radius:999px;background:linear-gradient(to left,rgba(255,255,255,.95),rgba(190,215,255,.7) 30%,rgba(140,180,255,.28) 65%,transparent);filter:blur(1px);transform-origin:right center;animation:meteorTail .9s ease-out forwards;}
 .shooting-star-head{position:absolute;right:0;top:2px;width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 5px #fff,0 0 14px #dbe8ff,0 0 28px rgba(150,190,255,.8);animation:meteorHead .9s ease-out forwards;}
@@ -56,7 +60,7 @@ button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0
 <div id="star-field"><div class="star"></div></div>
 <div class="sun"></div>
 <div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div>
-<div class="menu"><h1>RhythmosAE</h1><div class="subtitle">Abyss and Eden</div><button id="guri" onclick="location.href='gfgame.html'">Abyss</button><button id="sym" onclick="location.href='spgame.html'">Eden</button><button id="credit" onclick="location.href='Credit.html'">Credits</button><button id="surpass" onclick="location.href='srgame.html'">S<br>U<br>R<br>P<br>A<br>S<br>S</button></div>
+<div class="menu"><h1>RhythmosAE</h1><div class="subtitle">Abyss and Eden</div><button id="guri" onclick="location.href='gfgame.html'">Abyss</button><button id="sym" onclick="location.href='spgame.html'">Eden</button><button id="credit" onclick="location.href='Credit.html'">Credits</button><div id="contact-box"><h2>Contact</h2><div id="contact-content">連絡事項をここに表示します。</div></div><button id="surpass" onclick="location.href='srgame.html'">S<br>U<br>R<br>P<br>A<br>S<br>S</button></div>
 <script>
 const titleBgm=document.getElementById('title-bgm');
 const soundNotice=document.getElementById('sound-notice');
@@ -84,13 +88,19 @@ function alignSurpass(){
     const menu=document.querySelector('.menu');
     const abyss=document.getElementById('guri');
     const credit=document.getElementById('credit');
+    const contact=document.getElementById('contact-box');
     const surpass=document.getElementById('surpass');
-    if(!menu||!abyss||!credit||!surpass) return;
+    if(!menu||!abyss||!credit||!contact||!surpass) return;
     const menuRect=menu.getBoundingClientRect();
     const abyssRect=abyss.getBoundingClientRect();
     const creditRect=credit.getBoundingClientRect();
+    const height=creditRect.bottom-abyssRect.top;
+    const left=abyssRect.right-menuRect.left+24;
+    contact.style.top=(abyssRect.top-menuRect.top)+'px';
+    contact.style.height=height+'px';
+    contact.style.left=left+'px';
     surpass.style.top=(abyssRect.top-menuRect.top)+'px';
-    surpass.style.height=(creditRect.bottom-abyssRect.top)+'px';
+    surpass.style.height=height+'px';
 }
 window.addEventListener('load',()=>{alignSurpass();setTimeout(alignSurpass,2300);});
 window.addEventListener('resize',alignSurpass);
