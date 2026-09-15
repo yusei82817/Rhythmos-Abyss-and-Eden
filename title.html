@@ -53,6 +53,20 @@ button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0
 #sound-box p{font-size:18px;line-height:1.7;color:#eef3ff;}
 #sound-complete{margin:22px auto 0;width:180px;padding:11px 18px;font-size:18px;color:#eef3ff;background:rgba(40,55,100,.75);border:1px solid rgba(205,220,255,.75);border-radius:8px;cursor:pointer;}
 #sound-complete:hover{background:rgba(75,95,160,.85);box-shadow:0 0 20px rgba(150,180,255,.45);transform:scale(1.04);}
+
+/* Side menu */
+#side-menu-toggle{position:fixed;top:24px;left:24px;z-index:10002;width:58px;height:58px;margin:0;padding:0;border:1px solid rgba(205,220,255,.55);border-radius:12px;background:rgba(4,8,25,.55);backdrop-filter:blur(9px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:.3s;}
+#side-menu-toggle:hover{transform:scale(1.06);background:rgba(75,95,160,.28);box-shadow:0 0 24px rgba(150,180,255,.5);}
+#side-menu-toggle span{display:block;width:28px;height:3px;border-radius:999px;background:#eaf0ff;transition:.3s;}
+#side-menu{position:fixed;top:0;left:0;z-index:10001;width:min(330px,82vw);height:100vh;padding:110px 24px 30px;background:rgba(4,8,25,.86);border-right:1px solid rgba(205,220,255,.32);backdrop-filter:blur(18px);box-shadow:12px 0 40px rgba(0,0,0,.35);transform:translateX(-105%);transition:transform .35s ease;}
+#side-menu.open{transform:translateX(0);}
+#side-menu h2{font-size:28px;font-weight:400;letter-spacing:3px;color:#eef3ff;text-shadow:0 0 12px rgba(190,210,255,.5);}
+#side-menu .side-menu-line{height:1px;margin:18px 0 22px;background:rgba(205,220,255,.25);}
+#side-menu .side-menu-item{display:block;width:100%;margin:0 0 14px;padding:15px 16px;text-align:left;font-size:19px;color:#eaf0ff;background:rgba(20,30,65,.42);border:1px solid rgba(205,220,255,.28);border-radius:10px;cursor:default;transition:.25s;}
+#side-menu .side-menu-item:hover{background:rgba(75,95,160,.28);box-shadow:0 0 18px rgba(150,180,255,.22);transform:translateX(4px);}
+body.side-menu-open #side-menu-toggle span:nth-child(1){transform:translateY(9px) rotate(45deg);}
+body.side-menu-open #side-menu-toggle span:nth-child(2){opacity:0;}
+body.side-menu-open #side-menu-toggle span:nth-child(3){transform:translateY(-9px) rotate(-45deg);}
 </style>
 </head>
 <body>
@@ -61,6 +75,19 @@ button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0
 <div id="star-field"><div class="star"></div></div>
 <div class="sun"></div>
 <div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div>
+
+<button id="side-menu-toggle" aria-label="サイドメニューを開閉">
+    <span></span><span></span><span></span>
+</button>
+<nav id="side-menu" aria-hidden="true">
+    <h2>Menu</h2>
+    <div class="side-menu-line"></div>
+    <div class="side-menu-item">Abyss</div>
+    <div class="side-menu-item">Eden</div>
+    <div class="side-menu-item">Credits</div>
+    <div class="side-menu-item">Surpass</div>
+</nav>
+
 <div class="menu"><h1>RhythmosAE</h1><div class="subtitle">Abyss and Eden</div><button id="guri" onclick="location.href='gfgame.html'">Abyss</button><button id="sym" onclick="location.href='spgame.html'">Eden</button><button id="credit" onclick="location.href='Credit.html'">Credits</button><div id="contact-box"><h2>Contact</h2>
     <div id="contact-content" class="target-element">
         連絡事項なし
@@ -70,6 +97,15 @@ const titleBgm=document.getElementById('title-bgm');
 const soundNotice=document.getElementById('sound-notice');
 const soundComplete=document.getElementById('sound-complete');
 soundComplete.addEventListener('click',()=>{soundNotice.remove();titleBgm.currentTime=0;titleBgm.play().catch(()=>{});});
+
+const sideMenuToggle=document.getElementById('side-menu-toggle');
+const sideMenu=document.getElementById('side-menu');
+sideMenuToggle.addEventListener('click',()=>{
+    const isOpen=document.body.classList.toggle('side-menu-open');
+    sideMenu.classList.toggle('open',isOpen);
+    sideMenu.setAttribute('aria-hidden',String(!isOpen));
+});
+
 function createStars(count=70){
     const field=document.getElementById('star-field');
     const template=field.querySelector('.star');
