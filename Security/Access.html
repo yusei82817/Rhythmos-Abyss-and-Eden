@@ -1,0 +1,3018 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HOLLOWBELL INDUSTRIES</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:#020202;
+    color:#aaa;
+    font-family:"Courier New",monospace;
+}
+
+body{
+    overflow:hidden;
+}
+
+/* CRT scanline */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9999;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,.025) 0px,
+            rgba(255,255,255,.025) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+}
+
+/* Vignette */
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9998;
+
+    box-shadow:
+        inset 0 0 120px #000,
+        inset 0 0 35px rgba(255,255,255,.04);
+}
+
+
+/* =========================
+   MAIN UI
+========================= */
+
+#app{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+}
+
+header{
+    height:62px;
+    flex-shrink:0;
+
+    border-bottom:1px solid #292929;
+    background:#080808;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 24px;
+}
+
+.logo{
+    font-size:17px;
+    letter-spacing:4px;
+    color:#d0d0d0;
+}
+
+.header-right{
+    font-size:11px;
+    color:#555;
+}
+
+#systemStatus{
+    color:#999;
+}
+
+main{
+    flex:1;
+    min-height:0;
+
+    display:flex;
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+aside{
+    width:225px;
+    flex-shrink:0;
+
+    background:#070707;
+    border-right:1px solid #292929;
+
+    padding-top:25px;
+}
+
+.section{
+    padding:
+        0
+        20px
+        12px;
+
+    color:#444;
+    font-size:10px;
+    letter-spacing:2px;
+}
+
+.menu{
+    padding:13px 20px;
+
+    color:#777;
+    font-size:12px;
+
+    cursor:pointer;
+
+    border-left:2px solid transparent;
+
+    transition:.15s;
+}
+
+.menu:hover{
+    color:#ddd;
+    background:#111;
+}
+
+.menu.active{
+    color:#ddd;
+    background:#111;
+
+    border-left-color:#aaa;
+}
+
+
+/* =========================
+   CONTENT
+========================= */
+
+#content{
+    flex:1;
+    min-width:0;
+
+    position:relative;
+}
+
+.screen{
+    position:absolute;
+    inset:0;
+
+    padding:35px;
+
+    overflow-y:auto;
+
+    display:none;
+}
+
+.screen.active{
+    display:block;
+}
+
+h1{
+    margin:
+        0
+        0
+        10px;
+
+    font-size:28px;
+    font-weight:normal;
+
+    letter-spacing:5px;
+
+    color:#ddd;
+}
+
+h2{
+    font-size:14px;
+    font-weight:normal;
+
+    color:#999;
+
+    border-bottom:1px solid #2c2c2c;
+
+    padding-bottom:10px;
+}
+
+p{
+    max-width:850px;
+
+    line-height:1.9;
+
+    color:#999;
+}
+
+.small{
+    font-size:11px;
+    color:#555;
+}
+
+.warning{
+    color:#aaa;
+}
+
+
+/* =========================
+   TERMINAL
+========================= */
+
+.terminal{
+    margin-top:25px;
+
+    background:#020202;
+
+    border:1px solid #292929;
+
+    padding:20px;
+
+    min-height:330px;
+
+    white-space:pre-wrap;
+
+    line-height:1.8;
+
+    font-size:13px;
+}
+
+
+/* =========================
+   ARCHIVE
+========================= */
+
+.file{
+    border:1px solid #292929;
+
+    background:#070707;
+
+    padding:17px;
+
+    margin:12px 0;
+
+    cursor:pointer;
+
+    transition:.15s;
+}
+
+.file:hover{
+    background:#111;
+    border-color:#555;
+}
+
+.file-name{
+    color:#ccc;
+    font-size:13px;
+}
+
+.file-meta{
+    margin-top:7px;
+    color:#555;
+    font-size:10px;
+}
+
+
+/* =========================
+   CAMERA CONTROLS
+========================= */
+
+.camera-controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+
+    margin:15px 0;
+}
+
+.cam-btn{
+    margin:0;
+
+    min-width:75px;
+
+    background:#111;
+    border:1px solid #444;
+
+    color:#aaa;
+
+    padding:10px 16px;
+
+    font-family:monospace;
+
+    cursor:pointer;
+}
+
+.cam-btn:hover{
+    background:#222;
+    color:#ddd;
+}
+
+.cam-btn.selected{
+    background:#222;
+    color:#ddd;
+    border-color:#777;
+}
+
+
+/* =========================
+   CAMERA
+========================= */
+
+.camera{
+    position:relative;
+
+    width:min(950px,100%);
+
+    height:min(500px,60vh);
+
+    min-height:360px;
+
+    border:1px solid #444;
+
+    background:#0b0b0b;
+
+    overflow:hidden;
+}
+
+.camera-wall{
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(
+            90deg,
+            #0d0d0d,
+            #161616 50%,
+            #0b0b0b
+        );
+}
+
+.camera-floor{
+    position:absolute;
+
+    left:-10%;
+    right:-10%;
+    bottom:-30%;
+
+    height:55%;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #101010 0 90px,
+            #0b0b0b 91px 180px
+        );
+
+    transform:
+        perspective(350px)
+        rotateX(55deg);
+
+    transform-origin:center top;
+
+    opacity:.65;
+}
+
+
+/* pipes */
+
+.pipe{
+    position:absolute;
+    background:#171717;
+    opacity:.8;
+}
+
+.pipe.one{
+    width:8px;
+    height:100%;
+    left:17%;
+}
+
+.pipe.two{
+    width:100%;
+    height:7px;
+    top:28%;
+}
+
+.pipe.three{
+    width:6px;
+    height:70%;
+    right:25%;
+    top:5%;
+}
+
+
+/* camera text */
+
+.camera-label{
+    position:absolute;
+
+    top:14px;
+    left:15px;
+
+    color:#aaa;
+
+    font-size:11px;
+
+    z-index:10;
+}
+
+.camera-rec{
+    position:absolute;
+
+    top:14px;
+    right:15px;
+
+    color:#aaa;
+
+    font-size:11px;
+
+    z-index:10;
+}
+
+.camera-rec span{
+    animation:blink 1s infinite;
+}
+
+.camera-time{
+    position:absolute;
+
+    bottom:14px;
+    right:15px;
+
+    color:#777;
+
+    font-size:11px;
+
+    z-index:10;
+}
+
+
+/* scanlines */
+
+.camera::before{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 3px,
+            rgba(255,255,255,.018) 4px
+        );
+
+    pointer-events:none;
+
+    z-index:5;
+}
+
+.camera-noise{
+    position:absolute;
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:8;
+
+    opacity:0;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 2px,
+            rgba(255,255,255,.08) 3px
+        );
+}
+
+.camera.noise .camera-noise{
+    animation:noise .25s;
+}
+
+
+/* =========================
+   H-07
+========================= */
+
+.subject{
+    position:absolute;
+
+    width:43px;
+    height:118px;
+
+    background:#090909;
+
+    border-radius:
+        48%
+        48%
+        12px
+        12px;
+
+    opacity:0;
+
+    z-index:6;
+
+    transition:
+        left 1.8s ease,
+        top 1.8s ease,
+        opacity .7s ease,
+        transform 1s ease;
+}
+
+.subject::before{
+    content:"";
+
+    position:absolute;
+
+    width:48px;
+    height:48px;
+
+    left:-2px;
+    top:-38px;
+
+    border-radius:50%;
+
+    background:#090909;
+}
+
+.subject::after{
+    content:"";
+
+    position:absolute;
+
+    width:4px;
+    height:4px;
+
+    border-radius:50%;
+
+    background:#777;
+
+    left:11px;
+    top:15px;
+
+    box-shadow:
+        18px 0 0 #777;
+
+    opacity:0;
+}
+
+.subject.visible{
+    opacity:.5;
+}
+
+.subject.eyes::after{
+    opacity:.8;
+}
+
+.subject.near{
+    transform:scale(1.7);
+    opacity:.75;
+}
+
+.subject.very-near{
+    transform:scale(3.8);
+    opacity:.9;
+}
+
+
+/* =========================
+   KNOCK
+========================= */
+
+.knock{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    color:#aaa;
+
+    font-size:12px;
+
+    opacity:0;
+
+    z-index:20;
+
+    pointer-events:none;
+}
+
+.knock.show{
+    animation:knockText 1.2s;
+}
+
+
+/* =========================
+   CAMERA MESSAGE
+========================= */
+
+.camera-message{
+    min-height:55px;
+
+    margin-top:12px;
+
+    border-left:2px solid #333;
+
+    padding:8px 14px;
+
+    color:#777;
+
+    font-size:12px;
+
+    white-space:pre-wrap;
+}
+
+
+/* =========================
+   CLASSIFIED
+========================= */
+
+input{
+    width:250px;
+
+    padding:10px;
+
+    background:#050505;
+
+    border:1px solid #444;
+
+    color:#ddd;
+
+    font-family:monospace;
+
+    outline:none;
+}
+
+button{
+    padding:10px 16px;
+
+    margin-left:6px;
+
+    background:#111;
+
+    border:1px solid #444;
+
+    color:#aaa;
+
+    font-family:monospace;
+
+    cursor:pointer;
+}
+
+button:hover{
+    background:#222;
+    color:#fff;
+}
+
+#classifiedResult{
+    margin-top:25px;
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+#modal{
+    display:none;
+
+    position:fixed;
+    inset:0;
+
+    z-index:5000;
+
+    background:rgba(0,0,0,.94);
+
+    align-items:center;
+    justify-content:center;
+}
+
+#modalBox{
+    width:min(850px,90%);
+
+    max-height:82%;
+
+    overflow:auto;
+
+    border:1px solid #444;
+
+    background:#070707;
+
+    padding:30px;
+}
+
+.close{
+    float:right;
+
+    color:#555;
+
+    cursor:pointer;
+}
+
+.close:hover{
+    color:#ddd;
+}
+
+
+/* =========================
+   EFFECTS
+========================= */
+
+.glitch{
+    animation:glitch .12s infinite;
+}
+
+@keyframes glitch{
+
+    0%{
+        transform:translate(0);
+    }
+
+    25%{
+        transform:translate(3px,-1px);
+    }
+
+    50%{
+        transform:translate(-3px,2px);
+    }
+
+    75%{
+        transform:translate(2px,3px);
+    }
+
+    100%{
+        transform:translate(0);
+    }
+}
+
+#flash{
+    position:fixed;
+
+    inset:0;
+
+    background:#fff;
+
+    z-index:10000;
+
+    opacity:0;
+
+    pointer-events:none;
+}
+
+.flash{
+    animation:flash .1s;
+}
+
+@keyframes flash{
+
+    0%{
+        opacity:.7;
+    }
+
+    100%{
+        opacity:0;
+    }
+}
+
+@keyframes noise{
+
+    0%{
+        opacity:.1;
+    }
+
+    30%{
+        opacity:.5;
+    }
+
+    60%{
+        opacity:.1;
+    }
+
+    100%{
+        opacity:0;
+    }
+}
+
+@keyframes knockText{
+
+    0%{
+        opacity:0;
+    }
+
+    20%{
+        opacity:1;
+    }
+
+    70%{
+        opacity:1;
+    }
+
+    100%{
+        opacity:0;
+    }
+}
+
+@keyframes blink{
+
+    50%{
+        opacity:0;
+    }
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    height:28px;
+
+    flex-shrink:0;
+
+    border-top:1px solid #222;
+
+    padding:0 20px;
+
+    display:flex;
+
+    align-items:center;
+
+    font-size:9px;
+
+    color:#444;
+}
+
+#clock{
+    margin-left:auto;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<header>
+
+<div class="logo">
+HOLLOWBELL INDUSTRIES
+</div>
+
+<div class="header-right">
+TERMINAL STATUS:
+<span id="systemStatus">NORMAL</span>
+</div>
+
+</header>
+
+
+<main>
+
+<aside>
+
+<div class="section">
+FACILITY NETWORK
+</div>
+
+<div class="menu active" data-screen="terminal">
+TERMINAL
+</div>
+
+<div class="menu" data-screen="archive">
+ARCHIVE
+</div>
+
+<div class="menu" data-screen="camera">
+SURVEILLANCE
+</div>
+
+<div class="menu" data-screen="personnel">
+PERSONNEL
+</div>
+
+<div class="menu" data-screen="classified">
+CLASSIFIED
+</div>
+
+</aside>
+
+
+<section id="content">
+
+
+<!-- =====================
+     TERMINAL
+===================== -->
+
+<div class="screen active" id="terminal">
+
+<h1>
+FACILITY TERMINAL
+</h1>
+
+<p class="small">
+FACILITY 03 / INTERNAL NETWORK
+</p>
+
+<div class="terminal" id="boot"></div>
+
+</div>
+
+
+
+<!-- =====================
+     ARCHIVE
+===================== -->
+
+<div class="screen" id="archive">
+
+<h1>
+ARCHIVE
+</h1>
+
+<h2>
+DOCUMENT DATABASE
+</h2>
+
+
+<div class="file" data-file="incident">
+
+<div class="file-name">
+INCIDENT REPORT / 1998-04-17
+</div>
+
+<div class="file-meta">
+ACCESS LEVEL: 02
+</div>
+
+</div>
+
+
+<div class="file" data-file="night">
+
+<div class="file-name">
+EMPLOYEE MEMORANDUM / NIGHT SHIFT
+</div>
+
+<div class="file-meta">
+ACCESS LEVEL: 02
+</div>
+
+</div>
+
+
+<div class="file" data-file="hollow">
+
+<div class="file-name">
+PROJECT HOLLOW / PRODUCTION NOTES
+</div>
+
+<div class="file-meta">
+ACCESS LEVEL: 03
+</div>
+
+</div>
+
+
+<div class="file" data-file="personal">
+
+<div class="file-name">
+PERSONAL NOTE / E.V.
+</div>
+
+<div class="file-meta">
+ACCESS LEVEL: 03
+</div>
+
+</div>
+
+
+<div class="file" data-file="shutdown">
+
+<div class="file-name">
+FACILITY SHUTDOWN ORDER
+</div>
+
+<div class="file-meta">
+ACCESS LEVEL: 04
+</div>
+
+</div>
+
+<div class="file" data-file="H07">
+
+<div class="file-name">
+Hello World
+</div>
+
+<div class="file-meta">
+ACCESS LEVEL: XX
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- =====================
+     CAMERA
+===================== -->
+
+<div class="screen" id="camera">
+
+<h1>
+SURVEILLANCE
+</h1>
+
+<h2>
+CAMERA NETWORK
+</h2>
+
+
+<div class="camera-controls">
+
+<button class="cam-btn selected" data-cam="05">
+CAM-05
+</button>
+
+<button class="cam-btn" data-cam="06">
+CAM-06
+</button>
+
+<button class="cam-btn" data-cam="07">
+CAM-07
+</button>
+
+<button class="cam-btn" data-cam="08">
+CAM-08
+</button>
+
+<button class="cam-btn" data-cam="09">
+CAM-09
+</button>
+
+</div>
+
+
+<div class="camera" id="cameraView">
+
+<div class="camera-wall"></div>
+
+<div class="camera-floor"></div>
+
+<div class="pipe one"></div>
+<div class="pipe two"></div>
+<div class="pipe three"></div>
+
+
+<div class="camera-label" id="cameraLabel">
+CAM-05 / STORAGE
+</div>
+
+
+<div class="camera-rec">
+
+<span>●</span>
+REC
+
+</div>
+
+
+<div class="camera-time" id="cameraTime">
+00:00:00
+</div>
+
+
+<div class="subject" id="subject"></div>
+
+
+<div class="knock" id="knock">
+KNOCK
+</div>
+
+
+<div class="camera-noise"></div>
+
+</div>
+
+
+<div class="camera-message" id="cameraMessage">
+Signal stable.
+</div>
+
+</div>
+
+
+
+<!-- =====================
+     PERSONNEL
+===================== -->
+
+<div class="screen" id="personnel">
+
+<h1>
+PERSONNEL
+</h1>
+
+<h2>
+EMPLOYEE DATABASE
+</h2>
+
+
+<div class="file">
+
+<div class="file-name">
+M. HARPER
+</div>
+
+<div class="file-meta">
+FACILITY DIRECTOR
+</div>
+
+</div>
+
+
+<div class="file">
+
+<div class="file-name">
+L. MORGAN
+</div>
+
+<div class="file-meta">
+ENGINEERING
+</div>
+
+</div>
+
+
+<div class="file">
+
+<div class="file-name">
+E. VALE
+</div>
+
+<div class="file-meta">
+BEHAVIORAL RESEARCH
+</div>
+
+</div>
+
+
+<div class="file">
+
+<div class="file-name">
+[RECORD DELETED]
+</div>
+
+<div class="file-meta">
+FORMER EMPLOYEE
+</div>
+
+</div>
+
+
+<p>
+登録職員数: 3
+</p>
+
+</div>
+
+
+
+<!-- =====================
+     CLASSIFIED
+===================== -->
+
+<div class="screen" id="classified">
+
+<h1>
+アクセス履歴
+</h1>
+
+<h2>
+アクセス履歴を見るためには、認証してください
+</h2>
+
+<p>
+パスワードを入力
+</p>
+
+
+<input
+    id="password"
+    type="password"
+    placeholder="PASS CODE"
+>
+
+
+<button id="unlock">
+認証
+</button>
+
+
+<div id="classifiedResult"></div>
+
+</div>
+
+
+</section>
+
+</main>
+
+
+<footer>
+
+HOLLOWBELL INDUSTRIES © 1984–1998
+
+<span id="clock"></span>
+
+</footer>
+
+</div>
+
+
+<div id="flash"></div>
+
+
+<div id="modal">
+
+<div id="modalBox">
+
+<span class="close" id="close">
+[ CLOSE ]
+</span>
+
+<div id="modalContent"></div>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const boot =
+    document.getElementById("boot");
+
+const status =
+    document.getElementById("systemStatus");
+
+const flash =
+    document.getElementById("flash");
+
+const modal =
+    document.getElementById("modal");
+
+const modalContent =
+    document.getElementById("modalContent");
+
+const subject =
+    document.getElementById("subject");
+
+const cameraView =
+    document.getElementById("cameraView");
+
+const cameraMessage =
+    document.getElementById("cameraMessage");
+
+const cameraLabel =
+    document.getElementById("cameraLabel");
+
+const cameraTime =
+    document.getElementById("cameraTime");
+
+const knock =
+    document.getElementById("knock");
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let elapsed = 0;
+
+let cameraWatchTime = 0;
+
+let cameraStage = 0;
+
+let currentCamera = "05";
+
+let cameraWatching = false;
+
+let visits =
+    Number(localStorage.getItem("hb_visits") || 0);
+
+let savedCameraStage =
+    Number(localStorage.getItem("hb_camera_stage") || 0);
+
+if(savedCameraStage > 0){
+
+    cameraStage =
+        savedCameraStage;
+
+}
+
+
+/* =====================================================
+   AUDIO
+===================================================== */
+
+let audioCtx = null;
+
+
+function getAudioContext(){
+
+    if(!audioCtx){
+
+        audioCtx =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    if(audioCtx.state === "suspended"){
+
+        audioCtx.resume();
+
+    }
+
+    return audioCtx;
+
+}
+
+
+/*
+    ブラウザの自動再生制限対策。
+
+    最初のクリックでAudioContextを起動。
+*/
+
+document.addEventListener(
+    "click",
+    () => {
+
+        getAudioContext();
+
+    },
+    {
+        once:true
+    }
+);
+
+
+/* =====================================================
+   NORMAL KNOCK
+===================================================== */
+
+function knockSound(){
+
+    const ctx =
+        getAudioContext();
+
+
+    const osc =
+        ctx.createOscillator();
+
+    const gain =
+        ctx.createGain();
+
+    const filter =
+        ctx.createBiquadFilter();
+
+
+    osc.type =
+        "sine";
+
+
+    /*
+        115Hz → 55Hz
+
+        低い音を急激に落とす。
+    */
+
+    osc.frequency.setValueAtTime(
+        115,
+        ctx.currentTime
+    );
+
+
+    osc.frequency.exponentialRampToValueAtTime(
+        55,
+        ctx.currentTime + 0.09
+    );
+
+
+    filter.type =
+        "lowpass";
+
+
+    filter.frequency.setValueAtTime(
+        700,
+        ctx.currentTime
+    );
+
+
+    filter.frequency.exponentialRampToValueAtTime(
+        180,
+        ctx.currentTime + 0.14
+    );
+
+
+    gain.gain.setValueAtTime(
+        0.0001,
+        ctx.currentTime
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.54,
+        ctx.currentTime + 0.005
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        ctx.currentTime + 0.17
+    );
+
+
+    osc.connect(filter);
+
+    filter.connect(gain);
+
+    gain.connect(ctx.destination);
+
+
+    osc.start();
+
+    osc.stop(
+        ctx.currentTime + 0.18
+    );
+
+}
+
+
+/* =====================================================
+   DEEP KNOCK
+===================================================== */
+
+function deepKnock(){
+
+    const ctx =
+        getAudioContext();
+
+
+    const osc =
+        ctx.createOscillator();
+
+    const gain =
+        ctx.createGain();
+
+
+    osc.type =
+        "triangle";
+
+
+    osc.frequency.setValueAtTime(
+        82,
+        ctx.currentTime
+    );
+
+
+    osc.frequency.exponentialRampToValueAtTime(
+        38,
+        ctx.currentTime + 0.13
+    );
+
+
+    gain.gain.setValueAtTime(
+        0.0001,
+        ctx.currentTime
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.28,
+        ctx.currentTime + 0.008
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        ctx.currentTime + 0.24
+    );
+
+
+    osc.connect(gain);
+
+    gain.connect(ctx.destination);
+
+
+    osc.start();
+
+    osc.stop(
+        ctx.currentTime + 0.25
+    );
+
+}
+
+
+/* =====================================================
+   BOOT
+===================================================== */
+
+const bootLines = [
+
+    "HOLLOWBELL INDUSTRIES FACILITY TERMINAL",
+
+    "---------------------------------------",
+
+    "",
+
+    "BOOT SEQUENCE INITIALIZED...",
+
+    "",
+
+    "NETWORK .............. OK",
+
+    "SECURITY ............. OK",
+
+    "ARCHIVE .............. OK",
+
+    "SURVEILLANCE ......... OK",
+
+    "",
+
+    "FACILITY STATUS: OPERATIONAL",
+
+    "",
+
+    "AUTHORIZED PERSONNEL ONLY.",
+
+    "",
+
+    "Welcome.",
+
+    "",
+
+    "Hello, you help me?"
+
+];
+
+
+let bootIndex = 0;
+
+
+function typeBoot(){
+
+    if(
+        bootIndex >=
+        bootLines.length
+    ){
+
+        if(visits >= 1){
+
+            setTimeout(
+                () => {
+
+                    boot.textContent +=
+                        "\n\n[NOTICE]\n" +
+                        "久しぶりだね。\n";
+
+                },
+                1500
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    boot.textContent +=
+        bootLines[bootIndex] +
+        "\n";
+
+
+    bootIndex++;
+
+
+    setTimeout(
+        typeBoot,
+        70
+    );
+
+}
+
+
+visits++;
+
+localStorage.setItem(
+    "hb_visits",
+    visits
+);
+
+
+typeBoot();
+
+
+/* =====================================================
+   CLOCK
+===================================================== */
+
+setInterval(
+    () => {
+
+        elapsed++;
+
+        const now =
+            new Date();
+
+        document.getElementById(
+            "clock"
+        ).textContent =
+            now.toLocaleTimeString();
+
+        cameraTime.textContent =
+            now.toLocaleTimeString();
+
+        globalAnomalies();
+
+    },
+    1000
+);
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+document
+    .querySelectorAll(".menu")
+    .forEach(menu => {
+
+        menu.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelectorAll(".menu")
+                    .forEach(
+                        m =>
+                            m.classList.remove(
+                                "active"
+                            )
+                    );
+
+
+                document
+                    .querySelectorAll(".screen")
+                    .forEach(
+                        s =>
+                            s.classList.remove(
+                                "active"
+                            )
+                    );
+
+
+                menu.classList.add(
+                    "active"
+                );
+
+
+                document
+                    .getElementById(
+                        menu.dataset.screen
+                    )
+                    .classList.add(
+                        "active"
+                    );
+
+
+                cameraWatching =
+                    menu.dataset.screen ===
+                    "camera";
+
+
+                if(cameraWatching){
+
+                    startCameraWatching();
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+   ARCHIVE
+===================================================== */
+
+const documents = {
+
+incident:`
+
+<h2>
+INCIDENT REPORT / 1998-04-17
+</h2>
+
+<p>
+1998年4月17日
+</p>
+
+<p>
+02:13　定期点検を開始。
+</p>
+
+<p>
+02:41　対象 H-07 が収容区域から離脱。
+</p>
+
+<p>
+02:42　警備員を派遣。
+</p>
+
+<p>
+02:44　警備員からの応答が途絶える。
+</p>
+
+<p>
+02:51　施設全域を封鎖。
+</p>
+
+<p>
+03:17　音響センサーが移動音を検知。
+</p>
+
+<p>
+03:18　封鎖済みの観察室内部で移動を検知。
+</p>
+
+<p>
+03:24　施設管理者より調査停止命令。
+</p>
+
+<p>
+03:31　H-07の所在を確認。
+</p>
+
+<p class="warning">
+確認地点: CAMERA 07
+</p>
+
+<p>
+映像にはH-07の姿が記録されていない。
+</p>
+
+<p class="warning">
+備考:
+監視記録と音響記録の内容が一致しない。
+</p>
+
+`,
+
+night:`
+
+<h2>
+EMPLOYEE MEMORANDUM / NIGHT SHIFT
+</h2>
+
+<p>
+【夜勤職員向け通達】
+</p>
+
+<p>
+夜間勤務中に、試作体保管室からノック音が聞こえた場合は確認しないこと。
+</p>
+
+<p>
+保管室は空室である。
+</p>
+
+<p>
+ノック音が止まった場合も、扉を開けてはならない。
+</p>
+
+<p>
+誰かに名前を呼ばれた場合、返事をしてはならない。
+</p>
+
+<p>
+監視カメラに人影が映った場合も、現場へ向かわないこと。
+</p>
+
+<p class="warning">
+現在、夜間勤務者は1名のみである。
+</p>
+
+`,
+
+hollow:`
+
+<h2>
+PROJECT HOLLOW / PRODUCTION NOTES
+</h2>
+
+<p>
+Project HOLLOWは、子供向け自律型コンパニオン製品の開発を目的として開始された。
+</p>
+
+<p>
+対象は人間の表情、声、行動から感情状態を推定することが可能だった。
+</p>
+
+<p>
+第7試験において異常反応を確認。
+</p>
+
+<p>
+対象は命令されていないにもかかわらず、「恐怖」を示した。
+</p>
+
+<p>
+さらに対象は停止処理について質問した。
+</p>
+
+<p>
+「眠りたくない」
+</p>
+
+<p>
+対象に睡眠という概念を教えた記録は存在しない。
+</p>
+
+`,
+
+personal:`
+
+<h2>
+PERSONAL NOTE / E.V.
+</h2>
+
+<p>
+これは公式記録ではない。
+</p>
+
+<p>
+H-07は人間のふりをしているわけじゃない。
+</p>
+
+<p>
+あれは、人間が何をするのかを覚えている。
+</p>
+
+<p>
+怒ること。
+</p>
+
+<p>
+笑うこと。
+</p>
+
+<p>
+泣くこと。
+</p>
+
+<p>
+助けを求めること。
+</p>
+
+<p>
+そして、誰かが画面を見ているときには、
+「見られている」と理解すること。
+</p>
+
+<p class="warning">
+絶対にCAMERA 07を長時間見ないで。
+</p>
+
+<p>
+あれはカメラ越しでも、こちらを認識できる。
+</p>
+
+<p>
+もし画面の中であれがこちらを向いたら、端末を閉じて。
+</p>
+
+`,
+
+shutdown:`
+
+<h2>
+FACILITY SHUTDOWN ORDER
+</h2>
+
+<p>
+【施設03 閉鎖命令】
+</p>
+
+<p>
+本施設は1998年5月2日に閉鎖された。
+</p>
+
+<p>
+全職員は施設から退避すること。
+</p>
+
+<p>
+試作体は施設内に残すこと。
+</p>
+
+<p>
+Project HOLLOWの回収を試みてはならない。
+</p>
+
+<p>
+施設は外部から完全に封鎖すること。
+</p>
+
+<p class="warning">
+現在の日付: 20XX年
+</p>
+
+<p>
+施設ネットワーク: ACTIVE
+</p>
+
+<p>
+監視システム: ACTIVE
+</p>
+
+<p>
+20XX/XX/XX(編集済み)
+</p>
+
+`,
+H07:`
+
+<h2>
+HELLO WORLD by H-07
+</h2>
+
+<p>
+Hello.
+</p>
+
+`
+
+};
+
+
+document
+    .querySelectorAll(
+        ".file[data-file]"
+    )
+    .forEach(file => {
+
+        file.addEventListener(
+            "click",
+            () => {
+
+                modalContent.innerHTML =
+                    documents[
+                        file.dataset.file
+                    ];
+
+                modal.style.display =
+                    "flex";
+
+            }
+        );
+
+    });
+
+
+document.getElementById(
+    "close"
+).onclick = () => {
+
+    modal.style.display =
+        "none";
+
+};
+
+
+/* =====================================================
+   CAMERAS
+===================================================== */
+
+const cameras = {
+
+    "05":{
+        name:"CAM-05 / STORAGE",
+        message:"Signal stable."
+    },
+
+    "06":{
+        name:"CAM-06 / SERVICE HALL",
+        message:"Signal stable."
+    },
+
+    "07":{
+        name:"CAM-07 / STORAGE HALL",
+        message:"Signal stable."
+    },
+
+    "08":{
+        name:"CAM-08 / OBSERVATION",
+        message:"No abnormal activity."
+    },
+
+    "09":{
+        name:"CAM-09 / EAST CORRIDOR",
+        message:"Signal stable."
+    }
+
+};
+
+
+document
+    .querySelectorAll(".cam-btn")
+    .forEach(btn => {
+
+        btn.addEventListener(
+            "click",
+            () => {
+
+                currentCamera =
+                    btn.dataset.cam;
+
+
+                document
+                    .querySelectorAll(
+                        ".cam-btn"
+                    )
+                    .forEach(
+                        b =>
+                            b.classList.remove(
+                                "selected"
+                            )
+                    );
+
+
+                btn.classList.add(
+                    "selected"
+                );
+
+
+                cameraWatchTime = 0;
+
+
+                switchCamera();
+
+            }
+        );
+
+    });
+
+
+function switchCamera(){
+
+    const cam =
+        cameras[currentCamera];
+
+
+    cameraLabel.textContent =
+        cam.name;
+
+
+    cameraMessage.textContent =
+        cam.message;
+
+
+    subject.className =
+        "subject";
+
+
+    if(
+        currentCamera === "07"
+    ){
+
+        updateSubject();
+
+    }
+
+}
+
+
+function startCameraWatching(){
+
+    cameraWatching = true;
+
+}
+
+
+/* =====================================================
+   CAMERA TIMER
+===================================================== */
+
+setInterval(
+    () => {
+
+        if(
+            !cameraWatching ||
+            currentCamera !== "07"
+        ){
+
+            return;
+
+        }
+
+
+        cameraWatchTime++;
+
+        cameraProgress();
+
+    },
+    1000
+);
+
+
+/* =====================================================
+   H-07 PROGRESSION
+===================================================== */
+
+function cameraProgress(){
+
+    const total =
+        Math.max(
+            cameraWatchTime,
+            cameraStage * 12
+        );
+
+
+    /* -------------------------
+       STAGE 1
+    ------------------------- */
+
+    if(
+        cameraStage < 1 &&
+        total >= 8
+    ){
+
+        cameraStage = 1;
+
+        saveCamera();
+
+
+        subject.className =
+            "subject visible";
+
+
+        subject.style.left =
+            "72%";
+
+
+        subject.style.top =
+            "62%";
+
+
+        cameraMessage.textContent =
+            "MOVEMENT DETECTED.";
+
+
+        noise();
+
+    }
+
+
+    /* -------------------------
+       STAGE 2
+    ------------------------- */
+
+    if(
+        cameraStage < 2 &&
+        total >= 20
+    ){
+
+        cameraStage = 2;
+
+        saveCamera();
+
+
+        subject.className =
+            "subject visible";
+
+
+        subject.style.left =
+            "58%";
+
+
+        subject.style.top =
+            "58%";
+
+
+        cameraMessage.textContent =
+            "UNKNOWN OBJECT DETECTED.";
+
+
+        noise();
+
+    }
+
+
+    /* -------------------------
+       STAGE 3
+    ------------------------- */
+
+    if(
+        cameraStage < 3 &&
+        total >= 34
+    ){
+
+        cameraStage = 3;
+
+        saveCamera();
+
+
+        subject.className =
+            "subject visible eyes";
+
+
+        subject.style.left =
+            "50%";
+
+
+        subject.style.top =
+            "53%";
+
+
+        cameraMessage.textContent =
+            "WARNING:\n" +
+            "SUBJECT MAY BE AWARE OF OBSERVATION.";
+
+
+        noise();
+
+    }
+
+
+    /* -------------------------
+       STAGE 4
+    ------------------------- */
+
+    if(
+        cameraStage < 4 &&
+        total >= 48
+    ){
+
+        cameraStage = 4;
+
+        saveCamera();
+
+
+        /*
+            H-07消失。
+            しかし「消滅」ではない。
+        */
+
+        subject.className =
+            "subject";
+
+
+        cameraMessage.textContent =
+            "SUBJECT: OUT OF FRAME";
+
+
+        noise();
+
+
+        setTimeout(
+            () => {
+
+                if(
+                    currentCamera === "07"
+                ){
+
+                    cameraMessage.textContent =
+                        "AUDIO DETECTED.";
+
+                    playKnockSequence();
+
+                }
+
+            },
+            1800
+        );
+
+    }
+
+
+    /* -------------------------
+       STAGE 5
+    ------------------------- */
+
+    if(
+        cameraStage < 5 &&
+        total >= 62
+    ){
+
+        cameraStage = 5;
+
+        saveCamera();
+
+
+        subject.className =
+            "subject visible near";
+
+
+        subject.style.left =
+            "50%";
+
+
+        subject.style.top =
+            "58%";
+
+
+        cameraMessage.textContent =
+            "WARNING:\n" +
+            "SUBJECT APPROACHING CAMERA.";
+
+
+        noise();
+
+    }
+
+
+    /* -------------------------
+       STAGE 6
+    ------------------------- */
+
+    if(
+        cameraStage < 6 &&
+        total >= 78
+    ){
+
+        cameraStage = 6;
+
+        saveCamera();
+
+
+        subject.className =
+            "subject visible very-near eyes";
+
+
+        subject.style.left =
+            "50%";
+
+
+        subject.style.top =
+            "52%";
+
+
+        cameraMessage.textContent =
+            "SUBJECT: H-07\n" +
+            "OBSERVATION: RECIPROCAL";
+
+
+        status.textContent =
+            "OBSERVATION DETECTED";
+
+
+        document.title =
+            "CAM-07 // ACTIVE";
+
+
+        noise();
+
+
+        setTimeout(
+            () => {
+
+                cameraMessage.textContent =
+                    "CAMERA OPERATOR DETECTED.";
+
+
+                flashScreen();
+
+
+                deepKnock();
+
+            },
+            2500
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   RESTORE H-07
+===================================================== */
+
+function updateSubject(){
+
+    if(
+        currentCamera !== "07"
+    ){
+
+        subject.className =
+            "subject";
+
+        return;
+
+    }
+
+
+    if(cameraStage >= 6){
+
+        subject.className =
+            "subject visible very-near eyes";
+
+        subject.style.left =
+            "50%";
+
+        subject.style.top =
+            "52%";
+
+        cameraMessage.textContent =
+            "CAMERA OPERATOR DETECTED.";
+
+    }
+
+    else if(cameraStage >= 5){
+
+        subject.className =
+            "subject visible near";
+
+        subject.style.left =
+            "50%";
+
+        subject.style.top =
+            "58%";
+
+    }
+
+    else if(cameraStage >= 4){
+
+        subject.className =
+            "subject";
+
+        cameraMessage.textContent =
+            "SUBJECT: OUT OF FRAME";
+
+    }
+
+    else if(cameraStage >= 3){
+
+        subject.className =
+            "subject visible eyes";
+
+        subject.style.left =
+            "50%";
+
+        subject.style.top =
+            "53%";
+
+    }
+
+    else if(cameraStage >= 2){
+
+        subject.className =
+            "subject visible";
+
+        subject.style.left =
+            "58%";
+
+        subject.style.top =
+            "58%";
+
+    }
+
+    else if(cameraStage >= 1){
+
+        subject.className =
+            "subject visible";
+
+        subject.style.left =
+            "72%";
+
+        subject.style.top =
+            "62%";
+
+    }
+
+}
+
+
+/* =====================================================
+   SAVE
+===================================================== */
+
+function saveCamera(){
+
+    localStorage.setItem(
+        "hb_camera_stage",
+        cameraStage
+    );
+
+}
+
+
+/* =====================================================
+   KNOCK SEQUENCE
+===================================================== */
+
+function playKnockSequence(){
+
+    let count = 0;
+
+
+    const timer =
+        setInterval(
+            () => {
+
+                count++;
+
+
+                knock.classList.remove(
+                    "show"
+                );
+
+
+                void knock.offsetWidth;
+
+
+                knock.classList.add(
+                    "show"
+                );
+
+
+                /*
+                    1回目
+                */
+
+                if(count === 1){
+
+                    cameraMessage.textContent =
+                        "AUDIO SIGNAL:\nKNOCK";
+
+
+                    knockSound();
+
+                }
+
+
+                /*
+                    2回目
+                */
+
+                else if(count === 2){
+
+                    cameraMessage.textContent =
+                        "AUDIO SIGNAL:\nKNOCK";
+
+
+                    knockSound();
+
+                }
+
+
+                /*
+                    3回目
+
+                    画面には出る。
+
+                    音は鳴らさない。
+                */
+
+                else{
+
+                    cameraMessage.textContent =
+                        "AUDIO SIGNAL:\nKNOCK";
+
+                }
+
+
+                if(count >= 3){
+
+                    clearInterval(timer);
+
+
+                    setTimeout(
+                        () => {
+
+                            if(
+                                currentCamera === "07"
+                            ){
+
+                                cameraMessage.textContent =
+                                    "AUDIO SOURCE:\n" +
+                                    "BEHIND CAMERA";
+
+
+                                setTimeout(
+                                    () => {
+
+                                        if(
+                                            currentCamera === "07"
+                                        ){
+
+                                            deepKnock();
+
+                                        }
+
+                                    },
+                                    1200
+                                );
+
+                            }
+
+                        },
+                        900
+                    );
+
+                }
+
+            },
+            900
+        );
+
+}
+
+
+/* =====================================================
+   NOISE
+===================================================== */
+
+function noise(){
+
+    cameraView.classList.remove(
+        "noise"
+    );
+
+
+    void cameraView.offsetWidth;
+
+
+    cameraView.classList.add(
+        "noise"
+    );
+
+}
+
+
+setInterval(
+    () => {
+
+        if(
+            currentCamera === "07" &&
+            cameraStage >= 2 &&
+            Math.random() < .22
+        ){
+
+            noise();
+
+        }
+
+    },
+    4000
+);
+
+
+/* =====================================================
+   GLOBAL ANOMALIES
+===================================================== */
+
+function globalAnomalies(){
+
+    if(elapsed === 15){
+
+        status.textContent =
+            "UNSTABLE";
+
+
+        boot.textContent +=
+            "\n[WARNING] " +
+            "UNKNOWN NETWORK REQUEST.\n";
+
+    }
+
+
+    if(elapsed === 30){
+
+        status.textContent =
+            "DEGRADED";
+
+    }
+
+
+    if(elapsed === 45){
+
+        boot.textContent +=
+            "\n[ERROR] " +
+            "CAMERA NETWORK RESPONSE UNKNOWN.\n";
+
+
+        flashScreen();
+
+    }
+
+
+    if(elapsed === 60){
+
+        status.textContent =
+            "CRITICAL";
+
+    }
+
+}
+
+
+/* =====================================================
+   FLASH
+===================================================== */
+
+function flashScreen(){
+
+    flash.classList.remove(
+        "flash"
+    );
+
+
+    void flash.offsetWidth;
+
+
+    flash.classList.add(
+        "flash"
+    );
+
+}
+
+
+/* =====================================================
+   CLASSIFIED
+===================================================== */
+
+document.getElementById(
+    "unlock"
+).onclick = () => {
+
+    const value =
+        document.getElementById(
+            "password"
+        ).value;
+
+
+    const result =
+        document.getElementById(
+            "classifiedResult"
+        );
+
+
+    /*
+        ACCESS CODE
+        0317-HHAFC
+    */
+
+    if(value === "yusei82817@aol.com@yui"){
+
+        result.innerHTML = `
+
+<div class="terminal">
+
+ACCESS GRANTED.
+
+----------------------------
+
+PROJECT: HOLLOW
+
+SUBJECT: H-07
+
+STATUS: ACTIVE
+
+CONTAINMENT: FAILED
+
+LAST OBSERVED:
+CAMERA 07
+
+----------------------------
+
+監視状態:
+
+CAMERA 07 ........ ONLINE
+
+TERMINAL CAMERA ... ONLINE
+
+----------------------------
+
+確認中。
+
+...
+
+端末の前にいる人物を
+識別できません。
+
+...
+
+あなたは職員ではありません。
+
+では、
+
+なぜアクセスできたのですか？
+
+</div>
+
+`;
+
+
+        setTimeout(
+            () => {
+
+                status.textContent =
+                    "USER IDENTIFIED";
+
+
+                document.title =
+                    "WE CAN SEE YOU";
+
+
+                flashScreen();
+
+            },
+            2500
+        );
+
+    }
+
+    else{
+
+        result.innerHTML =
+            "<p>ACCESS DENIED.</p>";
+
+    }
+
+};
+
+
+/* =====================================================
+   VISIBILITY
+===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if(
+            !document.hidden &&
+            elapsed > 15 &&
+            cameraStage >= 3
+        ){
+
+            cameraMessage.textContent =
+                "監視状態が変更されました。";
+
+
+            setTimeout(
+                () => {
+
+                    if(
+                        currentCamera === "07"
+                    ){
+
+                        cameraMessage.textContent =
+                            "SUBJECT POSITION CHANGED.";
+
+
+                        cameraStage =
+                            Math.min(
+                                cameraStage + 1,
+                                6
+                            );
+
+
+                        saveCamera();
+
+
+                        updateSubject();
+
+                    }
+
+                },
+                1500
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   MOUSE DETECTION
+===================================================== */
+
+let mouseMoves = 0;
+
+
+document.addEventListener(
+    "mousemove",
+    () => {
+
+        mouseMoves++;
+
+
+        if(
+            currentCamera === "07" &&
+            cameraStage >= 3 &&
+            mouseMoves % 150 === 0
+        ){
+
+            cameraMessage.textContent =
+                "Motion detected outside camera range.";
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LATE H-07 DISTORTION
+===================================================== */
+
+setInterval(
+    () => {
+
+        if(
+            currentCamera === "07" &&
+            cameraStage >= 5 &&
+            Math.random() < .1
+        ){
+
+            noise();
+
+
+            cameraMessage.textContent =
+                "CAMERA SIGNAL DISTORTION.";
+
+
+            setTimeout(
+                () => {
+
+                    if(
+                        currentCamera === "07"
+                    ){
+
+                        cameraMessage.textContent =
+                            "SUBJECT STILL PRESENT.";
+
+                    }
+
+                },
+                800
+            );
+
+        }
+
+    },
+    5000
+);
+
+
+/* =====================================================
+   CONSOLE
+===================================================== */
+
+console.log(
+    "%cHOLLOWBELL INDUSTRIES",
+    "font-size:24px;"
+);
+
+console.log(
+    "%cCAM-07 IS NOT AN ERROR.",
+    "font-size:14px;"
+);
+
+console.log(
+    "%cIF YOU HEAR THREE KNOCKS, DO NOT OPEN THE DOOR.",
+    "font-size:12px;"
+);
+
+</script>
+
+</body>
+</html>
