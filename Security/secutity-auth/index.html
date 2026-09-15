@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Security Authentication System">
+    <meta name="theme-color" content="#0a0a0a">
+
+    <title>Security Authentication</title>
+
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+
+    <main class="auth-container">
+
+        <section class="auth-panel" aria-labelledby="auth-title">
+
+            <header class="auth-header">
+                <div class="security-icon" aria-hidden="true">
+                    ◈
+                </div>
+
+                <h1 id="auth-title">
+                    SECURITY AUTHENTICATION
+                </h1>
+
+                <p>
+                    Secure Access Gateway
+                </p>
+            </header>
+
+
+            <form id="authentication-form" autocomplete="on">
+
+                <div class="form-group">
+                    <label for="user-id">
+                        USER ID
+                    </label>
+
+                    <input
+                        type="text"
+                        id="user-id"
+                        name="username"
+                        autocomplete="username"
+                        required
+                        maxlength="128"
+                        spellcheck="false"
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="password">
+                        PASSWORD
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        autocomplete="current-password"
+                        required
+                        maxlength="256"
+                    >
+                </div>
+
+
+                <div class="authentication-options">
+
+                    <label class="remember-option">
+                        <input
+                            type="checkbox"
+                            id="remember-session"
+                            name="remember"
+                        >
+
+                        <span>
+                            Remember this session
+                        </span>
+                    </label>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    id="authenticate-button"
+                >
+                    AUTHENTICATE
+                </button>
+
+            </form>
+
+
+            <div
+                id="authentication-status"
+                class="authentication-status"
+                role="status"
+                aria-live="polite"
+            >
+                STATUS: READY
+            </div>
+
+
+            <footer class="auth-footer">
+                <span>SECURITY AUTHENTICATION SYSTEM</span>
+                <span id="system-version">VERSION 1.0.0</span>
+            </footer>
+
+        </section>
+
+    </main>
+
+
+    <script src="js/auth.js" defer></script>
+
+</body>
+</html>
