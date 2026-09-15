@@ -7,34 +7,11 @@ const remember = document.getElementById("remember-session");
 const button = document.getElementById("authenticate-button");
 const status = document.getElementById("authentication-status");
 
-const SESSION_KEY = "security-auth-session";
+const ACCESS_PATH = "../Access.html";
 
 function setStatus(message, state = "ready") {
     status.textContent = `STATUS: ${message}`;
     status.dataset.state = state;
-}
-
-function clearSession() {
-    try {
-        sessionStorage.removeItem(SESSION_KEY);
-        localStorage.removeItem(SESSION_KEY);
-    } catch (_) {
-        // Storage can be unavailable in restricted browser contexts.
-    }
-}
-
-function restoreSessionState() {
-    try {
-        const stored = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-        if (stored) {
-            const session = JSON.parse(stored);
-            if (session?.authenticated === true) {
-                setStatus("SESSION PRESENT", "success");
-            }
-        }
-    } catch (_) {
-        clearSession();
-    }
 }
 
 function wait(ms) {
@@ -56,20 +33,28 @@ form.addEventListener("submit", async event => {
     setStatus("VERIFYING...", "checking");
 
     /*
-     * This frontend deliberately does NOT verify a password locally.
-     * A real authentication system must send credentials over HTTPS to
-     * a trusted backend, where the password is checked against a
-     * server-side Argon2id/scrypt/PBKDF2 password hash.
-     *
-     * No plaintext password is written to localStorage/sessionStorage.
+     * Frontend-only authentication is intentionally not treated as secure.
+     * Replace this section with a HTTPS backend request when real credential
+     * verification is connected. The backend must perform password hashing
+     * and verification, then establish the authenticated session.
      */
     await wait(350);
 
     setStatus("BACKEND NOT CONFIGURED", "error");
     button.disabled = false;
-
-    // Prevent accidental retention in browser autofill variables.
     password.value = "";
 });
 
-restoreSessionState();
+// Destination after successful authentication:
+// Security/secutity-auth/index.html -> Security/Access.html
+function openAccessPage() {
+    window.location.assign(ACCESS_PATH);
+}
+
+/*
+ * Temporary integration hook for the future backend.
+ * Call openAccessPage() only after the server has confirmed authentication.
+ */
+window.SecurityAuth = Object.freeze({
+    openAccessPage
+});
