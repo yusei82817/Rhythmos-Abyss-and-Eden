@@ -19,26 +19,17 @@
         <section class="auth-panel" aria-labelledby="auth-title">
 
             <header class="auth-header">
-                <div class="security-icon" aria-hidden="true">
-                    ◈
-                </div>
+                <div class="security-icon" aria-hidden="true">◈</div>
 
-                <h1 id="auth-title">
-                    SECURITY AUTHENTICATION
-                </h1>
+                <h1 id="auth-title">SECURITY AUTHENTICATION</h1>
 
-                <p>
-                    Secure Access Gateway
-                </p>
+                <p>Secure Access Gateway</p>
             </header>
 
             <form id="authentication-form" autocomplete="on">
 
                 <div class="form-group">
-                    <label for="user-id">
-                        USER ID / EMAIL
-                    </label>
-
+                    <label for="user-id">USER ID / EMAIL</label>
                     <input
                         type="email"
                         id="user-id"
@@ -52,10 +43,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">
-                        PASSWORD
-                    </label>
-
+                    <label for="password">PASSWORD</label>
                     <input
                         type="password"
                         id="password"
@@ -68,46 +56,29 @@
 
                 <div class="authentication-options">
                     <label class="remember-option">
-                        <input
-                            type="checkbox"
-                            id="remember-session"
-                            name="remember"
-                        >
-
-                        <span>
-                            Remember this session
-                        </span>
+                        <input type="checkbox" id="remember-session" name="remember">
+                        <span>Remember this session</span>
                     </label>
                 </div>
 
-                <button
-                    type="submit"
-                    id="authenticate-button"
-                >
-                    AUTHENTICATE
-                </button>
+                <button type="submit" id="authenticate-button">AUTHENTICATE</button>
+                <button type="button" id="signup-button">CREATE ACCOUNT</button>
 
             </form>
 
-            <div
-                id="authentication-status"
-                class="authentication-status"
-                role="status"
-                aria-live="polite"
-            >
+            <div id="authentication-status" class="authentication-status" role="status" aria-live="polite">
                 STATUS: READY
             </div>
 
             <footer class="auth-footer">
                 <span>SECURITY AUTHENTICATION SYSTEM</span>
-                <span id="system-version">VERSION 1.1.0</span>
+                <span id="system-version">VERSION 1.2.0</span>
             </footer>
 
         </section>
 
     </main>
 
-    <!-- Supabase client. The browser-side publishable/anon key is not a secret. -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <script src="js/supabase-config.js" defer></script>
     <script src="js/auth.js" defer></script>
