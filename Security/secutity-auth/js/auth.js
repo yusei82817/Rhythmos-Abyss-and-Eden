@@ -38,7 +38,7 @@ function isConfigured() {
     );
 }
 
-function createSupabaseClient() {
+function createSupabaseClient(persistSession = false) {
     if (!isConfigured()) {
         return null;
     }
@@ -49,7 +49,7 @@ function createSupabaseClient() {
 
     return window.supabase.createClient(config.url, config.key, {
         auth: {
-            persistSession: remember.checked,
+            persistSession,
             autoRefreshToken: true,
             detectSessionInUrl: true
         }
@@ -97,8 +97,20 @@ form.addEventListener("submit", async event => {
 
     try {
         /*
-         * Supabase performs the credential verification on its servers.
-         * The password is not stored in this repository and is not used
+         * Re-create the client for this login so the user's choice controls
+         * whether the Supabase session survives a browser restart.
+         * The preference itself is not used as proof of authentication.
+         */
+        supabaseClient = createSupabaseClient(remember.checked);
+
+        if (!supabaseClient) {
+            setStatus("CONFIGURATION REQUIRED", "error");
+            return;
+        }
+
+        /*
+         * Supabase performs credential verification on its servers.
+         * The password is never stored in this repository and is not used
          * as a local authentication decision.
          */
         const { error } = await supabaseClient.auth.signInWithPassword({
@@ -127,25 +139,12 @@ form.addEventListener("submit", async event => {
     }
 });
 
-remember.addEventListener("change", async () => {
-    if (!supabaseClient) {
-        return;
-    }
-
-    /*
-     * Supabase's persistence setting is established when createClient()
-     * runs. Rebuilding the client here would be possible, but deliberately
-     * avoiding that keeps session state predictable during a login attempt.
-     */
-});
-
 /*
- * Access pages must NOT trust a localStorage flag as proof of authentication.
- * They should call Supabase auth.getSession()/getUser() and deny access when
- * no valid Supabase session exists.
+ * No localStorage/sessionStorage flag is trusted as authentication proof.
+ * The Access page must validate the Supabase session independently.
  */
 
-supabaseClient = createSupabaseClient();
+supabaseClient = createSupabaseClient(false);
 
 if (supabaseClient) {
     checkExistingSession();
