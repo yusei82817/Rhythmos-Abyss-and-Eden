@@ -5,6 +5,7 @@ const userId = document.getElementById("user-id");
 const password = document.getElementById("password");
 const remember = document.getElementById("remember-session");
 const button = document.getElementById("authenticate-button");
+const signupButton = document.getElementById("signup-button");
 const status = document.getElementById("authentication-status");
 
 const ACCESS_PATH = "../Access.html";
@@ -19,7 +20,9 @@ function setStatus(message, state = "ready") {
 
 function setBusy(isBusy) {
     button.disabled = isBusy;
+    signupButton.disabled = isBusy;
     button.setAttribute("aria-busy", String(isBusy));
+    signupButton.setAttribute("aria-busy", String(isBusy));
 }
 
 function openAccessPage() {
@@ -39,13 +42,8 @@ function isConfigured() {
 }
 
 function createSupabaseClient(persistSession = false) {
-    if (!isConfigured()) {
-        return null;
-    }
-
-    if (!window.supabase || typeof window.supabase.createClient !== "function") {
-        return null;
-    }
+    if (!isConfigured()) return null;
+    if (!window.supabase || typeof window.supabase.createClient !== "function") return null;
 
     return window.supabase.createClient(config.url, config.key, {
         auth: {
@@ -87,20 +85,10 @@ form.addEventListener("submit", async event => {
         return;
     }
 
-    if (!supabaseClient) {
-        setStatus("CONFIGURATION REQUIRED", "error");
-        return;
-    }
-
     setBusy(true);
     setStatus("VERIFYING...", "checking");
 
     try {
-        /*
-         * Re-create the client for this login so the user's choice controls
-         * whether the Supabase session survives a browser restart.
-         * The preference itself is not used as proof of authentication.
-         */
         supabaseClient = createSupabaseClient(remember.checked);
 
         if (!supabaseClient) {
@@ -108,11 +96,6 @@ form.addEventListener("submit", async event => {
             return;
         }
 
-        /*
-         * Supabase performs credential verification on its servers.
-         * The password is never stored in this repository and is not used
-         * as a local authentication decision.
-         */
         const { error } = await supabaseClient.auth.signInWithPassword({
             email,
             password: secret
@@ -127,8 +110,6 @@ form.addEventListener("submit", async event => {
 
         setStatus("AUTHENTICATION SUCCESS", "success");
         password.value = "";
-
-        // Redirect only after Supabase confirms the login.
         openAccessPage();
     } catch (error) {
         console.error("Authentication request failed:", error);
@@ -139,10 +120,57 @@ form.addEventListener("submit", async event => {
     }
 });
 
-/*
- * No localStorage/sessionStorage flag is trusted as authentication proof.
- * The Access page must validate the Supabase session independently.
- */
+signupButton.addEventListener("click", async () => {
+    const email = userId.value.trim();
+    const secret = password.value;
+
+    if (!email || !secret) {
+        setStatus("EMAIL AND PASSWORD REQUIRED", "error");
+        return;
+    }
+
+    if (!supabaseClient) {
+        supabaseClient = createSupabaseClient(remember.checked);
+    }
+
+    if (!supabaseClient) {
+        setStatus("CONFIGURATION REQUIRED", "error");
+        return;
+    }
+
+    setBusy(true);
+    setStatus("CREATING ACCOUNT...", "checking");
+
+    try {
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password: secret
+        });
+
+        if (error) {
+            console.error("Account creation failed:", error);
+            setStatus("ACCOUNT CREATION FAILED", "error");
+            password.value = "";
+            return;
+        }
+
+        password.value = "";
+
+        if (data.session) {
+            setStatus("ACCOUNT CREATED", "success");
+            openAccessPage();
+            return;
+        }
+
+        setStatus("CHECK YOUR EMAIL", "success");
+    } catch (error) {
+        console.error("Account creation request failed:", error);
+        setStatus("ACCOUNT CREATION ERROR", "error");
+        password.value = "";
+    } finally {
+        setBusy(false);
+    }
+});
 
 supabaseClient = createSupabaseClient(false);
 
