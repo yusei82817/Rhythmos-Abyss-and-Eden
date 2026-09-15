@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block Breaker</title>
+
+<style>
+    body {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #111;
+    }
+
+    canvas {
+        background: #000;
+        border: 1px solid #fff;
+    }
+</style>
+</head>
+
+<body>
+
+<canvas id="game" width="1200" height="600"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+
+// ====================
+// パドル
+// ====================
+
+const paddle = {
+    width: 250,
+    height: 15,
+    x: canvas.width / 2 - 60,
+    y: canvas.height - 40,
+    speed: 30
+};
+
+let leftPressed = false;
+let rightPressed = false;
+
+
+// ====================
+// ボール
+// ====================
+
+const ball = {
+    x: canvas.width / 4, //2
+    y: canvas.height - 60,
+    radius: 8,
+
+    speed: 20,
+
+    vx: 3.5,
+    vy: -3.5
+};
+
+
+// ====================
+// ブロック
+// ====================
+
+const cols = 32; //16
+const rows = 18; //9
+
+const blockWidth = 34; //68
+const blockHeight = 12; //24
+const blockGap = 6;
+
+const blockStartX =
+    (canvas.width -
+        (cols * blockWidth + (cols - 1) * blockGap)
+    ) / 2;
+
+const blockStartY = 30;
+
+let blocks = [];
+
+function createInitialBlocks() {
+
+    blocks = [];
+
+    for (let row = 0; row < rows; row++) {
+
+        for (let col = 0; col < cols; col++) {
+
+            blocks.push({
+                x: blockStartX +
+                    col * (blockWidth + blockGap),
+
+                y: blockStartY +
+                    row * (blockHeight + blockGap),
+
+                width: blockWidth,
+                height: blockHeight,
+
+                alive: true
+            });
+        }
+    }
+}
+
+createInitialBlocks();
+
+
+// ====================
+// キー入力
+// ====================
+
+document.addEventListener("keydown", e => {
+
+    if (e.key === "ArrowLeft") {
+        leftPressed = true;
+    }
+
+    if (e.key === "ArrowRight") {
+        rightPressed = true;
+    }
+
+});
+
+document.addEventListener("keyup", e => {
+
+    if (e.key === "ArrowLeft") {
+        leftPressed = false;
+    }
+
+    if (e.key === "ArrowRight") {
+        rightPressed = false;
+    }
+
+});
+
+
+// ====================
+// 反射
+// ====================
+
+function increaseSpeed() {
+
+    const speed = Math.hypot(ball.vx, ball.vy);
+
+    const newSpeed =
+        Math.min(speed * 1.02, 40);
+
+    const angle =
+        Math.atan2(ball.vy, ball.vx);
+
+    ball.vx =
+        Math.cos(angle) * newSpeed;
+
+    ball.vy =
+        Math.sin(angle) * newSpeed;
+}
+
+
+// ====================
+// パドルとの衝突
+// ====================
+
+function checkPaddleCollision() {
+
+    if (
+        ball.y + ball.radius >= paddle.y &&
+        ball.y - ball.radius <=
+            paddle.y + paddle.height &&
+        ball.x >= paddle.x &&
+        ball.x <= paddle.x + paddle.width &&
+        ball.vy > 0
+    ) {
+
+        ball.y =
+            paddle.y - ball.radius;
+
+        const speed =
+            Math.min(
+                Math.hypot(ball.vx, ball.vy) * 1.02,
+                40
+            );
+
+        // 横方向の速度は維持する
+        // 縦方向だけ反転する
+        ball.vy =
+            -Math.abs(ball.vy);
+
+        // 速度を少し上げる
+        const currentSpeed =
+            Math.hypot(ball.vx, ball.vy);
+
+        ball.vx =
+            ball.vx / currentSpeed * speed;
+
+        ball.vy =
+            ball.vy / currentSpeed * speed;
+    }
+}
+
+
+// ====================
+// ブロック衝突
+// ====================
+
+function checkBlockCollision() {
+
+    for (const block of blocks) {
+
+        if (!block.alive) continue;
+
+        if (
+            ball.x + ball.radius > block.x &&
+            ball.x - ball.radius <
+                block.x + block.width &&
+            ball.y + ball.radius > block.y &&
+            ball.y - ball.radius <
+                block.y + block.height
+        ) {
+
+            block.alive = false;
+
+            ball.vy *= -1;
+
+            increaseSpeed();
+
+            break;
+        }
+    }
+}
+
+
+// ====================
+// ブロック追加
+// ====================
+
+let destroyedBlocks = 0;
+
+function addRow() {
+
+    for (const block of blocks) {
+        block.y += block.height + blockGap;
+    }
+
+    for (let col = 0; col < cols; col++) {
+
+        blocks.push({
+            x: blockStartX +
+                col * (blockWidth + blockGap),
+
+            y: blockStartY,
+
+            width: blockWidth,
+            height: blockHeight,
+
+            alive: Math.random() > 0.2
+        });
+    }
+}
+
+
+// ====================
+// 更新
+// ====================
+
+function update() {
+
+    // パドルをボールに追従させる
+paddle.x =
+    ball.x - paddle.width / 2;
+
+// 画面外に出ないようにする
+if (paddle.x < 0) {
+    paddle.x = 0;
+}
+
+if (
+    paddle.x + paddle.width >
+    canvas.width
+) {
+    paddle.x =
+        canvas.width - paddle.width;
+}
+
+
+    // ボール
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+
+    // 左右の壁
+    if (
+        ball.x - ball.radius <= 0 ||
+        ball.x + ball.radius >= canvas.width
+    ) {
+
+        ball.vx *= -1;
+
+        increaseSpeed();
+    }
+
+
+    // 上
+    if (ball.y - ball.radius <= 0) {
+
+        ball.y = ball.radius;
+
+        ball.vy *= -1;
+
+        increaseSpeed();
+    }
+
+
+    checkPaddleCollision();
+    checkBlockCollision();
+
+
+    // 落下
+    if (
+        ball.y - ball.radius >
+        canvas.height
+    ) {
+
+        resetBall();
+    }
+}
+
+
+// ====================
+// ボールリセット
+// ====================
+
+function resetBall() {
+
+    ball.x =
+        canvas.width / 2;
+
+    ball.y =
+        canvas.height - 60;
+
+    ball.speed = 5;
+
+    ball.vx = 3.5;
+    ball.vy = -3.5;
+}
+
+
+// ====================
+// 描画
+// ====================
+
+function draw() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    // パドル
+
+    ctx.fillStyle = "#fff";
+
+    ctx.fillRect(
+        paddle.x,
+        paddle.y,
+        paddle.width,
+        paddle.height
+    );
+
+
+    // ボール
+
+    ctx.beginPath();
+
+    ctx.arc(
+        ball.x,
+        ball.y,
+        ball.radius,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+
+    // ブロック
+
+    for (const block of blocks) {
+
+        if (!block.alive) continue;
+
+        ctx.fillRect(
+            block.x,
+            block.y,
+            block.width,
+            block.height
+        );
+    }
+}
+
+
+// ====================
+// メインループ
+// ====================
+
+function gameLoop() {
+
+    update();
+    draw();
+
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+
+</script>
+
+</body>
+</html>
