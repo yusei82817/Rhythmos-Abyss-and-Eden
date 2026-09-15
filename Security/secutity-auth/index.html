@@ -32,25 +32,24 @@
                 </p>
             </header>
 
-
             <form id="authentication-form" autocomplete="on">
 
                 <div class="form-group">
                     <label for="user-id">
-                        USER ID
+                        USER ID / EMAIL
                     </label>
 
                     <input
-                        type="text"
+                        type="email"
                         id="user-id"
                         name="username"
                         autocomplete="username"
+                        inputmode="email"
                         required
-                        maxlength="128"
+                        maxlength="320"
                         spellcheck="false"
                     >
                 </div>
-
 
                 <div class="form-group">
                     <label for="password">
@@ -67,9 +66,7 @@
                     >
                 </div>
 
-
                 <div class="authentication-options">
-
                     <label class="remember-option">
                         <input
                             type="checkbox"
@@ -81,9 +78,7 @@
                             Remember this session
                         </span>
                     </label>
-
                 </div>
-
 
                 <button
                     type="submit"
@@ -94,7 +89,6 @@
 
             </form>
 
-
             <div
                 id="authentication-status"
                 class="authentication-status"
@@ -104,17 +98,18 @@
                 STATUS: READY
             </div>
 
-
             <footer class="auth-footer">
                 <span>SECURITY AUTHENTICATION SYSTEM</span>
-                <span id="system-version">VERSION 1.0.0</span>
+                <span id="system-version">VERSION 1.1.0</span>
             </footer>
 
         </section>
 
     </main>
 
-
+    <!-- Supabase client. The browser-side publishable/anon key is not a secret. -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="js/supabase-config.js" defer></script>
     <script src="js/auth.js" defer></script>
 
 </body>
