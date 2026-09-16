@@ -2,6 +2,7 @@ import { judgeNote } from './judgment.js?v=2';
 
 const glitch = document.getElementById("glitch");
 const bgm = document.getElementById('bgm');
+const menuBgm = document.getElementById('menu-bgm');
 const container = document.getElementById('game-container');
 const gameBg = document.getElementById('game-bg');
 const flash = document.getElementById('flash-overlay');
@@ -164,13 +165,36 @@ function stopRainDrops() {
     rainOverlay.classList.remove('active');
 }
 
+/* 選曲画面では「コールドフィッシュ.mp3」をループ再生する。 */
+function startMenuBgm() {
+    if (!menuBgm || isPlaying) return;
+
+    menuBgm.loop = true;
+    menuBgm.src = 'コールドフィッシュ.mp3';
+    menuBgm.volume = 0.5;
+
+    menuBgm.play().catch(err => {
+        console.warn('選曲BGMの自動再生を開始できませんでした:', err);
+    });
+}
+
+if (menuBgm) {
+    startMenuBgm();
+
+    const resumeMenuBgm = () => {
+        if (!isPlaying) startMenuBgm();
+    };
+
+    window.addEventListener('pointerdown', resumeMenuBgm, { once: true });
+    window.addEventListener('keydown', resumeMenuBgm, { once: true });
+}
+
 async function initGame(src, mode, bgImage = '') {
     if (!src || !mode) {
         console.error('エラー: src または mode が指定されていません。');
         return;
     }
 
-    const menuBgm = document.getElementById('menu-bgm');
     if (menuBgm) {
         menuBgm.pause();
         menuBgm.currentTime = 0;
