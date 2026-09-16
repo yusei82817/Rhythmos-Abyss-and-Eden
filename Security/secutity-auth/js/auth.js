@@ -129,9 +129,8 @@ signupButton.addEventListener("click", async () => {
         return;
     }
 
-    if (!supabaseClient) {
-        supabaseClient = createSupabaseClient(remember.checked);
-    }
+    // Always rebuild the client so the current session preference is used.
+    supabaseClient = createSupabaseClient(remember.checked);
 
     if (!supabaseClient) {
         setStatus("CONFIGURATION REQUIRED", "error");
