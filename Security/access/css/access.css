@@ -12,6 +12,11 @@ body{
     font-family:"Courier New",monospace;
 }
 
+/* Hide HOLLOWBELL until the authentication gate confirms a user. */
+html:not(.auth-ready) body{
+    visibility:hidden;
+}
+
 body{ overflow:hidden; }
 
 body::before{
