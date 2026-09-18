@@ -38,6 +38,7 @@ body::before{content:"";position:absolute;inset:0;background:radial-gradient(cir
 </style>
 </head>
 <body>
+<audio id="hw-bgm" src="Peritune_BattleField5_Retro.mp3" loop preload="auto"></audio>
 <div id="scene">
   <div class="moon"></div><div class="cloud c1"></div><div class="cloud c2"></div>
   <div class="fog f1"></div><div class="fog f2"></div><div id="bat">🦇</div>
@@ -49,6 +50,14 @@ body::before{content:"";position:absolute;inset:0;background:radial-gradient(cir
 <script>
 const start=document.getElementById('start');
 const fade=document.getElementById('fade');
+const hwBgm=document.getElementById('hw-bgm');
+hwBgm.volume=0.5;
+function startHalloweenBgm(){
+  hwBgm.play().catch(()=>{});
+}
+startHalloweenBgm();
+document.addEventListener('pointerdown',startHalloweenBgm,{once:true});
+document.addEventListener('keydown',startHalloweenBgm,{once:true});
 const particles=[];
 for(let i=0;i<24;i++){
   const p=document.createElement('div');
@@ -63,6 +72,7 @@ for(let i=0;i<24;i++){
 setTimeout(()=>start.classList.add('show'),3200);
 function enterGame(){
   if(fade.classList.contains('active'))return;
+  hwBgm.pause();
   fade.classList.add('active');
   setTimeout(()=>{location.href='hwgame.html';},1150);
 }
