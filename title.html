@@ -53,8 +53,6 @@ button:hover{transform:scale(1.08);background:rgba(75,95,160,.22);box-shadow:0 0
 #sound-box p{font-size:18px;line-height:1.7;color:#eef3ff;}
 #sound-complete{margin:22px auto 0;width:180px;padding:11px 18px;font-size:18px;color:#eef3ff;background:rgba(40,55,100,.75);border:1px solid rgba(205,220,255,.75);border-radius:8px;cursor:pointer;}
 #sound-complete:hover{background:rgba(75,95,160,.85);box-shadow:0 0 20px rgba(150,180,255,.45);transform:scale(1.04);}
-
-/* Side menu */
 #side-menu-toggle{position:fixed;top:24px;left:24px;z-index:10002;width:58px;height:58px;margin:0;padding:0;border:1px solid rgba(205,220,255,.55);border-radius:12px;background:rgba(4,8,25,.55);backdrop-filter:blur(9px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:.3s;}
 #side-menu-toggle:hover{transform:scale(1.06);background:rgba(75,95,160,.28);box-shadow:0 0 24px rgba(150,180,255,.5);}
 #side-menu-toggle span{display:block;width:28px;height:3px;border-radius:999px;background:#eaf0ff;transition:.3s;}
@@ -82,7 +80,7 @@ body.side-menu-open #side-menu-toggle span:nth-child(3){transform:translateY(-9p
 <nav id="side-menu" aria-hidden="true">
     <h2>Menu</h2>
     <div class="side-menu-line"></div>
-    <div class="side-menu-item" onclick="location.href='gfgame.html'"=>Abyss</div>
+    <div class="side-menu-item" onclick="location.href='gfgame.html'">Abyss</div>
     <div class="side-menu-item" onclick="location.href='spgame.html'">Eden</div>
     <div class="side-menu-item" onclick="location.href='Credit.html'">Credits</div>
     <div class="side-menu-item" onclick="location.href='srgame.html'">Surpass</div>
@@ -99,7 +97,6 @@ const titleBgm=document.getElementById('title-bgm');
 const soundNotice=document.getElementById('sound-notice');
 const soundComplete=document.getElementById('sound-complete');
 soundComplete.addEventListener('click',()=>{soundNotice.remove();titleBgm.currentTime=0;titleBgm.play().catch(()=>{});});
-
 const sideMenuToggle=document.getElementById('side-menu-toggle');
 const sideMenu=document.getElementById('side-menu');
 sideMenuToggle.addEventListener('click',()=>{
@@ -107,59 +104,44 @@ sideMenuToggle.addEventListener('click',()=>{
     sideMenu.classList.toggle('open',isOpen);
     sideMenu.setAttribute('aria-hidden',String(!isOpen));
 });
-
 function createStars(count=70){
     const field=document.getElementById('star-field');
     const template=field.querySelector('.star');
     for(let i=0;i<count;i++){
         const star=template.cloneNode(true);
-        star.style.left=Math.random()*100+'vw';
-        star.style.top=Math.random()*100+'vh';
-        const size=1+Math.random()*2;
-        star.style.width=size+'px';
-        star.style.height=size+'px';
-        star.style.opacity=0.35+Math.random()*0.65;
-        star.style.animationDuration=(1.5+Math.random()*3)+'s';
-        star.style.animationDelay=(-Math.random()*3)+'s';
-        field.appendChild(star);
+        star.style.left=Math.random()*100+'vw'; star.style.top=Math.random()*100+'vh';
+        const size=1+Math.random()*2; star.style.width=size+'px'; star.style.height=size+'px';
+        star.style.opacity=0.35+Math.random()*0.65; star.style.animationDuration=(1.5+Math.random()*3)+'s';
+        star.style.animationDelay=(-Math.random()*3)+'s'; field.appendChild(star);
     }
     template.remove();
 }
 createStars(70);
 function alignSurpass(){
-    const menu=document.querySelector('.menu');
-    const abyss=document.getElementById('guri');
-    const credit=document.getElementById('credit');
-    const contact=document.getElementById('contact-box');
-    const surpass=document.getElementById('surpass');
-    if(!menu||!abyss||!credit||!contact||!surpass) return;
-    const menuRect=menu.getBoundingClientRect();
-    const abyssRect=abyss.getBoundingClientRect();
-    const creditRect=credit.getBoundingClientRect();
-    const height=creditRect.bottom-abyssRect.top;
-    const left=abyssRect.right-menuRect.left+24;
-    contact.style.top=(abyssRect.top-menuRect.top)+'px';
-    contact.style.height=height+'px';
-    contact.style.left=left+'px';
-    surpass.style.top=(abyssRect.top-menuRect.top)+'px';
-    surpass.style.height=height+'px';
+    const menu=document.querySelector('.menu'),abyss=document.getElementById('guri'),credit=document.getElementById('credit'),contact=document.getElementById('contact-box'),surpass=document.getElementById('surpass');
+    if(!menu||!abyss||!credit||!contact||!surpass)return;
+    const menuRect=menu.getBoundingClientRect(),abyssRect=abyss.getBoundingClientRect(),creditRect=credit.getBoundingClientRect();
+    const height=creditRect.bottom-abyssRect.top,left=abyssRect.right-menuRect.left+24;
+    contact.style.top=(abyssRect.top-menuRect.top)+'px'; contact.style.height=height+'px'; contact.style.left=left+'px';
+    surpass.style.top=(abyssRect.top-menuRect.top)+'px'; surpass.style.height=height+'px';
 }
 window.addEventListener('load',()=>{alignSurpass();setTimeout(alignSurpass,2300);});
 window.addEventListener('resize',alignSurpass);
-function createShootingStar(){const star=document.createElement('div');const tail=document.createElement('div');const head=document.createElement('div');star.className='shooting-star';tail.className='shooting-star-tail';head.className='shooting-star-head';star.append(tail,head);const angle=18+Math.random()*30;const distance=300+Math.random()*320;const rad=angle*Math.PI/180;const dx=Math.cos(rad)*distance;const dy=Math.sin(rad)*distance;star.style.left=(Math.random()*78+7)+'vw';star.style.top=(Math.random()*42+6)+'vh';star.style.setProperty('--angle',angle+'deg');star.style.setProperty('--dx',dx+'px');star.style.setProperty('--dy',dy+'px');document.body.appendChild(star);star.addEventListener('animationend',()=>star.remove(),{once:true});}
+function createShootingStar(){
+    const star=document.createElement('div'),tail=document.createElement('div'),head=document.createElement('div');
+    star.className='shooting-star';tail.className='shooting-star-tail';head.className='shooting-star-head';star.append(tail,head);
+    const angle=18+Math.random()*30,distance=300+Math.random()*320,rad=angle*Math.PI/180,dx=Math.cos(rad)*distance,dy=Math.sin(rad)*distance;
+    star.style.left=(Math.random()*78+7)+'vw';star.style.top=(Math.random()*42+6)+'vh';star.style.setProperty('--angle',angle+'deg');star.style.setProperty('--dx',dx+'px');star.style.setProperty('--dy',dy+'px');
+    document.body.appendChild(star);star.addEventListener('animationend',()=>star.remove(),{once:true});
+}
 function scheduleShootingStar(){const delay=7000+Math.random()*13000;setTimeout(()=>{createShootingStar();scheduleShootingStar();},delay);}
 scheduleShootingStar();
 function triggerEclipse(){
-    if(document.body.classList.contains('eclipse')) return;
-    document.body.classList.add('eclipse');
-    const duration=9000+Math.random()*7000;
-    setTimeout(()=>document.body.classList.remove('eclipse'),duration);
-    scheduleEclipse();
+    if(document.body.classList.contains('eclipse'))return;
+    document.body.classList.add('eclipse');const duration=9000+Math.random()*7000;
+    setTimeout(()=>document.body.classList.remove('eclipse'),duration);scheduleEclipse();
 }
-function scheduleEclipse(){
-    const delay=30000+Math.random()*50000;
-    setTimeout(triggerEclipse,delay);
-}
+function scheduleEclipse(){const delay=30000+Math.random()*50000;setTimeout(triggerEclipse,delay);}
 scheduleEclipse();
 </script>
 </body>
