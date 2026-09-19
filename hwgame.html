@@ -7,18 +7,39 @@
 <link rel="stylesheet" href="hwstyle.css">
 </head>
 <body>
-<button id="top-button" onclick="location.href='title.html'">Top</button>
+<button id="top-button" type="button">Top</button>
 
 <main id="game-container">
-  <section id="song-list" aria-label="Halloween songs">
-    <div class="song-card" data-release="" onclick="initGame('Crazy-Halloween-Night.mp3','Halloween')">
-      <img src="Jacket.png" class="jacket">
-      <h3>Crazy Halloween Night</h3>
-      <p>Halloween Special</p>
+  <section id="select-screen" aria-label="Halloween songs">
+    <h1>HALLOWEEN NIGHT</h1>
+    <div id="song-list">
+      <div class="song-card" data-release="" onclick="initGame('Crazy-Halloween-Night.mp3','Halloween')">
+        <img src="Jacket.png" class="jacket" alt="Crazy Halloween Night jacket">
+        <h3>Crazy Halloween Night</h3>
+        <p>Halloween Special</p>
+      </div>
     </div>
+  </section>
+
+  <section id="play-screen" aria-label="Halloween game">
+    <div id="game-bg"></div>
+    <div id="score-ui">SCORE:<span id="score">000000</span></div>
+    <div id="combo-container"><p id="combo-num"></p><div id="judge-text" aria-live="polite"></div></div>
+
+    <div class="lane-container">
+      <div class="lane" id="lane-0"><span class="key-label">A</span></div>
+      <div class="lane" id="lane-1"><span class="key-label">S</span></div>
+      <div class="lane" id="lane-2"><span class="key-label">K</span></div>
+      <div class="lane" id="lane-3"><span class="key-label">L</span></div>
+      <div id="judge-line" class="judgment-line"></div>
+    </div>
+
+    <div id="song-timer">00:00.00</div>
+    <div id="game-message" aria-live="polite"></div>
   </section>
 </main>
 
+<audio id="bgm" preload="auto"></audio>
 <script src="hwgame.js"></script>
 </body>
 </html>
