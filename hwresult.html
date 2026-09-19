@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Halloween Result | RhythmosAE</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle,#4b163e,#08030d 70%);color:#ffe4bd;font-family:monospace;display:flex;align-items:center;justify-content:center}
+.box{width:min(440px,88vw);padding:32px;text-align:center;background:rgba(8,3,13,.9);border:3px solid #ff9d32;border-radius:15px;box-shadow:0 0 30px rgba(255,90,30,.45)}
+h1{font-size:42px;letter-spacing:6px;color:#ff9d32}.score{font-size:42px;color:#fff}.data{font-size:21px;line-height:1.7}button{margin-top:24px;padding:12px 28px;background:#14071a;color:#ffe4bd;border:2px solid #ff9d32;border-radius:8px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="box"><h1>RESULT</h1><div class="score" id="score">000000</div><div class="data">
+<div>PERFECT: <span id="perfect">0</span></div>
+<div>SUCCESS: <span id="success">0</span></div>
+<div>GREAT: <span id="great">0</span></div>
+<div>MISS: <span id="miss">0</span></div>
+</div><button type="button" onclick="location.href='hwgame.html'">SELECT TRACK</button></div>
+<script>
+for(const id of ['score','perfect','success','great','miss']){
+ const v=localStorage.getItem(id)||'0';
+ document.getElementById(id).textContent=id==='score'?String(v).padStart(6,'0'):v;
+}
+</script>
+</body>
+</html>
