@@ -8,6 +8,101 @@
 </head>
 <body>
 <button id="top-button" type="button">Top</button>
+<!-- 💡 ここからコピー -->
+<!-- 1. 外部フォント（Eater）の読み込み設定（すでに<head>内にあれば不要です） -->
+<link rel="preconnect" href="https://googleapis.com">
+<link rel="preconnect" href="https://gstatic.com" crossorigin>
+<link href="https://googleapis.com/css2?family=Eater&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================================
+   狂気エフェクト用のCSS（既存のスタイルと衝突しないようクラス名を独立させています）
+   ========================================================================== */
+
+/* 周囲への視覚負荷を与えるコンテナ（この枠内だけが不気味に明滅します） */
+.horror-container-box {
+  width: 100%;
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #030000; /* 漆黒ではなく、かすかに血の気が混ざった黒 */
+  overflow: hidden;
+  box-sizing: border-box;
+  
+  /* 枠内全体が呼吸するようにゆっくり明滅し、不快感を与える */
+  animation: pulse-of-death-embed 6s infinite ease-in-out;
+}
+
+@keyframes pulse-of-death-embed {
+  0%, 100% { filter: brightness(100%) contrast(100%); }
+  50% { filter: brightness(35%) contrast(160%); }
+}
+
+/* 精神汚染・脳裏にこびりつく禁忌の文字テクスチャ */
+.insanity-embed-text {
+  font-family: 'Eater', sans-serif;
+  font-size: clamp(2.5rem, 8vw, 6rem); /* 画面サイズに合わせて自動縮小 */
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  display: inline-block;
+  user-select: none;
+
+  /* 腐食と溶解のテクスチャ（凝固した血と壊死した黒のマルチブレンド） */
+  background: 
+    radial-gradient(circle at 50% 30%, #4a0000 0%, transparent 60%),
+    radial-gradient(circle at 20% 70%, #1a0005 0%, transparent 40%),
+    linear-gradient(to bottom, #d6001c 20%, #6b000b 50%, #000000 90%);
+  background-blend-mode: difference;
+  
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  /* 網膜剥離を起こすような不快な補色の残像（緑・青・赤の影） */
+  text-shadow: 
+    -3px -3px 2px rgba(0, 255, 150, 0.5), 
+     3px  3px 2px rgba(255, 0, 100, 0.6),
+     0 0 15px rgba(255, 0, 0, 0.8);
+
+  /* ドロドロの歪み */
+  filter: contrast(200%) brightness(80%) blur(0.4px);
+
+  /* 神経細胞が破壊されたような「発狂・痙攣」アニメーション */
+  animation: brain-decay-embed 0.08s infinite alternate linear;
+}
+
+@keyframes brain-decay-embed {
+  0% {
+    transform: translate(0, 0) skewX(-1deg) scaleY(1);
+    filter: contrast(200%) hue-rotate(0deg);
+  }
+  20% {
+    transform: translate(-2px, 1px) skewX(2deg) scaleY(1.05);
+    text-shadow: -4px 2px 3px rgba(0, 255, 150, 0.7), 2px -3px 3px rgba(255, 0, 100, 0.8);
+  }
+  40% {
+    transform: translate(2px, -1px) skewY(-2deg) scaleX(0.98);
+  }
+  60% {
+    transform: translate(-4px, -2px) skewX(-5deg) scale(1.1);
+    filter: contrast(300%) hue-rotate(15deg) blur(1px);
+  }
+  80% {
+    transform: translate(3px, 2px) skewY(1deg) scaleY(0.95);
+    text-shadow: 3px 3px 1px rgba(0, 255, 150, 0.5), -3px -3px 1px rgba(255, 0, 100, 0.6);
+  }
+  100% {
+    transform: translate(-1px, -1px) skewX(0deg) scale(1);
+    filter: contrast(200%) hue-rotate(-10deg);
+  }
+}
+</style>
+<!-- 💡 ここまでコピー -->
 
 <main id="game-container">
   <section id="select-screen" aria-label="Halloween songs">
@@ -23,8 +118,10 @@
 
   <section id="play-screen" aria-label="Halloween game">
     <div id="game-bg"></div>
-    <div id="score-ui">SCORE:<span id="score">000000</span></div>
+    <div class="horror-container-box">
+    <div id="score-ui" class="insanity-embed-text">SCORE:<span id="score" class="insanity-embed-text">000000</span></div>
     <div id="combo-container"><p id="combo-num"></p><div id="judge-text" aria-live="polite"></div></div>
+    </div>
 
     <div class="lane-container">
       <div class="lane" id="lane-0"><span class="key-label">A</span></div>
