@@ -1,5 +1,5 @@
 *{box-sizing:border-box;margin:0;padding:0}
-@import url('https://fonts.googleapis.com/css2?family=Mystery+Quest&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Eater&family=Mystery+Quest&display=swap');
 :root{--cream:#ffe4bd;--orange:#ff9d32;--red:#c92b3b;--purple:#6e2b78}
 html,body{width:100%;height:100%;background:#08030d;color:var(--cream);font-family:Arial,sans-serif}
 body{overflow:hidden}
@@ -13,7 +13,7 @@ body{overflow:hidden}
 .jacket{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;margin-bottom:10px}
 #play-screen{display:none;position:relative;width:min(440px,92vw);height:min(600px,92vh);background:#0d0611;border:4px solid var(--orange);border-radius:15px;overflow:hidden;box-shadow:0 0 35px rgba(255,90,30,.5)}
 #game-bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 20%,rgba(255,90,30,.22),transparent 35%),linear-gradient(180deg,#16051e,#08030d);z-index:0}
-#score-ui{position:absolute;top:18px;width:100%;text-align:center;font:700 25px monospace;z-index:5;text-shadow:0 0 12px var(--orange)}
+#score-ui{position:absolute;top:18px;width:100%;text-align:center;font-family:'Eater',cursive;font-size:25px;font-weight:400;z-index:5;text-shadow:0 0 12px var(--orange)}
 .lane-container{position:absolute;inset:0;display:flex;z-index:1;background:rgba(20,5,22,.45)}
 .lane{position:relative;flex:1;border-right:2px solid rgba(255,157,50,.35);background:linear-gradient(#24102b,#09030d)}
 .lane:last-of-type{border-right:0}
