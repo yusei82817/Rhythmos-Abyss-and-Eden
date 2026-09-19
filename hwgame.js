@@ -69,10 +69,19 @@ function resetGameState() {
 async function loadChart(src) {
     const audioName = decodeURIComponent(src.split('/').pop() || '');
     const chartName = audioName.replace(/\.[^.]+$/, '');
-    const chartPath = `chart/hwc/${encodeURIComponent(chartName)}.json`;
+    const chartPaths = [
+        `chart/hwc/${encodeURIComponent(chartName)}.json`,
+        `chart/hwc/${encodeURIComponent(chartName + ' ')}.json`
+    ];
 
     try {
-        const response = await fetch(chartPath);
+        let response = await fetch(chartPaths[0]);
+
+        // 旧形式の「曲名 + 半角スペース + .json」も救済する
+        if (!response.ok && response.status === 404) {
+            response = await fetch(chartPaths[1]);
+        }
+
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const data = await response.json();
