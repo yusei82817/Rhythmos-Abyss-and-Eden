@@ -81,6 +81,12 @@
         padding-top: 8px;
     }
     .hint { color: #aaa; }
+    .destination {
+        margin-top: 8px;
+        color: #8fd3ff;
+        font-family: monospace;
+        word-break: break-all;
+    }
 </style>
 </head>
 <body>
@@ -104,12 +110,7 @@
 
 <audio id="bgm" preload="metadata"></audio>
 
-<div class="lanes">
-    <div class="lane" data-lane="0">A</div>
-    <div class="lane" data-lane="1">D</div>
-    <div class="lane" data-lane="2">J</div>
-    <div class="lane" data-lane="3">L</div>
-</div>
+<div class="lanes" id="lanes"></div>
 
 <div class="controls">
     <button id="play">▶ 再生</button>
@@ -121,8 +122,11 @@
 </div>
 
 <div class="info">
+    <div>ゲーム: <strong id="gameName">-</strong></div>
+    <div>レーン: <strong id="laneCount">-</strong></div>
     <div>記録済みノーツ: <strong id="count">0</strong></div>
-    <div class="hint">曲を再生し、ノーツを置きたい瞬間に A / D / J / L を押す。</div>
+    <div class="hint" id="keyHint">曲を選択すると使用キーが表示されます。</div>
+    <div class="destination" id="destination">出力先: -</div>
     <div class="notes" id="notes">まだノーツはありません。</div>
 </div>
 
@@ -135,16 +139,47 @@ const notesEl = document.getElementById('notes');
 const bpmEl = document.getElementById('bpm');
 const offsetEl = document.getElementById('offset');
 const filenameEl = document.getElementById('filename');
-const lanes = [...document.querySelectorAll('.lane')];
+const lanesEl = document.getElementById('lanes');
+const gameNameEl = document.getElementById('gameName');
+const laneCountEl = document.getElementById('laneCount');
+const keyHintEl = document.getElementById('keyHint');
+const destinationEl = document.getElementById('destination');
+
+const GAME_CONFIG = {
+    'gfgame.html': {
+        name: 'Abyss',
+        laneKeys: ['A', 'D', 'J', 'L'],
+        chartDir: 'chart/abyss'
+    },
+    'spgame.html': {
+        name: 'Eden',
+        laneKeys: ['A', 'D', 'J', 'L'],
+        chartDir: 'chart/eden'
+    },
+    'hwgame.html': {
+        name: 'Halloween',
+        laneKeys: ['A', 'S', 'D', 'L'],
+        chartDir: 'chart/halloween'
+    },
+    'srgame.html': {
+        name: 'Surpass',
+        laneKeys: ['A', 'S', 'D', 'F', 'J', 'K', 'L', ';'],
+        chartDir: 'chart/surpass'
+    }
+};
 
 let notes = [];
 let songs = [];
+let currentSong = null;
+let currentKeys = [];
 
 async function loadSongsFromGamePages() {
-    const pages = ['gfgame.html', 'spgame.html'];
-    const songMap = new Map();
+    const pages = Object.keys(GAME_CONFIG);
+    const songList = [];
 
     for (const page of pages) {
+        const config = GAME_CONFIG[page];
+
         try {
             const response = await fetch(page);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -156,36 +191,92 @@ async function loadSongsFromGamePages() {
             while ((match = regex.exec(html)) !== null) {
                 const filename = match[1];
                 const mode = match[2];
-                if (!songMap.has(filename)) {
-                    songMap.set(filename, { filename, mode, source: page });
-                }
+
+                songList.push({
+                    filename,
+                    mode,
+                    source: page,
+                    game: config.name,
+                    laneKeys: [...config.laneKeys],
+                    chartDir: config.chartDir
+                });
             }
         } catch (error) {
             console.warn(`曲一覧を読み込めませんでした: ${page}`, error);
         }
     }
 
-    songs = [...songMap.values()];
-    songs.forEach((item) => {
+    songs = songList;
+
+    song.innerHTML = '';
+    songs.forEach((item, index) => {
         const option = document.createElement('option');
-        option.value = item.filename;
-        option.textContent = `${item.filename} [${item.mode}]`;
+        option.value = String(index);
+        option.textContent = `[${item.game}] ${item.filename} [${item.mode}]`;
         song.appendChild(option);
     });
 
     if (songs.length > 0) {
         setSong();
     } else {
-        console.warn('gfgame.html / spgame.html から曲を取得できませんでした。');
+        gameNameEl.textContent = '-';
+        keyHintEl.textContent = 'ゲームページから曲を取得できませんでした。';
+        destinationEl.textContent = '出力先: -';
     }
 }
 
+function getCurrentSong() {
+    const index = Number(song.value);
+    return Number.isInteger(index) && songs[index] ? songs[index] : null;
+}
+
+function chartNameFromAudio(filename) {
+    return decodeURIComponent(filename)
+        .replace(/\.[^.]+$/, '')
+        .trim() || 'chart';
+}
+
 function setSong() {
-    if (!song.value) return;
-    bgm.src = song.value;
+    const item = getCurrentSong();
+    if (!item) return;
+
+    currentSong = item;
+    currentKeys = [...item.laneKeys];
+
+    bgm.src = item.filename;
     bgm.load();
     bgm.currentTime = 0;
+
+    renderLanes();
+    updateSongInfo();
+
+    filenameEl.value = `${chartNameFromAudio(item.filename)}.json`;
     updateTimer();
+}
+
+function renderLanes() {
+    lanesEl.innerHTML = '';
+    lanesEl.style.gridTemplateColumns = `repeat(${currentKeys.length}, 1fr)`;
+
+    currentKeys.forEach((key, lane) => {
+        const el = document.createElement('div');
+        el.className = 'lane';
+        el.dataset.lane = String(lane);
+        el.textContent = key;
+        lanesEl.appendChild(el);
+    });
+}
+
+function updateSongInfo() {
+    if (!currentSong) return;
+
+    gameNameEl.textContent = currentSong.game;
+    laneCountEl.textContent = String(currentSong.laneKeys.length);
+    keyHintEl.textContent =
+        `使用キー: ${currentSong.laneKeys.join(' / ')}`;
+
+    destinationEl.textContent =
+        `出力先: ${currentSong.chartDir}/${filenameEl.value.trim() || 'chart.json'}`;
 }
 
 function formatTime(seconds) {
@@ -202,19 +293,23 @@ function updateTimer() {
 
 function renderNotes() {
     count.textContent = notes.length;
+
     if (notes.length === 0) {
         notesEl.textContent = 'まだノーツはありません。';
         return;
     }
+
     notesEl.innerHTML = notes.map((note, index) =>
         `${String(index + 1).padStart(3, '0')} | ${note.time.toFixed(3)} | lane ${note.lane}`
     ).join('<br>');
+
     notesEl.scrollTop = notesEl.scrollHeight;
 }
 
 function flashLane(lane) {
-    const el = lanes[lane];
+    const el = lanesEl.querySelector(`.lane[data-lane="${lane}"]`);
     if (!el) return;
+
     el.classList.add('flash');
     setTimeout(() => el.classList.remove('flash'), 80);
 }
@@ -225,6 +320,8 @@ song.addEventListener('change', () => {
     renderNotes();
     setSong();
 });
+
+filenameEl.addEventListener('input', updateSongInfo);
 
 document.getElementById('play').addEventListener('click', async () => {
     try {
@@ -257,12 +354,19 @@ document.getElementById('clear').addEventListener('click', () => {
 });
 
 document.getElementById('export').addEventListener('click', () => {
+    if (!currentSong) return;
+
     const data = {
         bpm: Number(bpmEl.value) || 120,
         offset: Number(offsetEl.value) || 0,
         notes: [...notes].sort((a, b) => a.time - b.time)
     };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+
+    const blob = new Blob(
+        [JSON.stringify(data, null, 2)],
+        { type: 'application/json' }
+    );
+
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -272,18 +376,22 @@ document.getElementById('export').addEventListener('click', () => {
 });
 
 window.addEventListener('keydown', (e) => {
-    if (e.repeat) return;
-    const keyMap = { a: 0, d: 1, j: 2, l: 3 };
-    const lane = keyMap[e.key.toLowerCase()];
-    if (lane === undefined) return;
+    if (e.repeat || !currentSong) return;
+
+    const key = e.key.toLowerCase();
+    const lane = currentKeys.findIndex(value => value.toLowerCase() === key);
+
+    if (lane === -1) return;
 
     e.preventDefault();
+
     if (bgm.paused || bgm.ended) return;
 
     notes.push({
         time: Number(bgm.currentTime.toFixed(3)),
         lane
     });
+
     flashLane(lane);
     renderNotes();
 });
