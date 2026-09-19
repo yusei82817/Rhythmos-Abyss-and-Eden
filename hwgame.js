@@ -69,7 +69,7 @@ function resetGameState() {
 async function loadChart(src) {
     const audioName = decodeURIComponent(src.split('/').pop() || '');
     const chartName = audioName.replace(/\.[^.]+$/, '');
-    const chartPath = `chart/halloween/${encodeURIComponent(chartName)}.json`;
+    const chartPath = `chart/hwc/${encodeURIComponent(chartName)}.json`;
 
     try {
         const response = await fetch(chartPath);
