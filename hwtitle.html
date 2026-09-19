@@ -32,14 +32,35 @@ body{background:#090612;color:#fff;font-family:monospace;touch-action:manipulati
 #press{position:absolute;left:50%;top:69%;transform:translate(-50%,-50%);z-index:12;border:0;background:#1b1130;color:#ffe9a8;font:900 clamp(11px,2.5vw,17px) monospace;letter-spacing:2px;padding:8px 14px;box-shadow:4px 4px 0 #05030a;cursor:pointer;opacity:0;pointer-events:none}
 #press.show{opacity:1;pointer-events:auto;animation:blink .9s steps(2,end) infinite}
 #hud{position:absolute;left:8px;top:7px;z-index:11;color:#8579b7;font-size:8px;letter-spacing:1px}
-#bat{position:absolute;left:-28px;top:16%;z-index:8;font-size:18px;color:#05030a;text-shadow:6px 0 #05030a,12px 0 #05030a;animation:bat 8s linear infinite}
+#bat{position:absolute;left:-36px;top:16%;z-index:8;width:32px;height:16px;image-rendering:pixelated;transform-origin:center;animation:bat 8s linear infinite}
+#bat .pixel{position:absolute;width:4px;height:4px;background:#05030a}
+#bat .b1{left:12px;top:4px;width:8px;height:8px}
+#bat .b2{left:8px;top:0;width:4px;height:8px}
+#bat .b3{left:20px;top:0;width:4px;height:8px}
+#bat .b4{left:4px;top:4px;width:4px;height:8px}
+#bat .b5{left:24px;top:4px;width:4px;height:8px}
+#bat .b6{left:0;top:8px;width:4px;height:4px}
+#bat .b7{left:28px;top:8px;width:4px;height:4px}
+#bat .b8{left:12px;top:12px;width:4px;height:4px}
+#bat .b9{left:20px;top:12px;width:4px;height:4px}
+#bat .eye{position:absolute;left:14px;top:7px;width:2px;height:2px;background:#d86b46}
 #fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:100;transition:opacity .8s steps(6,end)}
 #fade.active{opacity:1}
 #vignette{position:absolute;inset:0;z-index:49;box-shadow:inset 0 0 45px #000;pointer-events:none}
 @keyframes blink{50%{opacity:.35}}
 @keyframes cloud{from{transform:translateX(0)}to{transform:translateX(110px)}}
 @keyframes cloud2{from{transform:translateX(0)}to{transform:translateX(-130px)}}
-@keyframes bat{0%{left:-30px;top:18%}50%{left:48%;top:10%}100%{left:105%;top:25%}}
+@keyframes bat{
+0%{left:-36px;top:18%;transform:scaleX(1) scaleY(1)}
+12%{transform:scaleX(.88) scaleY(1.18)}
+25%{transform:scaleX(1) scaleY(1)}
+37%{transform:scaleX(.88) scaleY(1.18)}
+50%{left:48%;top:10%;transform:scaleX(1) scaleY(1)}
+62%{transform:scaleX(.88) scaleY(1.18)}
+75%{transform:scaleX(1) scaleY(1)}
+87%{transform:scaleX(.88) scaleY(1.18)}
+100%{left:105%;top:25%;transform:scaleX(1) scaleY(1)}
+}
 @media(max-width:600px){#title h1{letter-spacing:1px}}
 </style>
 </head>
@@ -50,11 +71,16 @@ body{background:#090612;color:#fff;font-family:monospace;touch-action:manipulati
   <div id="stars"></div>
   <div id="moon"><i class="crater c1"></i><i class="crater c2"></i><i class="crater c3"></i></div>
   <div id="cloud1"></div><div id="cloud2"></div>
-  <div id="bat">\/\\</div>
+  <div id="bat">
+    <i class="pixel b1"></i><i class="pixel b2"></i><i class="pixel b3"></i>
+    <i class="pixel b4"></i><i class="pixel b5"></i><i class="pixel b6"></i>
+    <i class="pixel b7"></i><i class="pixel b8"></i><i class="pixel b9"></i>
+    <i class="eye"></i>
+  </div>
   <div id="mountains"></div>
   <div id="ground"></div>
   <div class="pumpkin p1"></div><div class="pumpkin p2"></div><div class="pumpkin p3"></div><div class="pumpkin p4"></div>
-  <div id="hud">RHythmosAE // HALLOWEEN 199X</div>
+  <div id="hud">RHYTHMOSAE // HALLOWEEN 199X</div>
   <div id="title"><h1>HALLOWEEN NIGHT</h1><p>RHYTHMOSAE SPECIAL EDITION</p></div>
   <button id="press" aria-label="Touch The Start">TOUCH THE START</button>
   <div id="vignette"></div>
@@ -63,7 +89,6 @@ body{background:#090612;color:#fff;font-family:monospace;touch-action:manipulati
 <script>
 const start=document.getElementById('press');
 const fade=document.getElementById('fade');
-const scene=document.getElementById('screen');
 const hwBgm=document.getElementById('hw-bgm');
 hwBgm.volume=0.5;
 function startHalloweenBgm(){hwBgm.play().catch(()=>{});}
