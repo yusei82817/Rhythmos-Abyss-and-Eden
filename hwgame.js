@@ -14,6 +14,9 @@ let combo = 0;
 let perfect = 0;
 let success = 0;
 let great = 0;
+let superCount = 0;
+let good = 0;
+let bene = 0;
 let miss = 0;
 let isPlaying = false;
 let activeNotes = [];
@@ -58,11 +61,16 @@ function resetGameState() {
     perfect = 0;
     success = 0;
     great = 0;
+    superCount = 0;
+    good = 0;
+    bene = 0;
     miss = 0;
     isPlaying = false;
     scoreEl.textContent = '000000';
     comboEl.textContent = '';
     judgeEl.textContent = '';
+    judgeEl.className = '';
+    judgeEl.dataset.judgment = '';
     timerEl.textContent = '00:00.00';
 }
 
@@ -176,6 +184,9 @@ function updateTimer() {
 function showJudgment(result) {
     judgeEl.textContent = result;
     judgeEl.dataset.judgment = result;
+    judgeEl.className = '';
+    void judgeEl.offsetWidth;
+    judgeEl.className = `judgment-${result.toLowerCase()}`;
     comboEl.textContent = combo || '';
     scoreEl.textContent = String(score).padStart(6, '0');
 }
@@ -211,6 +222,18 @@ window.addEventListener('keydown', event => {
         great++;
         combo++;
         score += 50;
+    } else if (result === 'SUPER') {
+        superCount++;
+        combo++;
+        score += 40;
+    } else if (result === 'GOOD') {
+        good++;
+        combo++;
+        score += 30;
+    } else if (result === 'BENE') {
+        bene++;
+        combo++;
+        score += 20;
     } else {
         miss++;
         combo = 0;
@@ -234,6 +257,9 @@ function finishGame() {
     localStorage.setItem('perfect', String(perfect));
     localStorage.setItem('success', String(success));
     localStorage.setItem('great', String(great));
+    localStorage.setItem('super', String(superCount));
+    localStorage.setItem('good', String(good));
+    localStorage.setItem('bene', String(bene));
     localStorage.setItem('miss', String(miss));
 
     location.href = 'hwresult.html';
