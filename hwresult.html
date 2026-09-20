@@ -15,10 +15,13 @@ h1{font-size:42px;letter-spacing:6px;color:#ff9d32}.score{font-size:42px;color:#
 <div>PERFECT: <span id="perfect">0</span></div>
 <div>SUCCESS: <span id="success">0</span></div>
 <div>GREAT: <span id="great">0</span></div>
+<div>SUPER: <span id="super">0</span></div>
+<div>GOOD: <span id="good">0</span></div>
+<div>BENE: <span id="bene">0</span></div>
 <div>MISS: <span id="miss">0</span></div>
 </div><button type="button" onclick="location.href='hwgame.html'">SELECT TRACK</button></div>
 <script>
-for(const id of ['score','perfect','success','great','miss']){
+for(const id of ['score','perfect','success','great','super','good','bene','miss']){
  const v=localStorage.getItem(id)||'0';
  document.getElementById(id).textContent=id==='score'?String(v).padStart(6,'0'):v;
 }
