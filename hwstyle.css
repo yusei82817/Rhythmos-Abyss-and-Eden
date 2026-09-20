@@ -33,3 +33,94 @@ body{overflow:hidden}
 #song-timer{position:absolute;top:58px;right:12px;z-index:6;font:16px monospace;color:#ffe4bd;background:rgba(0,0,0,.45);padding:4px 7px;border-radius:4px}
 #game-message{position:absolute;bottom:4px;left:0;right:0;text-align:center;z-index:7;font-size:11px;color:#d6b8ca}
 @media(max-width:600px){#top-button{top:10px;left:10px}.key-label{font-size:16px}}
+
+
+/* Halloween judgment animations */
+#judge-text[class^="judgment-"]{position:relative;display:inline-block;transform-origin:center;will-change:transform,opacity,filter,color,text-shadow}
+#judge-text.judgment-perfect{animation:judge-perfect .9s ease-out both;color:#fff}
+#judge-text.judgment-perfect::before{content:'';position:absolute;left:50%;top:50%;width:42px;height:10px;border-radius:999px;background:#fff;transform:translate(-50%,-50%) rotate(-12deg);box-shadow:-18px 0 0 -1px #fff,18px 0 0 -1px #fff,0 0 18px #fff;z-index:-1;animation:perfect-bone 0.9s ease-out both}
+#judge-text.judgment-perfect::after{content:'';position:absolute;inset:-35px;background:#fff;border-radius:50%;opacity:0;z-index:-2;animation:perfect-flash .9s ease-out both}
+
+#judge-text.judgment-success{animation:judge-success 1s ease-in-out both;color:#d8ffbd;text-shadow:0 0 14px #8bff78}
+#judge-text.judgment-great{animation:judge-great 1s ease-in-out both;color:#fff;text-shadow:0 0 14px #ff9d32}
+#judge-text.judgment-super{animation:judge-super 1.05s ease-in-out both;color:#fff5cf;text-shadow:0 0 18px #fff0a0}
+#judge-text.judgment-good{animation:judge-good 1.05s ease-in-out both;color:#ffb04a;text-shadow:0 0 16px #ff6a00}
+#judge-text.judgment-bene{animation:judge-bene 1.25s ease-in-out both;color:#ffd76a;text-shadow:0 0 18px #ffd76a}
+#judge-text.judgment-miss{animation:judge-miss .8s ease-out both;color:#ff2e45;text-shadow:0 0 18px #ff0026}
+
+@keyframes judge-perfect{
+  0%{opacity:0;transform:scale(.25);filter:brightness(3)}
+  22%{opacity:1;transform:scale(1.18);filter:brightness(2)}
+  55%{opacity:1;transform:scale(1);filter:brightness(1.5)}
+  100%{opacity:0;transform:scale(.82);filter:brightness(1)}
+}
+@keyframes perfect-bone{
+  0%,45%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(-12deg)}
+  58%{opacity:1;transform:translate(-50%,-50%) scale(1.1) rotate(-12deg)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.6) rotate(18deg)}
+}
+@keyframes perfect-flash{
+  0%,45%{opacity:0;transform:scale(.2)}
+  52%{opacity:.85;transform:scale(.8)}
+  100%{opacity:0;transform:scale(1.7)}
+}
+
+@keyframes judge-success{
+  0%{opacity:0;transform:scale(1);filter:none;color:#d8ffbd}
+  20%{opacity:1;transform:scale(1.08);filter:sepia(1) saturate(2) hue-rotate(70deg)}
+  50%{transform:scale(1.02) skewX(-3deg);filter:sepia(1) saturate(5) hue-rotate(45deg) blur(.4px)}
+  72%{opacity:.55;transform:scale(.95) skewX(6deg);filter:blur(3px) contrast(1.4)}
+  86%{opacity:.08;transform:scale(.82);filter:blur(7px)}
+  92%{opacity:1;transform:scale(1.04);filter:brightness(3) blur(0)}
+  100%{opacity:0;transform:scale(1.35);filter:brightness(5)}
+}
+
+@keyframes judge-great{
+  0%{opacity:0;transform:scale(1)}
+  18%{opacity:1;transform:scale(1.08)}
+  40%{opacity:1;transform:scale(1.03) skewX(-4deg);text-shadow:5px 0 #fff,-5px 0 #fff}
+  52%{opacity:.25;transform:scale(1.18) skewX(7deg);filter:blur(2px)}
+  64%{opacity:.9;transform:scale(.94) skewX(-2deg);filter:blur(0)}
+  78%{transform:scale(1.05);text-shadow:0 0 18px #ff9d32}
+  100%{opacity:0;transform:scale(.85)}
+}
+
+@keyframes judge-super{
+  0%{opacity:0;transform:scale(.65);filter:brightness(2)}
+  22%{opacity:1;transform:scale(1.18);filter:brightness(3)}
+  40%{transform:scale(1);filter:brightness(1.7)}
+  60%{color:#c8c8c8;filter:sepia(.2) saturate(.4)}
+  78%{color:#a86a3a;filter:sepia(.7) saturate(1.5)}
+  92%{opacity:.45;transform:scale(.94);filter:sepia(1) saturate(.4) blur(1px)}
+  100%{opacity:0;transform:scale(.82);filter:sepia(1) saturate(0) blur(4px)}
+}
+
+@keyframes judge-good{
+  0%{opacity:0;transform:scale(.92);filter:none}
+  18%{opacity:1;transform:scale(1.05);color:#ffb04a}
+  38%{color:#ff5a18;text-shadow:0 0 22px #ff3b00;filter:brightness(1.5)}
+  58%{color:#d45a20;filter:sepia(1) saturate(3)}
+  76%{color:#151515;text-shadow:0 0 8px #ff6a00;filter:brightness(.35) contrast(1.7)}
+  90%{opacity:.55;transform:translateY(3px) scale(.98);filter:brightness(.15) blur(1px)}
+  100%{opacity:0;transform:translateY(18px) scale(.7);filter:brightness(.1) blur(5px)}
+}
+
+@keyframes judge-bene{
+  0%{opacity:0;transform:scale(.8);color:#ffd76a;filter:brightness(1)}
+  20%{opacity:1;transform:scale(1.08);color:#ffd700;filter:brightness(2)}
+  42%{color:#e5e7eb;filter:brightness(1.4)}
+  62%{color:#b87333;filter:brightness(1.15)}
+  78%{color:#c98b45;filter:brightness(1.1)}
+  90%{opacity:.8;transform:scale(.92);color:#d8ff9b;text-shadow:0 0 12px #d8ff9b,0 0 28px #8cff66}
+  100%{opacity:0;transform:translate(22px,-20px) scale(.45);color:#d8ff9b;text-shadow:0 0 30px #d8ff9b;filter:blur(2px)}
+}
+
+@keyframes judge-miss{
+  0%{opacity:0;transform:scale(.85)}
+  18%{opacity:1;transform:scale(1.08);color:#ff2e45}
+  35%{transform:translateX(-7px) rotate(-2deg)}
+  45%{transform:translateX(7px) rotate(2deg);filter:brightness(1.5)}
+  55%{transform:translateX(-5px)}
+  68%{transform:translateX(4px) scale(.98);filter:brightness(.65)}
+  100%{opacity:0;transform:scale(.78);filter:brightness(.2) blur(3px)}
+}
