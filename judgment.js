@@ -39,7 +39,7 @@ export function judgeNote(note, currentTime) {
         return 'BENE';
     }
 
-    if (diff < JUDGMENT_WINDOWS.miss) {
+    if (diff <= JUDGMENT_WINDOWS.miss) {
         return 'MISS';
     }
 
