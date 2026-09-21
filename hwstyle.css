@@ -36,17 +36,18 @@ body{overflow:hidden}
 
 
 /* Halloween judgment animations */
-#judge-text[class^="judgment-"]{position:relative;display:inline-block;transform-origin:center;will-change:transform,opacity,filter,color,text-shadow}
-#judge-text.judgment-perfect{animation:judge-perfect .9s ease-out both;color:#fff}
-#judge-text.judgment-perfect::before{content:'';position:absolute;left:50%;top:50%;width:42px;height:10px;border-radius:999px;background:#fff;transform:translate(-50%,-50%) rotate(-12deg);box-shadow:-18px 0 0 -1px #fff,18px 0 0 -1px #fff,0 0 18px #fff;z-index:-1;animation:perfect-bone 0.9s ease-out both}
-#judge-text.judgment-perfect::after{content:'';position:absolute;inset:-35px;background:#fff;border-radius:50%;opacity:0;z-index:-2;animation:perfect-flash .9s ease-out both}
+#judge-text.judgment-clones{position:absolute;inset:0;width:100%;height:100%;z-index:8;pointer-events:none;overflow:hidden}
+.judgment-clone{position:absolute;display:inline-block;transform-origin:center;will-change:transform,opacity,filter,color,text-shadow;white-space:nowrap;pointer-events:none}
+.judgment-clone.judgment-perfect{animation:judge-perfect .9s ease-out both;color:#fff}
+.judgment-clone.judgment-perfect::before{content:'';position:absolute;left:50%;top:50%;width:42px;height:10px;border-radius:999px;background:#fff;transform:translate(-50%,-50%) rotate(var(--clone-rotate, -12deg));box-shadow:-18px 0 0 -1px #fff,18px 0 0 -1px #fff,0 0 18px #fff;z-index:-1;animation:perfect-bone 0.9s ease-out both}
+.judgment-clone.judgment-perfect::after{content:'';position:absolute;inset:-35px;background:#fff;border-radius:50%;opacity:0;z-index:-2;animation:perfect-flash .9s ease-out both}
 
-#judge-text.judgment-success{animation:judge-success 1s ease-in-out both;color:#d8ffbd;text-shadow:0 0 14px #8bff78}
-#judge-text.judgment-great{animation:judge-great 1s ease-in-out both;color:#fff;text-shadow:0 0 14px #ff9d32}
-#judge-text.judgment-super{animation:judge-super 1.05s ease-in-out both;color:#fff5cf;text-shadow:0 0 18px #fff0a0}
-#judge-text.judgment-good{animation:judge-good 1.05s ease-in-out both;color:#ffb04a;text-shadow:0 0 16px #ff6a00}
-#judge-text.judgment-bene{animation:judge-bene 1.25s ease-in-out both;color:#ffd76a;text-shadow:0 0 18px #ffd76a}
-#judge-text.judgment-miss{animation:judge-miss .8s ease-out both;color:#ff2e45;text-shadow:0 0 18px #ff0026}
+.judgment-clone.judgment-success{animation:judge-success 1s ease-in-out both;color:#d8ffbd;text-shadow:0 0 14px #8bff78}
+.judgment-clone.judgment-great{animation:judge-great 1s ease-in-out both;color:#fff;text-shadow:0 0 14px #ff9d32}
+.judgment-clone.judgment-super{animation:judge-super 1.05s ease-in-out both;color:#fff5cf;text-shadow:0 0 18px #fff0a0}
+.judgment-clone.judgment-good{animation:judge-good 1.05s ease-in-out both;color:#ffb04a;text-shadow:0 0 16px #ff6a00}
+.judgment-clone.judgment-bene{animation:judge-bene 1.25s ease-in-out both;color:#ffd76a;text-shadow:0 0 18px #ffd76a}
+.judgment-clone.judgment-miss{animation:judge-miss .8s ease-out both;color:#ff2e45;text-shadow:0 0 18px #ff0026}
 
 @keyframes judge-perfect{
   0%{opacity:0;transform:scale(.25);filter:brightness(3)}
