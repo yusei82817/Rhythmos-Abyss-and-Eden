@@ -188,13 +188,13 @@ function showJudgment(result) {
     clone.className = `judgment-clone judgment-${result.toLowerCase()}`;
     clone.textContent = result;
 
-    // 判定文字をプレイ画面内のランダムな位置へ散開させる。
+    // 判定文字を画面全域へ散開させ、端からはみ出す個体も許可する。
     // 連続判定でも既存クローンを消さず、各演出を最後まで見せる。
-    const x = 12 + Math.random() * 76;
-    const y = 18 + Math.random() * 62;
+    const x = -10 + Math.random() * 120;
+    const y = -10 + Math.random() * 120;
     clone.style.left = `${x}%`;
     clone.style.top = `${y}%`;
-    clone.style.setProperty('--clone-rotate', `${(Math.random() * 24 - 12).toFixed(1)}deg`);
+    clone.style.setProperty('--clone-rotate', `${(Math.random() * 60 - 30).toFixed(1)}deg`);
 
     judgeEl.appendChild(clone);
 
