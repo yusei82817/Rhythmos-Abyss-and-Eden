@@ -69,7 +69,7 @@ function resetGameState() {
     scoreEl.textContent = '000000';
     comboEl.textContent = '';
     judgeEl.textContent = '';
-    judgeEl.className = '';
+    judgeEl.className = 'judgment-clones';
     judgeEl.dataset.judgment = '';
     timerEl.textContent = '00:00.00';
 }
@@ -182,11 +182,29 @@ function updateTimer() {
 }
 
 function showJudgment(result) {
-    judgeEl.textContent = result;
     judgeEl.dataset.judgment = result;
-    judgeEl.className = '';
-    void judgeEl.offsetWidth;
-    judgeEl.className = `judgment-${result.toLowerCase()}`;
+
+    const clone = document.createElement('span');
+    clone.className = `judgment-clone judgment-${result.toLowerCase()}`;
+    clone.textContent = result;
+
+    // 判定文字をプレイ画面内のランダムな位置へ散開させる。
+    // 連続判定でも既存クローンを消さず、各演出を最後まで見せる。
+    const x = 12 + Math.random() * 76;
+    const y = 18 + Math.random() * 62;
+    clone.style.left = `${x}%`;
+    clone.style.top = `${y}%`;
+    clone.style.setProperty('--clone-rotate', `${(Math.random() * 24 - 12).toFixed(1)}deg`);
+
+    judgeEl.appendChild(clone);
+
+    const maxClones = 24;
+    while (judgeEl.children.length > maxClones) {
+        judgeEl.firstElementChild?.remove();
+    }
+
+    clone.addEventListener('animationend', () => clone.remove(), { once: true });
+
     comboEl.textContent = combo || '';
     scoreEl.textContent = String(score).padStart(6, '0');
 }
