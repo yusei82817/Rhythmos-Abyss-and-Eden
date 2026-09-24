@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>4D Tesseract Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: #fff;
+            font-family: sans-serif;
+        }
+        canvas {
+            border: 1px solid #333;
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="tesseractCanvas" width="500" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById('tesseractCanvas');
+const ctx = canvas.getContext('2d');
+const WIDTH = canvas.width;
+const HEIGHT = canvas.height;
+
+// 超立方体の16頂点 (X, Y, Z, W)
+const vertices = [];
+for (let x of [-0.5, 0.5]) {
+    for (let y of [-0.5, 0.5]) {
+        for (let z of [-0.5, 0.5]) {
+            for (let w of [-0.5, 0.5]) {
+                vertices.push({x, y, z, w});
+            }
+        }
+    }
+}
+
+// 2つの頂点が「辺」で結ばれているか判定（ハミング距離が1）
+function isEdge(i, j) {
+    let diff = i ^ j;
+    return (diff > 0 && (diff & (diff - 1)) === 0);
+}
+
+// 4次元座標を2次元画面座標に変換する
+function project4Dto2D(p, angle) {
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+
+    // 1. XW回転
+    let x1 = p.x * cosA - p.w * sinA;
+    let w1 = p.x * sinA + p.w * cosA;
+
+    // 2. YZ回転
+    let y1 = p.y * cosA - p.z * sinA;
+    let z1 = p.y * sinA + p.z * cosA;
+
+    // 3. 4D -> 3D 射影 (W軸の落とし込み)
+    const distance4D = 2.0;
+    const factor4D = 1.0 / (distance4D - w1);
+    let x3d = x1 * factor4D;
+    let y3d = y1 * factor4D;
+    let z3d = z1 * factor4D;
+
+    // 4. 3D -> 2D 射影 (Z軸の落とし込み)
+    const distance3D = 2.0;
+    const factor3D = 1.0 / (distance3D - z3d);
+
+    // 画面の中心（WIDTH/2, HEIGHT/2）を基準にスケーリング
+    return {
+        x: WIDTH / 2 + x3d * factor3D * WIDTH * 1.5,
+        y: HEIGHT / 2 + y3d * factor3D * HEIGHT * 1.5
+    };
+}
+
+let angle = 0;
+
+// アニメーションループ（1コマずつの描画処理）
+function draw() {
+    // 画面を黒でクリア
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+    // 全頂点を2D座標に変換
+    const projected = vertices.map(p => project4Dto2D(p, angle));
+
+    // 線（ワイヤーフレーム）のスタイル設定
+    ctx.strokeStyle = '#00ffff'; // シアン色
+    ctx.lineWidth = 2;
+
+    // 辺で繋がっている頂点どうしに線を引く
+    for (let i = 0; i < 16; i++) {
+        for (let j = i + 1; j < 16; j++) {
+            if (isEdge(i, j)) {
+                ctx.beginPath();
+                ctx.moveTo(projected[i].x, projected[i].y);
+                ctx.lineTo(projected[j].x, projected[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+
+    // 角度を少しずつ進める（速度の調整）
+    angle += 0.02;
+
+    // 次のフレームを要請（ブラウザに合わせた最適なFPSでループします）
+    requestAnimationFrame(draw);
+}
+
+// アニメーションの開始
+draw();
+</script>
+
+</body>
+</html>
