@@ -1,122 +1,46 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>4D Tesseract Viewer</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            color: #fff;
-            font-family: sans-serif;
-        }
-        canvas {
-            border: 1px solid #333;
-            background-color: #000;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>15D Hypercube WebGL Viewer</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}
+canvas{display:block;width:100%;height:100%}
+#info{position:fixed;left:10px;top:10px;color:#fff;font:13px monospace;line-height:1.5;background:rgba(0,0,0,.55);padding:8px 10px;pointer-events:none;user-select:none}
+</style>
 </head>
 <body>
-
-    <canvas id="tesseractCanvas" width="500" height="500"></canvas>
-
+<canvas id="canvas"></canvas>
+<div id="info">15D Hypercube<br>Vertices: 32768<br>Edges: 245760<br>WebGL</div>
 <script>
-const canvas = document.getElementById('tesseractCanvas');
-const ctx = canvas.getContext('2d');
-const WIDTH = canvas.width;
-const HEIGHT = canvas.height;
-
-// 超立方体の16頂点 (X, Y, Z, W)
-const vertices = [];
-for (let x of [-0.5, 0.5]) {
-    for (let y of [-0.5, 0.5]) {
-        for (let z of [-0.5, 0.5]) {
-            for (let w of [-0.5, 0.5]) {
-                vertices.push({x, y, z, w});
-            }
-        }
-    }
-}
-
-// 2つの頂点が「辺」で結ばれているか判定（ハミング距離が1）
-function isEdge(i, j) {
-    let diff = i ^ j;
-    return (diff > 0 && (diff & (diff - 1)) === 0);
-}
-
-// 4次元座標を2次元画面座標に変換する
-function project4Dto2D(p, angle) {
-    const cosA = Math.cos(angle);
-    const sinA = Math.sin(angle);
-
-    // 1. XW回転
-    let x1 = p.x * cosA - p.w * sinA;
-    let w1 = p.x * sinA + p.w * cosA;
-
-    // 2. YZ回転
-    let y1 = p.y * cosA - p.z * sinA;
-    let z1 = p.y * sinA + p.z * cosA;
-
-    // 3. 4D -> 3D 射影 (W軸の落とし込み)
-    const distance4D = 2.0;
-    const factor4D = 1.0 / (distance4D - w1);
-    let x3d = x1 * factor4D;
-    let y3d = y1 * factor4D;
-    let z3d = z1 * factor4D;
-
-    // 4. 3D -> 2D 射影 (Z軸の落とし込み)
-    const distance3D = 2.0;
-    const factor3D = 1.0 / (distance3D - z3d);
-
-    // 画面の中心（WIDTH/2, HEIGHT/2）を基準にスケーリング
-    return {
-        x: WIDTH / 2 + x3d * factor3D * WIDTH * 1.5,
-        y: HEIGHT / 2 + y3d * factor3D * HEIGHT * 1.5
-    };
-}
-
-let angle = 0;
-
-// アニメーションループ（1コマずつの描画処理）
-function draw() {
-    // 画面を黒でクリア
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, WIDTH, HEIGHT);
-
-    // 全頂点を2D座標に変換
-    const projected = vertices.map(p => project4Dto2D(p, angle));
-
-    // 線（ワイヤーフレーム）のスタイル設定
-    ctx.strokeStyle = '#00ffff'; // シアン色
-    ctx.lineWidth = 2;
-
-    // 辺で繋がっている頂点どうしに線を引く
-    for (let i = 0; i < 16; i++) {
-        for (let j = i + 1; j < 16; j++) {
-            if (isEdge(i, j)) {
-                ctx.beginPath();
-                ctx.moveTo(projected[i].x, projected[i].y);
-                ctx.lineTo(projected[j].x, projected[j].y);
-                ctx.stroke();
-            }
-        }
-    }
-
-    // 角度を少しずつ進める（速度の調整）
-    angle += 0.02;
-
-    // 次のフレームを要請（ブラウザに合わせた最適なFPSでループします）
-    requestAnimationFrame(draw);
-}
-
-// アニメーションの開始
-draw();
+'use strict';
+const canvas=document.getElementById('canvas'),info=document.getElementById('info');
+const gl=canvas.getContext('webgl',{antialias:false,alpha:false});
+if(!gl){info.textContent='WebGL is not supported.';throw Error('WebGL is not supported')}
+const DIM=15,VCOUNT=1<<DIM,ECOUNT=DIM*(1<<(DIM-1)),ICOUNT=ECOUNT*2;
+const positions=new Float32Array(VCOUNT*DIM);
+for(let i=0;i<VCOUNT;i++){let b=i*DIM;for(let d=0;d<DIM;d++)positions[b+d]=(i&(1<<d))?.5:-.5}
+const indices=new Uint32Array(ICOUNT);let ei=0;
+for(let i=0;i<VCOUNT;i++)for(let d=0;d<DIM;d++){let j=i^(1<<d);if(i<j){indices[ei++]=i;indices[ei++]=j}}
+if(!gl.getExtension('OES_element_index_uint')){info.textContent='OES_element_index_uint is required';throw Error('OES_element_index_uint is required')}
+const projected=new Float32Array(VCOUNT*3),work=new Float32Array(DIM);
+const rotations=[[0,1,.30],[0,2,.22],[0,3,.18],[0,4,.15],[1,2,.24],[1,5,.17],[2,3,.20],[2,6,.14],[3,7,.16],[4,8,.13],[5,9,.15],[6,10,.12],[7,11,.11],[8,12,.10],[9,13,.09],[10,14,.08]];
+const trig=rotations.map(()=>({c:1,s:0}));
+function resize(){let dpr=Math.min(devicePixelRatio||1,1.5),w=Math.max(1,Math.floor(innerWidth*dpr)),h=Math.max(1,Math.floor(innerHeight*dpr));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h)}}
+addEventListener('resize',resize);resize();
+const vs=`attribute vec3 aPosition;uniform vec2 uResolution;void main(){vec2 p=aPosition.xy;p.x/=uResolution.x/uResolution.y;gl_Position=vec4(p,aPosition.z,1.0);}`;
+const fs=`precision mediump float;void main(){gl_FragColor=vec4(0.,1.,1.,1.);}`;
+function shader(type,src){let s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s}
+let program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vs));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
+let positionBuffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer);gl.bufferData(gl.ARRAY_BUFFER,projected.byteLength,gl.DYNAMIC_DRAW);
+let indexBuffer=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,indexBuffer);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,indices,gl.STATIC_DRAW);
+let aPosition=gl.getAttribLocation(program,'aPosition'),uResolution=gl.getUniformLocation(program,'uResolution');gl.enableVertexAttribArray(aPosition);gl.vertexAttribPointer(aPosition,3,gl.FLOAT,false,0,0);
+function project(t){for(let r=0;r<rotations.length;r++){let[a,b,v]=rotations[r],ang=t*v;trig[r].c=Math.cos(ang);trig[r].s=Math.sin(ang)}let dist=2.8,scale=Math.min(canvas.width,canvas.height)*.95;
+for(let i=0;i<VCOUNT;i++){let src=i*DIM;for(let d=0;d<DIM;d++)work[d]=positions[src+d];for(let r=0;r<rotations.length;r++){let[a,b]=rotations[r],c=trig[r].c,s=trig[r].s,x=work[a],y=work[b];work[a]=x*c-y*s;work[b]=x*s+y*c}for(let d=DIM-1;d>=3;d--){let f=1/(dist-work[d]);for(let k=0;k<d;k++)work[k]*=f}let f3=1/(3-work[2]),o=i*3;projected[o]=work[0]*f3*scale/canvas.width*2;projected[o+1]=work[1]*f3*scale/canvas.height*2;projected[o+2]=Math.max(-1,Math.min(1,work[2]*.15))}}
+let last=performance.now(),lastFps=last,frames=0,time=0;
+function draw(now){let dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;resize();project(time);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(program);gl.uniform2f(uResolution,canvas.width,canvas.height);gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer);gl.bufferSubData(gl.ARRAY_BUFFER,0,projected);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,indexBuffer);gl.drawElements(gl.LINES,ICOUNT,gl.UNSIGNED_INT,0);frames++;if(now-lastFps>=500){let fps=Math.round(frames*1000/(now-lastFps));frames=0;lastFps=now;info.innerHTML=`15D Hypercube<br>Vertices: ${VCOUNT.toLocaleString()}<br>Edges: ${ECOUNT.toLocaleString()}<br>WebGL<br>FPS: ${fps}`}requestAnimationFrame(draw)}
+requestAnimationFrame(draw);
 </script>
-
 </body>
 </html>
