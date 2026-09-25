@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rhythmos - Heaven's Door</title>
+<style>
+:root{--ui:#fff;--muted:rgba(255,255,255,.72)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02030b;color:var(--ui);font-family:Arial,Helvetica,sans-serif}
+body{touch-action:manipulation}
+#scene{position:relative;width:100%;height:100%;overflow:hidden;background:#02030b}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#skip{position:absolute;z-index:50;top:max(14px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));border:1px solid rgba(255,255,255,.55);background:rgba(0,0,0,.3);color:#fff;padding:10px 16px;min-width:76px;min-height:44px;border-radius:8px;font-size:14px;letter-spacing:.12em;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+#skip:hover{background:rgba(255,255,255,.12)}
+#hint{position:absolute;z-index:45;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translateX(-50%);font-size:14px;letter-spacing:.18em;color:rgba(255,255,255,.8);opacity:0;pointer-events:none;transition:opacity .45s ease;text-align:center;white-space:nowrap}
+#hint.show{opacity:1}
+#logo{position:absolute;z-index:35;left:50%;top:50%;transform:translate(-50%,-50%);width:min(78vw,760px);opacity:0;pointer-events:none;text-align:center;filter:drop-shadow(0 0 18px rgba(255,255,255,.34));}
+#logo .brand{font-weight:900;font-size:clamp(54px,10vw,112px);line-height:.88;letter-spacing:.01em;transform-origin:left center;white-space:nowrap}
+#logo .subtitle-wrap{position:relative;width:100%;margin-top:12px;}
+#logo .subtitle{font-weight:700;font-size:clamp(28px,5vw,58px);line-height:1;letter-spacing:.025em;white-space:nowrap}
+#arrow{position:absolute;left:0;right:0;top:calc(100% + 12px);height:18px;transform:translateX(-115%);opacity:0;}
+#arrow .shaft{position:absolute;left:0;right:12px;top:8px;height:2px;background:linear-gradient(90deg,rgba(255,255,255,.25),#fff 22%,#fff 82%,rgba(255,255,255,.7));box-shadow:0 0 7px rgba(255,255,255,.75)}
+#arrow .head{position:absolute;right:0;top:2px;width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:15px solid #fff;filter:drop-shadow(0 0 5px rgba(255,255,255,.9))}
+#arrow .feather{position:absolute;left:3px;top:1px;width:17px;height:14px;border-left:2px solid rgba(255,255,255,.85);border-top:2px solid rgba(255,255,255,.55);transform:skewX(-28deg) rotate(-18deg);opacity:.8}
+#logo.show{opacity:1;animation:logoIn 1.25s cubic-bezier(.2,.8,.2,1) forwards}
+#logo.arrow-go #arrow{opacity:1;animation:arrowFly .95s cubic-bezier(.18,.8,.16,1) forwards}
+@keyframes logoIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.92);filter:brightness(2.4) drop-shadow(0 0 28px rgba(255,255,255,.95))}55%{opacity:1;transform:translate(-50%,-50%) scale(1.03);filter:brightness(1.35) drop-shadow(0 0 26px rgba(255,255,255,.65))}100%{opacity:1;transform:translate(-50%,-50%) scale(1);filter:brightness(1) drop-shadow(0 0 18px rgba(255,255,255,.34))}}
+@keyframes arrowFly{0%{transform:translateX(-115%);opacity:0}12%{opacity:1}100%{transform:translateX(115%);opacity:0}}
+#doorLayer{position:absolute;z-index:30;inset:0;pointer-events:none}
+#doorGlow{position:absolute;left:50%;top:50%;width:min(62vw,650px);aspect-ratio:1/1.45;transform:translate(-50%,-50%) scale(.65);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95) 0,rgba(235,246,255,.55) 20%,rgba(180,220,255,.18) 48%,transparent 72%);filter:blur(8px);opacity:0}
+#door{position:absolute;left:50%;top:50%;width:min(42vw,460px);height:min(58vw,620px);max-height:70vh;transform:translate(-50%,-50%) scale(.7);opacity:0;pointer-events:auto;cursor:pointer}
+#door .frame{position:absolute;inset:0;border:16px solid #5b351f;border-radius:12px 12px 3px 3px;background:linear-gradient(90deg,#2d160d,#7a4b2b 18%,#3c2114 48%,#80522d 76%,#2b150b);box-shadow:0 0 0 4px #bd8b4d,0 0 25px rgba(255,190,90,.25),inset 0 0 30px rgba(0,0,0,.55)}
+#door .arch{position:absolute;left:6%;right:6%;top:-5%;height:25%;border:12px solid #6b3e22;border-bottom:0;border-radius:50% 50% 0 0;background:linear-gradient(90deg,#3a1e10,#9a6030,#3b1d0f);box-shadow:0 0 0 3px #d2a15a}
+#door .left,#door .right{position:absolute;top:13%;bottom:2%;width:48%;background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 8px,rgba(0,0,0,.08) 8px 18px),linear-gradient(90deg,#4b2816,#8a542d 42%,#3a1c0d);border:4px solid #c18a4d;box-shadow:inset 0 0 22px rgba(0,0,0,.48)}
+#door .left{left:2%;transform-origin:right center;border-radius:4px 0 0 4px}
+#door .right{right:2%;transform-origin:left center;border-radius:0 4px 4px 0}
+#door .panel{position:absolute;inset:12%;border:2px solid rgba(228,182,107,.65);box-shadow:inset 0 0 12px rgba(0,0,0,.35)}
+#door .knob{position:absolute;top:48%;width:18px;height:18px;border-radius:50%;background:#e2bd70;box-shadow:0 0 8px rgba(255,224,145,.7)}
+#door .left .knob{right:7px}.right .knob{left:7px}
+#door .crack{position:absolute;left:50%;top:13%;bottom:2%;width:3px;transform:translateX(-50%);background:rgba(255,255,255,.45);box-shadow:0 0 12px rgba(255,255,255,.45);opacity:.55}
+#door.opening .left{animation:doorLeft 1.1s cubic-bezier(.18,.8,.2,1) forwards}
+#door.opening .right{animation:doorRight 1.1s cubic-bezier(.18,.8,.2,1) forwards}
+#door.opening .crack{animation:crackFade .45s ease forwards}
+#door.visible{animation:doorIn 1.1s cubic-bezier(.2,.8,.2,1) forwards}
+#doorGlow.visible{animation:glowIn 1.3s ease forwards}
+@keyframes doorIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}70%{opacity:1;transform:translate(-50%,-50%) scale(1.03)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes glowIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}100%{opacity:.75;transform:translate(-50%,-50%) scale(1.05)}}
+@keyframes doorLeft{to{transform:rotateY(-82deg) translateX(-4%)}}
+@keyframes doorRight{to{transform:rotateY(82deg) translateX(4%)}}
+@keyframes crackFade{to{opacity:0}}
+#flash{position:absolute;z-index:60;inset:0;background:#000;opacity:0;pointer-events:none}
+#flash.black{animation:blackFlash .5s ease forwards}
+@keyframes blackFlash{0%{opacity:0}30%{opacity:1}58%{opacity:1}100%{opacity:0}}
+#doorPrompt{position:absolute;z-index:40;left:50%;top:calc(50% + min(33vw,350px));transform:translateX(-50%);color:rgba(255,255,255,.78);font-size:13px;letter-spacing:.16em;opacity:0;pointer-events:none;text-align:center}
+#doorPrompt.show{opacity:1;transition:opacity .5s ease}
+@media (max-width:600px){#skip{font-size:13px;padding:9px 13px}.doorPrompt{font-size:12px}#hint{font-size:12px}}
+@media (prefers-reduced-motion:reduce){#logo.show,#logo.arrow-go #arrow,#door.visible,#doorGlow.visible,#flash.black{animation-duration:.001ms;animation-iteration-count:1}}
+</style>
+</head>
+<body>
+<div id="scene">
+  <canvas id="fx" aria-label="Heaven's Door OP animation"></canvas>
+  <button id="skip" type="button">SKIP</button>
+  <div id="doorLayer">
+    <div id="doorGlow"></div>
+    <div id="door" aria-label="Heaven's Door">
+      <div class="frame"></div>
+      <div class="arch"></div>
+      <div class="left"><div class="panel"></div><div class="knob"></div></div>
+      <div class="right"><div class="panel"></div><div class="knob"></div></div>
+      <div class="crack"></div>
+    </div>
+  </div>
+  <div id="doorPrompt">DOUBLE TAP THE DOOR</div>
+  <div id="logo" aria-label="Rhythmos Heaven's Door">
+    <div class="brand">Rhythmos</div>
+    <div class="subtitle-wrap"><div class="subtitle">Heaven's Door</div><div id="arrow"><span class="feather"></span><span class="shaft"></span><span class="head"></span></div></div>
+  </div>
+  <div id="hint">TAP TO CONTINUE</div>
+  <div id="flash"></div>
+</div>
+<script>
+(() => {
+  const canvas = document.getElementById('fx');
+  const ctx = canvas.getContext('2d');
+  const skip = document.getElementById('skip');
+  const door = document.getElementById('door');
+  const doorGlow = document.getElementById('doorGlow');
+  const doorPrompt = document.getElementById('doorPrompt');
+  const logo = document.getElementById('logo');
+  const hint = document.getElementById('hint');
+  const flash = document.getElementById('flash');
+  const brand = logo.querySelector('.brand');
+  const subtitle = logo.querySelector('.subtitle');
+
+  // Change only this value when the stage-select HTML is ready.
+  const NEXT_HTML = 'hdstage.html';
+
+  let w = 0, h = 0, dpr = 1;
+  let start = performance.now();
+  let last = start;
+  let stopped = false;
+  let doorVisible = false;
+  let doorOpened = false;
+  let titleVisible = false;
+  let arrowDone = false;
+  let lastDoorTap = 0;
+  let raf = 0;
+
+  const feathers = [];
+  const meteors = [];
+  const stars = [];
+  const seed = Math.random() * 1000;
+
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function easeInOut(t){ return t*t*(3-2*t); }
+  function easeInCubic(t){ return t*t*t; }
+  function rand(i){ return (Math.sin(i * 12.9898 + seed) * 43758.5453) % 1; }
+
+  function resize(){
+    const r = window.devicePixelRatio || 1;
+    dpr = Math.min(2, r);
+    w = Math.max(1, window.innerWidth);
+    h = Math.max(1, window.innerHeight);
+    canvas.width = Math.floor(w*dpr);
+    canvas.height = Math.floor(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.imageSmoothingEnabled = true;
+    if (!stars.length) seedStars();
+  }
+  window.addEventListener('resize', resize, {passive:true});
+  resize();
+
+  function seedStars(){
+    stars.length = 0;
+    for(let i=0;i<90;i++) stars.push({x:Math.random(),y:Math.random()*.72,r:.5+Math.random()*1.5,a:.25+Math.random()*.7,tw:Math.random()*6.28});
+  }
+  function spawnFeather(){
+    feathers.push({x:Math.random()*w,y:-40-Math.random()*80,vy:25+Math.random()*65,sway:Math.random()*6.28,phase:Math.random()*6.28,rot:Math.random()*6.28,vr:-1.3+Math.random()*2.6,s:.45+Math.random()*.75,alpha:.35+Math.random()*.55});
+  }
+  function spawnMeteor(i){
+    const x = Math.random()*w;
+    meteors.push({x,y:-80-Math.random()*180,vx:-35+Math.random()*70,vy:210+Math.random()*300,size:8+Math.random()*20,rot:Math.random()*6.28,vr:-2+Math.random()*4,phase:i*Math.PI*.37});
+  }
+  function drawSky(t){
+    let c1,c2;
+    if(t < 10){
+      const q=clamp(t/10,0,1);
+      c1=`rgb(${Math.round(28+28*q)},${Math.round(80+35*q)},${Math.round(170+45*q)})`;
+      c2=`rgb(${Math.round(8+25*q)},${Math.round(24+26*q)},${Math.round(74+40*q)})`;
+    }else{
+      const q=clamp((t-10)/10,0,1);
+      const stops=[
+        [28,70,170],[238,150,72],[160,63,78],[52,34,87],[4,8,28]
+      ];
+      const x=q*(stops.length-1), a=Math.floor(x), b=Math.min(stops.length-1,a+1), f=x-a;
+      const A=stops[a],B=stops[b];
+      c1=`rgb(${Math.round(lerp(A[0],B[0],f))},${Math.round(lerp(A[1],B[1],f))},${Math.round(lerp(A[2],B[2],f))})`;
+      c2=`rgb(${Math.round(lerp(A[0]*.22,B[0]*.22,f))},${Math.round(lerp(A[1]*.22,B[1]*.22,f))},${Math.round(lerp(A[2]*.42,B[2]*.42,f))})`;
+    }
+    const g=ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,c1); g.addColorStop(1,c2);
+    ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+  }
+  function drawStars(t){
+    if(t<19) return;
+    const q=clamp((t-19)/11,0,1);
+    for(const s of stars){
+      const a=s.a*q*(.65+.35*Math.sin(t*1.8+s.tw));
+      ctx.fillStyle=`rgba(255,255,255,${Math.max(0,a)})`;
+      ctx.beginPath(); ctx.arc(s.x*w,s.y*h,s.r,0,Math.PI*2); ctx.fill();
+    }
+  }
+  function drawSun(t){
+    if(t<6) return;
+    const q=clamp((t-6)/14,0,1);
+    const x=w*.5, y=lerp(h*.22,h*.84,easeInOut(clamp((t-10)/10,0,1)));
+    const intensity=t<10 ? clamp((t-6)/4,0,1) : 1-clamp((t-10)/10,0,1)*.88;
+    const r=Math.min(w,h)*.065;
+    const g=ctx.createRadialGradient(x,y,0,x,y,r*5);
+    g.addColorStop(0,`rgba(255,255,255,${.98*intensity})`);
+    g.addColorStop(.16,`rgba(255,248,205,${.9*intensity})`);
+    g.addColorStop(.45,`rgba(255,190,85,${.25*intensity})`);
+    g.addColorStop(1,'rgba(255,140,40,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r*5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=`rgba(255,252,225,${Math.max(0,intensity)})`; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  }
+  function drawMoon(t){
+    if(t<20) return;
+    const q=clamp((t-20)/10,0,1);
+    const x=w*.72, y=lerp(h*.88,h*.34,easeInOut(q));
+    const r=Math.min(w,h)*.055;
+    const g=ctx.createRadialGradient(x,y,0,x,y,r*3.5);
+    g.addColorStop(0,'rgba(245,250,255,.9)'); g.addColorStop(.3,'rgba(190,215,255,.35)'); g.addColorStop(1,'rgba(150,190,255,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r*3.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e9f2ff'; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(120,145,175,.22)';
+    for(let i=0;i<6;i++){ const cx=x+(Math.sin(i*2.2)*r*.45), cy=y+(Math.cos(i*1.7)*r*.42); ctx.beginPath(); ctx.arc(cx,cy,r*(.08+((i%3)*.035)),0,Math.PI*2); ctx.fill(); }
+  }
+  function drawRedMoon(t){
+    if(t<30 || t>35.2) return;
+    const q=clamp((t-30)/4,0,1), r=Math.min(w,h)*.11;
+    const startX=w+r*1.2, targetX=w*.72;
+    const x=lerp(startX,targetX,easeInCubic(q)), y=h*.34;
+    const g=ctx.createRadialGradient(x,y,0,x,y,r*3.2);
+    g.addColorStop(0,'rgba(255,80,70,.9)'); g.addColorStop(.35,'rgba(210,20,25,.35)'); g.addColorStop(1,'rgba(120,0,0,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r*3.2,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#8f1117'; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(35,0,5,.25)'; for(let i=0;i<9;i++){const cx=x+Math.sin(i*3.1)*r*.58,cy=y+Math.cos(i*2.1)*r*.58;ctx.beginPath();ctx.arc(cx,cy,r*(.08+(i%4)*.025),0,Math.PI*2);ctx.fill();}
+  }
+  function drawFeather(f,t,dt){
+    f.y += f.vy*dt; f.x += Math.sin(t*1.7+f.phase)*18*dt; f.rot += f.vr*dt;
+    ctx.save(); ctx.translate(f.x,f.y); ctx.rotate(f.rot); ctx.scale(f.s,f.s); ctx.globalAlpha=f.alpha;
+    const grd=ctx.createLinearGradient(0,-32,0,30); grd.addColorStop(0,'#fff'); grd.addColorStop(.65,'#f4f7ff'); grd.addColorStop(1,'#cbd4df');
+    ctx.fillStyle=grd; ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(0,28); ctx.quadraticCurveTo(-3,6,-18,-2); ctx.bezierCurveTo(-27,-8,-25,-24,-10,-31); ctx.bezierCurveTo(-4,-33,-1,-30,0,-25); ctx.bezierCurveTo(3,-30,8,-28,15,-22); ctx.bezierCurveTo(25,-13,23,-2,13,5); ctx.quadraticCurveTo(6,11,0,28); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle='rgba(130,145,165,.7)'; ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(0,28);ctx.lineTo(0,-28);ctx.stroke();
+    for(let i=0;i<6;i++){ctx.beginPath();ctx.moveTo(0,-22+i*7);ctx.lineTo(-12-i*1.4,-13+i*6);ctx.stroke();ctx.beginPath();ctx.moveTo(0,-18+i*7);ctx.lineTo(11+i*1.2,-10+i*6);ctx.stroke();}
+    ctx.restore();
+  }
+  function drawMeteors(t,dt){
+    if(t<35) return;
+    if(meteors.length<22 && t<41){ for(let i=meteors.length;i<22;i++) spawnMeteor(i); }
+    for(let i=meteors.length-1;i>=0;i--){const m=meteors[i];m.x+=m.vx*dt;m.y+=m.vy*dt;m.rot+=m.vr*dt; if(m.y>h+100){meteors.splice(i,1);continue;}
+      ctx.save();ctx.translate(m.x,m.y);ctx.rotate(m.rot);ctx.globalAlpha=.9;
+      const tail=ctx.createLinearGradient(0,m.size*.2,0,m.size*5);tail.addColorStop(0,'rgba(255,245,205,.9)');tail.addColorStop(.25,'rgba(255,130,50,.65)');tail.addColorStop(1,'rgba(255,30,0,0)');ctx.fillStyle=tail;ctx.beginPath();ctx.moveTo(-m.size*.3,0);ctx.lineTo(m.size*.3,0);ctx.lineTo(m.size*.15,m.size*5);ctx.lineTo(-m.size*.2,m.size*5);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#b7bcc5';ctx.beginPath();for(let k=0;k<8;k++){const a=k*Math.PI/4;const rr=m.size*(.7+((k*7)%3)*.15);const px=Math.cos(a)*rr,py=Math.sin(a)*rr;k?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.closePath();ctx.fill();ctx.restore();
+    }
+  }
+  function resizeLogoBrand(){
+    const a=subtitle.getBoundingClientRect().width; const b=brand.getBoundingClientRect().width;
+    if(b>0) brand.style.transform=`scaleX(${a/b})`;
+  }
+  function flashBlack(){ flash.classList.remove('black'); void flash.offsetWidth; flash.classList.add('black'); }
+  function showDoor(){
+    if(doorVisible) return; doorVisible=true; door.classList.add('visible'); doorGlow.classList.add('visible'); doorPrompt.classList.add('show');
+  }
+  function openDoor(){
+    if(!doorVisible || doorOpened) return;
+    doorOpened=true; doorPrompt.classList.remove('show'); door.classList.add('opening');
+    setTimeout(()=>{ titleVisible=true; logo.classList.add('show'); resizeLogoBrand(); setTimeout(()=>{logo.classList.add('arrow-go'); arrowDone=true; setTimeout(()=>hint.classList.add('show'),1050);},1300); },650);
+  }
+  function goNext(){ if(stopped) return; stopped=true; cancelAnimationFrame(raf); window.location.href=NEXT_HTML; }
+  skip.addEventListener('pointerup',e=>{e.stopPropagation();goNext();});
+  door.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(doorOpened) return;
+    const now=performance.now();
+    if(now-lastDoorTap<=380){ lastDoorTap=0; openDoor(); }
+    else lastDoorTap=now;
+  });
+  hint.addEventListener('pointerup',()=>{ if(titleVisible && arrowDone) goNext(); });
+  window.addEventListener('resize',()=>{if(titleVisible)resizeLogoBrand();},{passive:true});
+
+  function draw(t,dt){
+    drawSky(t); drawStars(t); drawSun(t); drawMoon(t); drawRedMoon(t);
+    if(t>=2 && t<5 && feathers.length<28) spawnFeather();
+    for(let i=feathers.length-1;i>=0;i--){drawFeather(feathers[i],t,dt);if(feathers[i].y>h+80)feathers.splice(i,1);}
+    drawMeteors(t,dt);
+    if(t>=34 && t<35.2){
+      const q=clamp((t-34)/1.2,0,1); const cx=w*.72,cy=h*.34; const r=Math.min(w,h)*(.06+q*.55);
+      ctx.strokeStyle=`rgba(255,245,230,${1-q})`;ctx.lineWidth=5*(1-q)+1;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+      ctx.fillStyle=`rgba(255,245,230,${Math.max(0,1-q*1.8)})`;ctx.beginPath();ctx.arc(cx,cy,Math.min(w,h)*.18*(1-q),0,Math.PI*2);ctx.fill();
+    }
+    if(t>=40 && t<41 && !doorVisible){ showDoor(); flashBlack(); }
+  }
+  function loop(now){
+    if(stopped) return;
+    const t=(now-start)/1000,dt=Math.min(.05,(now-last)/1000);last=now;
+    draw(t,dt);
+    if(t>41 && !doorVisible) showDoor();
+    raf=requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
