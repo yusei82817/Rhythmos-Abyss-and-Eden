@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; color: #fff; }
         #container { position: relative; width: 100vw; height: 100vh; overflow: hidden; transition: transform 0.5s ease; }
@@ -59,7 +58,6 @@
 <body>
 
 <div id="container">
-    <div id="youtube-player"></div>
     <video id="input_video"></video>
     <canvas id="output_canvas"></canvas>
     
@@ -77,22 +75,14 @@
 
     <div id="overlay">
         <h1 style="color:#0f0">RHYTHMOS DANCING</h1>
-        <p>右手・左手・右膝・左膝を使ってターゲットを狙え。</p>
+        <p>右手・左手・右膝・左膝を使ってターゲットを狙え。音楽なしのテスト版。</p>
         <button style="padding:15px 40px; background:#0f0; border:none; font-weight:bold;">INITIALIZE</button>
     </div>
 </div>
 
 <script>
-let player, score = 0, timeLeft = 120, gameActive = false, gameTimer = null;
+let score = 0, timeLeft = 120, gameActive = false, gameTimer = null;
 let target = { x: 0.62, y: 0.5, part: 'rightHand', lane: 'right' };
-const hitSound = new Audio('https://actions.google.com/sounds/v1/foley/wood_plank_flick.ogg');
-
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('youtube-player', {
-        videoId: 'wtrFQLivuCg',
-        playerVars: { 'playlist': 'tcnxvlhb2Zg,n5ntakgegH8,wtrFQLivuCg', 'loop': 1 }
-    });
-}
 
 // リセット機能のコア
 function resetGame() {
@@ -107,7 +97,6 @@ function resetGame() {
     document.getElementById('overlay').style.display = 'flex';
     document.getElementById('container').className = "";
     
-    if (player && player.pauseVideo) player.pauseVideo();
     console.log("System Reset Complete.");
 }
 
@@ -166,8 +155,6 @@ function onResults(results) {
 
             if (pt && pt.visibility > 0.5) {
                 if (Math.sqrt((pt.x-target.x)**2 + (pt.y-target.y)**2) < threshold) {
-                    hitSound.currentTime = 0;
-                    hitSound.play();
                     score++;
                     document.getElementById('scoreVal').innerText = score;
                     moveTarget();
@@ -223,7 +210,6 @@ document.getElementById('overlay').addEventListener('click', () => {
     if (!gameActive) {
         gameActive = true;
         document.getElementById('overlay').style.display = 'none';
-        if (player) player.playVideo();
         moveTarget();
         gameTimer = setInterval(() => {
             timeLeft--;
