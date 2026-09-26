@@ -54,7 +54,8 @@ function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
         const untilHit = note.time - elapsed;
         const progress = 1 - (untilHit + spawnLead) / spawnLead;
         const clamped = Math.max(0, Math.min(1, progress));
-        note.element.style.transform = `translateY(${clamped * 100}%)`;
+        const travel = Math.max(0, (note.element.parentElement?.clientHeight || 400) - 50);
+        note.element.style.transform = `translateY(${clamped * travel}px)`;
 
         if (elapsed > note.time + HD_MISS_WINDOW) {
           note.element.dataset.hit = '1';
