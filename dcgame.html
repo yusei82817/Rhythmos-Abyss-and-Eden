@@ -83,7 +83,8 @@
 <script>
 let score = 0, timeLeft = 120, gameActive = false, gameTimer = null;
 let target = { x: 0.62, y: 0.5, part: 'rightHand', lane: 'right' };
-
+console.log("let Працює добре");
+    
 // リセット機能のコア
 function resetGame() {
     clearInterval(gameTimer);
@@ -97,7 +98,7 @@ function resetGame() {
     document.getElementById('overlay').style.display = 'flex';
     document.getElementById('container').className = "";
     
-    console.log("System Reset Complete.");
+    console.log("System Reset Працює добре");
 }
 
 function moveTarget() {
@@ -107,6 +108,7 @@ function moveTarget() {
     target.part = lane === 'left'
         ? (Math.random() < 0.5 ? 'leftHand' : 'leftKnee')
         : (Math.random() < 0.5 ? 'rightHand' : 'rightKnee');
+    console.log("function moveTarget lane&part Працює добре");
 
     if (target.part === 'leftHand') {
         // 手はレーン中央付近
@@ -124,9 +126,10 @@ function moveTarget() {
         // 膝はレーン内で位置をランダム化
         target.x = 0.55 + Math.random() * 0.14;
         target.y = 0.45 + Math.random() * 0.40;
+
     }
 }
-
+console.log("function moveTarget Працює добре");
 function onResults(results) {
     const canvasElement = document.getElementById('output_canvas');
     const canvasCtx = canvasElement.getContext('2d');
@@ -195,7 +198,7 @@ function onResults(results) {
     }
     canvasCtx.restore();
 }
-
+console.log("canvas Працює добре")
 const pose = new Pose({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}` });
 pose.setOptions({ modelComplexity: 1, smoothLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
 pose.onResults(onResults);
@@ -217,12 +220,14 @@ document.getElementById('overlay').addEventListener('click', () => {
             if (timeLeft <= 0) resetGame(); // 時間切れでリセット（またはリザルトへ）
         }, 1000);
     }
+    console.log("Start Event Працює добре");
 });
 
 // リセットボタンイベント
 document.getElementById('resetBtn').addEventListener('click', (e) => {
     e.stopPropagation(); // オーバーレイのクリック連動を防止
     resetGame();
+    console.log("reset event Працює добре");
 });
 </script>
 </body>
