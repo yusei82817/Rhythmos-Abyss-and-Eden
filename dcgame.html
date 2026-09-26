@@ -115,13 +115,26 @@ function moveTarget() {
     const lane = Math.random() < 0.5 ? 'left' : 'right';
 
     target.lane = lane;
-    target.x = lane === 'left' ? 0.38 : 0.62;
-    target.y = 0.2 + Math.random() * 0.6;
+    target.part = lane === 'left'
+        ? (Math.random() < 0.5 ? 'leftHand' : 'leftKnee')
+        : (Math.random() < 0.5 ? 'rightHand' : 'rightKnee');
 
-    if (lane === 'left') {
-        target.part = Math.random() < 0.5 ? 'leftHand' : 'leftKnee';
+    if (target.part === 'leftHand') {
+        // 手はレーン中央付近
+        target.x = 0.38;
+        target.y = 0.25 + Math.random() * 0.35;
+    } else if (target.part === 'rightHand') {
+        // 手はレーン中央付近
+        target.x = 0.62;
+        target.y = 0.25 + Math.random() * 0.35;
+    } else if (target.part === 'leftKnee') {
+        // 膝はレーン内で位置をランダム化
+        target.x = 0.31 + Math.random() * 0.14;
+        target.y = 0.45 + Math.random() * 0.40;
     } else {
-        target.part = Math.random() < 0.5 ? 'rightHand' : 'rightKnee';
+        // 膝はレーン内で位置をランダム化
+        target.x = 0.55 + Math.random() * 0.14;
+        target.y = 0.45 + Math.random() * 0.40;
     }
 }
 
