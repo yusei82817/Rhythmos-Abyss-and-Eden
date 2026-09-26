@@ -6,7 +6,7 @@
   <title>Heaven's Door - Game</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <style>
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080b14;color:#fff;font-family:system-ui,sans-serif}body{display:grid;place-items:center;min-height:100vh;overflow:hidden}.game{width:min(100vw,1100px);padding:20px}.hud{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px;font-weight:700}.lane-area{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;height:min(62vh,560px);min-height:320px}.lane{position:relative;border:1px solid #ffffff2a;background:linear-gradient(#ffffff08,#ffffff02);overflow:hidden}.key{position:absolute;left:8px;right:8px;bottom:10px;padding:10px;text-align:center;border:1px solid #ffffff40;background:#ffffff0d;font-weight:800}.status{margin-top:14px;text-align:center;color:#bfc8dc;min-height:1.5em}.note{position:absolute;width:70%;height:16px;left:15%;top:0;border-radius:999px;background:#fff;box-shadow:0 0 18px #fff;transform:translateY(-20px)}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080b14;color:#fff;font-family:system-ui,sans-serif}body{display:grid;place-items:center;min-height:100vh;overflow:hidden}.game{width:min(100vw,1100px);padding:20px}.hud{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px;font-weight:700}.lane-area{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;height:min(62vh,560px);min-height:320px}.lane{position:relative;border:1px solid #ffffff2a;background:linear-gradient(#ffffff08,#ffffff02);overflow:hidden}.key{position:absolute;left:8px;right:8px;bottom:10px;padding:10px;text-align:center;border:1px solid #ffffff40;background:#ffffff0d;font-weight:800}.status{margin-top:14px;text-align:center;color:#bfc8dc;min-height:1.5em}.note{position:absolute;width:70%;height:16px;left:15%;top:0;border-radius:999px;background:#fff;box-shadow:0 0 18px #fff;transform:translateY(0);will-change:transform}
   </style>
 </head>
 <body>
@@ -15,6 +15,7 @@
   <section class="lane-area" id="lanes" aria-label="6-key play area"></section>
   <div class="status" id="status">A / S / D / J / K / L</div>
 </main>
+<script src="hdnote.js"></script>
 <script src="hdgame.js"></script>
 </body>
 </html>
