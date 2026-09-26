@@ -136,23 +136,36 @@ function onResults(results) {
                 }
             }
 
-            const colors = {
-                rightHand: '#f00',
-                leftHand: '#00f',
-                rightKnee: '#ff0',
-                leftKnee: '#0f0'
+            const targetStyle = {
+                rightHand: { symbol: '◀', color: '#00aaff' },
+                leftHand:  { symbol: '▶', color: '#00aaff' },
+                rightKnee: { symbol: '◀', color: '#ff3030' },
+                leftKnee:  { symbol: '▶', color: '#ff3030' }
             };
 
-            canvasCtx.beginPath();
-            canvasCtx.arc(
-                target.x * canvasElement.width,
-                target.y * canvasElement.height,
-                40,
-                0,
-                Math.PI * 2
-            );
-            canvasCtx.fillStyle = colors[target.part];
-            canvasCtx.fill();
+            const style = targetStyle[target.part];
+
+            // canvas自体を左右反転しているため、
+            // 画面上で指定どおりの向きに見えるよう記号だけ補正する。
+            const drawSymbol = {
+                rightHand: '▶',
+                leftHand: '◀',
+                rightKnee: '▶',
+                leftKnee: '◀'
+            }[target.part];
+
+            const targetX = target.x * canvasElement.width;
+            const targetY = target.y * canvasElement.height;
+
+            canvasCtx.font = 'bold 80px Arial';
+            canvasCtx.textAlign = 'center';
+            canvasCtx.textBaseline = 'middle';
+            canvasCtx.lineWidth = 6;
+            canvasCtx.strokeStyle = '#000';
+            canvasCtx.fillStyle = style.color;
+
+            canvasCtx.strokeText(drawSymbol, targetX, targetY);
+            canvasCtx.fillText(drawSymbol, targetX, targetY);
         }
     }
     canvasCtx.restore();
