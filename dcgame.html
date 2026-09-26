@@ -138,14 +138,16 @@ function onResults(results) {
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-    if (results.poseLandmarks) {
-        // スコア演出分岐
-        if (gameActive) {
-            if (score >= 70) container.className = "system-collapse";
-            else if (score >= 60) container.className = "glitch-hard";
-            else if (score >= 45) container.className = "glitch-mid";
-            else container.className = "";
+    if (gameActive) {
+        const container = document.getElementById('container');
 
+        if (score >= 70) container.className = "system-collapse";
+        else if (score >= 60) container.className = "glitch-hard";
+        else if (score >= 45) container.className = "glitch-mid";
+        else container.className = "";
+
+        // 姿勢ランドマークが取得できた場合だけ判定を行う。
+        if (results.poseLandmarks) {
             const landmarkMap = {
                 rightHand: 15,
                 leftHand: 16,
@@ -157,44 +159,41 @@ function onResults(results) {
             const pt = results.poseLandmarks[landmarkMap[target.part]];
 
             if (pt && pt.visibility > 0.5) {
-                if (Math.sqrt((pt.x-target.x)**2 + (pt.y-target.y)**2) < threshold) {
+                if (Math.sqrt((pt.x - target.x) ** 2 + (pt.y - target.y) ** 2) < threshold) {
                     score++;
                     document.getElementById('scoreVal').innerText = score;
                     moveTarget();
                 }
             }
-
-            const targetStyle = {
-                rightHand: { symbol: '◀', color: '#00aaff' },
-                leftHand:  { symbol: '▶', color: '#00aaff' },
-                rightKnee: { symbol: '◀', color: '#ff3030' },
-                leftKnee:  { symbol: '▶', color: '#ff3030' }
-            };
-
-            const style = targetStyle[target.part];
-
-            // canvas自体を左右反転しているため、
-            // 画面上で指定どおりの向きに見えるよう記号だけ補正する。
-            const drawSymbol = {
-                rightHand: '▶',
-                leftHand: '◀',
-                rightKnee: '▶',
-                leftKnee: '◀'
-            }[target.part];
-
-            const targetX = target.x * canvasElement.width;
-            const targetY = target.y * canvasElement.height;
-
-            canvasCtx.font = 'bold 80px Arial';
-            canvasCtx.textAlign = 'center';
-            canvasCtx.textBaseline = 'middle';
-            canvasCtx.lineWidth = 6;
-            canvasCtx.strokeStyle = '#000';
-            canvasCtx.fillStyle = style.color;
-
-            canvasCtx.strokeText(drawSymbol, targetX, targetY);
-            canvasCtx.fillText(drawSymbol, targetX, targetY);
         }
+
+        // ターゲット表示は姿勢検出の成否に関係なく行う。
+        const targetColor = {
+            rightHand: '#00aaff',
+            leftHand: '#00aaff',
+            rightKnee: '#ff3030',
+            leftKnee: '#ff3030'
+        }[target.part];
+
+        const drawSymbol = {
+            rightHand: '▶',
+            leftHand: '◀',
+            rightKnee: '▶',
+            leftKnee: '◀'
+        }[target.part];
+
+        const targetX = target.x * canvasElement.width;
+        const targetY = target.y * canvasElement.height;
+
+        canvasCtx.font = 'bold 80px Arial';
+        canvasCtx.textAlign = 'center';
+        canvasCtx.textBaseline = 'middle';
+        canvasCtx.lineWidth = 6;
+        canvasCtx.strokeStyle = '#000';
+        canvasCtx.fillStyle = targetColor;
+
+        canvasCtx.strokeText(drawSymbol, targetX, targetY);
+        canvasCtx.fillText(drawSymbol, targetX, targetY);
     }
     canvasCtx.restore();
 }
