@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Fitness - Reset Enabled</title>
+    <title>Rhythmos Dancing</title>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils"></script>
@@ -57,15 +57,15 @@
     </div>
 
     <div id="overlay">
-        <h1 style="color:#0f0">120s MISSION</h1>
-        <p>スコアに応じてシステムが変貌します。</p>
+        <h1 style="color:#0f0">RHYTHMOS DANCING</h1>
+        <p>右手・左手・右膝・左膝を使ってターゲットを狙え。</p>
         <button style="padding:15px 40px; background:#0f0; border:none; font-weight:bold;">INITIALIZE</button>
     </div>
 </div>
 
 <script>
 let player, score = 0, timeLeft = 120, gameActive = false, gameTimer = null;
-let target = { x: 0.5, y: 0.5, type: 'punch' };
+let target = { x: 0.5, y: 0.5, part: 'rightHand' };
 const hitSound = new Audio('https://actions.google.com/sounds/v1/foley/wood_plank_flick.ogg');
 
 function onYouTubeIframeAPIReady() {
@@ -94,11 +94,10 @@ function resetGame() {
 
 function moveTarget() {
     target.x = 0.2 + Math.random() * 0.6;
-    let pool = ['punch', 'kick', 'squat'];
-    if (score >= 45) pool.push('sidebend');
-    target.type = pool[Math.floor(Math.random() * pool.length)];
-    if (score >= 70) { target.y = 0.1 + Math.random() * 0.8; } 
-    else { target.y = 0.2 + Math.random() * 0.6; }
+    target.y = 0.2 + Math.random() * 0.6;
+
+    const parts = ['rightHand', 'leftHand', 'rightKnee', 'leftKnee'];
+    target.part = parts[Math.floor(Math.random() * parts.length)];
 }
 
 function onResults(results) {
@@ -117,27 +116,42 @@ function onResults(results) {
             else if (score >= 45) container.className = "glitch-mid";
             else container.className = "";
 
-            let pts = [], thres = 0.1;
-            if (target.type === 'punch') pts = [results.poseLandmarks[15], results.poseLandmarks[16]];
-            else if (target.type === 'kick') pts = [results.poseLandmarks[25], results.poseLandmarks[26]];
-            else if (target.type === 'squat') { pts = [results.poseLandmarks[23], results.poseLandmarks[24]]; thres = 0.15; }
-            else if (target.type === 'sidebend') { pts = [results.poseLandmarks[11], results.poseLandmarks[12]]; thres = 0.18; }
+            const landmarkMap = {
+                rightHand: 15,
+                leftHand: 16,
+                rightKnee: 25,
+                leftKnee: 26
+            };
 
-            pts.forEach(pt => {
-                if (pt && pt.visibility > 0.5) {
-                    if (Math.sqrt((pt.x-target.x)**2 + (pt.y-target.y)**2) < thres) {
-                        hitSound.currentTime = 0; hitSound.play();
-                        score++;
-                        document.getElementById('scoreVal').innerText = score;
-                        moveTarget();
-                    }
+            const threshold = 0.1;
+            const pt = results.poseLandmarks[landmarkMap[target.part]];
+
+            if (pt && pt.visibility > 0.5) {
+                if (Math.sqrt((pt.x-target.x)**2 + (pt.y-target.y)**2) < threshold) {
+                    hitSound.currentTime = 0;
+                    hitSound.play();
+                    score++;
+                    document.getElementById('scoreVal').innerText = score;
+                    moveTarget();
                 }
-            });
+            }
 
-            const colors = {punch:'#f00', kick:'#00f', squat:'#ff0', sidebend:'#0f0'};
+            const colors = {
+                rightHand: '#f00',
+                leftHand: '#00f',
+                rightKnee: '#ff0',
+                leftKnee: '#0f0'
+            };
+
             canvasCtx.beginPath();
-            canvasCtx.arc(target.x * canvasElement.width, target.y * canvasElement.height, 40, 0, Math.PI*2);
-            canvasCtx.fillStyle = colors[target.type];
+            canvasCtx.arc(
+                target.x * canvasElement.width,
+                target.y * canvasElement.height,
+                40,
+                0,
+                Math.PI * 2
+            );
+            canvasCtx.fillStyle = colors[target.part];
             canvasCtx.fill();
         }
     }
