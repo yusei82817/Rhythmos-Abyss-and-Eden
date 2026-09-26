@@ -13,6 +13,19 @@
         #container { position: relative; width: 100vw; height: 100vh; overflow: hidden; transition: transform 0.5s ease; }
         video { transform: scaleX(-1); position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; }
         canvas { transform: scaleX(-1); position: absolute; width: 100%; height: 100%; object-fit: cover; }
+
+        #lanes { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+        .lane {
+            position: absolute;
+            top: 8%;
+            bottom: 8%;
+            width: 22%;
+            border-left: 3px solid rgba(255,255,255,0.35);
+            border-right: 3px solid rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.035);
+        }
+        .left-lane { left: 27%; }
+        .right-lane { right: 27%; }
         
         #ui { position: absolute; top: 20px; left: 20px; z-index: 10; }
         .score-display { font-size: 48px; font-weight: bold; color: #0f0; text-shadow: 0 0 10px #0f0; }
@@ -56,6 +69,12 @@
         <div class="score-display">SCORE: <span id="scoreVal">0</span></div>
     </div>
 
+
+    <div id="lanes">
+        <div class="lane left-lane"></div>
+        <div class="lane right-lane"></div>
+    </div>
+
     <div id="overlay">
         <h1 style="color:#0f0">RHYTHMOS DANCING</h1>
         <p>右手・左手・右膝・左膝を使ってターゲットを狙え。</p>
@@ -65,7 +84,7 @@
 
 <script>
 let player, score = 0, timeLeft = 120, gameActive = false, gameTimer = null;
-let target = { x: 0.5, y: 0.5, part: 'rightHand' };
+let target = { x: 0.62, y: 0.5, part: 'rightHand', lane: 'right' };
 const hitSound = new Audio('https://actions.google.com/sounds/v1/foley/wood_plank_flick.ogg');
 
 function onYouTubeIframeAPIReady() {
@@ -93,11 +112,17 @@ function resetGame() {
 }
 
 function moveTarget() {
-    target.x = 0.2 + Math.random() * 0.6;
+    const lane = Math.random() < 0.5 ? 'left' : 'right';
+
+    target.lane = lane;
+    target.x = lane === 'left' ? 0.38 : 0.62;
     target.y = 0.2 + Math.random() * 0.6;
 
-    const parts = ['rightHand', 'leftHand', 'rightKnee', 'leftKnee'];
-    target.part = parts[Math.floor(Math.random() * parts.length)];
+    if (lane === 'left') {
+        target.part = Math.random() < 0.5 ? 'leftHand' : 'leftKnee';
+    } else {
+        target.part = Math.random() < 0.5 ? 'rightHand' : 'rightKnee';
+    }
 }
 
 function onResults(results) {
