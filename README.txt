@@ -24,6 +24,7 @@ A/S/D/F/J/K/L/;キーでノーツを叩く、
 【制作】
 nio_games
 Rhythmos_Studio
+Noa_Moa More Games!
 
 【注意】
 音源ファイルやゲームデータの無断転載・再配布は禁止です。
@@ -35,6 +36,7 @@ BGMer
 youtube 伊昇奏多のNNGtimes(旧：夜空ノエルのRWNtimes)
 H/MIX GALLERY
 ニコニ・コモンズ
+創作堂さくら紅葉
 
 【制作協力者】
 匿名Dio
