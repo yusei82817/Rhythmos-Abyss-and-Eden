@@ -6,34 +6,31 @@
 </head>
 <body>
 
-    
-    <!-- 1. CDNからPyodideを読み込む -->
-    <script src="https://jsdelivr.net"></script>
-    <h1>🐍 GitHub Pages × Pyodide テスト</h1>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+
+    <h1>GitHub Pages × Pyodide テスト</h1>
     <p>ブラウザのコンソール（F12キー）を開いて確認してください。</p>
 
-    <script type="text/javascript">
+    <script>
         async function main() {
-            // 2. Pyodideの初期化（ブラウザ内にPython環境を作る）
-            let pyodide = await loadPyodide();
+            const pyodide = await loadPyodide();
+
             console.log("Python環境の準備が完了しました！");
 
-            // 3. JavaScriptの中でPythonのコードを実行させる
-            let result = await pyodide.runPythonAsync(`
+            const result = await pyodide.runPythonAsync(`
                 import sys
                 print("これはPythonから出力されています！")
-                
-                # Pythonで計算
+
                 x = 10
                 y = 20
                 x * y
             `);
 
-            // 4. Pythonの計算結果をJavaScript側で受け取って表示
-            console.log("Pythonの計算結果:", result); // 200が出力される
+            console.log("Pythonの計算結果:", result);
         }
-        
+
         main();
     </script>
+
 </body>
 </html>
