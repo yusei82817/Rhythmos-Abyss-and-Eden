@@ -1,5 +1,9 @@
 Rhythmos Abyss and Eden
- +Surpass Edition
+ + Surpass
+ + Halloween
+   Edition
+
+Rhythmos Heaven's Door
 
 ブラウザ向けリズムゲーム
 
