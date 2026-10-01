@@ -1,6 +1,7 @@
 const HD_NOTE_SPEED = 0.00032;
 const HD_HIT_WINDOW = 140;
 const HD_MISS_WINDOW = 180;
+const HD_SPAWN_LEAD = 1800;
 
 async function loadHDNotePattern(stageId) {
   const response = await fetch('note-pattern.json', { cache: 'no-store' });
@@ -22,13 +23,14 @@ function createHDNote(note, laneEl) {
 
 function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
   let notes = [];
-  let startTime = performance.now();
+  let startTime = null;
   let raf = 0;
   let loaded = false;
   let finished = false;
 
   loadHDNotePattern(stageId).then(pattern => {
     notes = pattern.map(note => ({ ...note, element: null, spawned: false }));
+    startTime = performance.now();
     loaded = true;
   }).catch(error => {
     console.error(error);
@@ -42,10 +44,9 @@ function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
     }
 
     const elapsed = now - startTime;
-    const spawnLead = 1800;
 
     for (const note of notes) {
-      if (!note.spawned && elapsed >= note.time - spawnLead) {
+      if (!note.spawned && elapsed >= note.time - HD_SPAWN_LEAD) {
         const lane = lanes[note.lane];
         if (lane) note.element = createHDNote(note, lane);
         note.spawned = true;
@@ -53,9 +54,10 @@ function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
 
       if (note.element && note.element.dataset.hit === '0') {
         const untilHit = note.time - elapsed;
-        const progress = 1 - (untilHit + spawnLead) / spawnLead;
+        const progress = 1 - (untilHit + HD_SPAWN_LEAD) / HD_SPAWN_LEAD;
         const clamped = Math.max(0, Math.min(1, progress));
-        const travel = Math.max(0, (note.element.parentElement?.clientHeight || 400) - 50);
+        const lane = note.element.parentElement;
+        const travel = Math.max(0, (lane?.clientHeight || 400) - 72);
         note.element.style.transform = `translateY(${clamped * travel}px)`;
 
         if (elapsed > note.time + HD_MISS_WINDOW) {
@@ -76,6 +78,7 @@ function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
   }
 
   function hitLane(lane) {
+    if (!loaded || startTime === null) return false;
     const now = performance.now() - startTime;
     let target = null;
     let best = Infinity;
