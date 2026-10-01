@@ -21,27 +21,36 @@ function createHDNote(note, laneEl) {
   return el;
 }
 
+function generateMathNotes(duration = 30000, interval = 250) {
+  const notes = [];
+  const count = Math.floor(duration / interval);
+
+  for (let i = 0; i < count; i++) {
+    const t = i * 0.22;
+    const wave = 3 + Math.sin(t) * 3;
+    const lane = Math.max(0, Math.min(6, Math.round(wave)));
+    const type = lane === 3 ? 'space' : 'normal';
+
+    notes.push({
+      time: i * interval + 1000,
+      lane,
+      type
+    });
+  }
+
+  return notes;
+}
+
 function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
-  let notes = [];
+  let notes = generateMathNotes();
   let startTime = null;
   let raf = 0;
-  let loaded = false;
   let finished = false;
 
-  loadHDNotePattern(stageId).then(pattern => {
-    notes = pattern.map(note => ({ ...note, element: null, spawned: false }));
-    startTime = performance.now();
-    loaded = true;
-  }).catch(error => {
-    console.error(error);
-    onEnd?.(error);
-  });
+  startTime = performance.now();
 
   function frame(now) {
-    if (!loaded || finished) {
-      if (!finished) raf = requestAnimationFrame(frame);
-      return;
-    }
+    if (finished) return;
 
     const elapsed = now - startTime;
 
@@ -78,7 +87,7 @@ function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
   }
 
   function hitLane(lane) {
-    if (!loaded || startTime === null) return false;
+    if (startTime === null) return false;
     const now = performance.now() - startTime;
     let target = null;
     let best = Infinity;
