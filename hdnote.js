@@ -1,14 +1,6 @@
-const HD_NOTE_SPEED = 0.00032;
 const HD_HIT_WINDOW = 140;
 const HD_MISS_WINDOW = 180;
 const HD_SPAWN_LEAD = 1800;
-
-async function loadHDNotePattern(stageId) {
-  const response = await fetch('note-pattern.json', { cache: 'no-store' });
-  if (!response.ok) throw new Error(`note-pattern.json: ${response.status}`);
-  const data = await response.json();
-  return data[stageId]?.notes || [];
-}
 
 function createHDNote(note, laneEl) {
   const el = document.createElement('div');
@@ -27,15 +19,13 @@ function generateMathNotes(duration = 30000, interval = 250) {
 
   for (let i = 0; i < count; i++) {
     const t = i * 0.13;
-    const raw = Math.tan(t);
-    const normalized = Math.atan(raw) / Math.PI + 0.5;
+    const normalized = Math.atan(Math.tan(t)) / Math.PI + 0.5;
     const lane = Math.max(0, Math.min(6, Math.round(normalized * 6)));
-    const type = lane === 3 ? 'space' : 'normal';
 
     notes.push({
       time: i * interval + 1000,
       lane,
-      type
+      type: lane === 3 ? 'space' : 'normal'
     });
   }
 
@@ -43,8 +33,8 @@ function generateMathNotes(duration = 30000, interval = 250) {
 }
 
 function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
-  let notes = generateMathNotes();
-  let startTime = performance.now();
+  const notes = generateMathNotes();
+  const startTime = performance.now();
   let raf = 0;
   let finished = false;
 
@@ -56,27 +46,28 @@ function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
     for (const note of notes) {
       if (!note.spawned && elapsed >= note.time - HD_SPAWN_LEAD) {
         const lane = lanes[note.lane];
-        if (lane) note.element = createHDNote(note, lane);
+        if (lane) {
+          note.element = createHDNote(note, lane);
+          note.element.style.transform = 'translateY(0px)';
+        }
         note.spawned = true;
       }
 
-      if (note.element && note.element.dataset.hit === '0') {
-        const untilHit = note.time - elapsed;
-        const progress = 1 - (untilHit + HD_SPAWN_LEAD) / HD_SPAWN_LEAD;
-        const clamped = Math.max(0, Math.min(1, progress));
-        const lane = note.element.parentElement;
-        const travel = Math.max(0, (lane?.clientHeight || 400) - 72);
-        note.element.style.transform = `translateY(${clamped * travel}px)`;
+      if (!note.element || note.element.dataset.hit !== '0') continue;
 
-        if (elapsed > note.time + HD_MISS_WINDOW) {
-          note.element.dataset.hit = '1';
-          note.element.remove();
-          onMiss?.(note);
-        }
+      const lane = note.element.parentElement;
+      const travel = Math.max(0, (lane?.clientHeight || 400) - 72);
+      const progress = Math.max(0, Math.min(1, (elapsed - (note.time - HD_SPAWN_LEAD)) / HD_SPAWN_LEAD));
+      note.element.style.transform = `translate3d(0, ${progress * travel}px, 0)`;
+
+      if (elapsed > note.time + HD_MISS_WINDOW) {
+        note.element.dataset.hit = '1';
+        note.element.remove();
+        onMiss?.(note);
       }
     }
 
-    if (notes.length && elapsed > Math.max(...notes.map(n => n.time)) + HD_MISS_WINDOW + 500) {
+    if (notes.length && elapsed > notes[notes.length - 1].time + HD_MISS_WINDOW + 500) {
       finished = true;
       onEnd?.();
       return;
@@ -86,7 +77,6 @@ function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
   }
 
   function hitLane(lane) {
-    if (startTime === null) return false;
     const now = performance.now() - startTime;
     let target = null;
     let best = Infinity;
