@@ -11,8 +11,9 @@ async function loadHDNotePattern(stageId) {
 
 function createHDNote(note, laneEl) {
   const el = document.createElement('div');
-  el.className = 'note';
+  el.className = `note${note.type === 'space' ? ' space-note' : ''}`;
   el.dataset.lane = String(note.lane);
+  el.dataset.type = note.type || 'normal';
   el.dataset.time = String(note.time);
   el.dataset.hit = '0';
   laneEl.appendChild(el);
