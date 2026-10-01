@@ -2,8 +2,8 @@ const params = new URLSearchParams(location.search);
 const stageId = params.get('stage') || 'HD01';
 const medleyCode = params.get('medley') || 'M01';
 
-const KEY_TO_LANE = { a: 0, s: 1, d: 2, j: 3, k: 4, l: 5 };
-const LANE_KEYS = ['A', 'S', 'D', 'J', 'K', 'L'];
+const KEY_TO_LANE = { a: 0, s: 1, d: 2, ' ': 3, j: 4, k: 5, l: 6 };
+const LANE_KEYS = ['A', 'S', 'D', 'SPACE', 'J', 'K', 'L'];
 
 const stageEl = document.getElementById('stage');
 const medleyEl = document.getElementById('medley');
@@ -15,10 +15,10 @@ stageEl.textContent = stageId;
 medleyEl.textContent = medleyCode;
 
 const lanes = [];
-LANE_KEYS.forEach((key) => {
+LANE_KEYS.forEach((key, index) => {
   const lane = document.createElement('div');
-  lane.className = 'lane';
-  lane.dataset.lane = String(KEY_TO_LANE[key.toLowerCase()]);
+  lane.className = 'lane' + (index === 3 ? ' space-lane' : '');
+  lane.dataset.lane = String(index);
 
   const label = document.createElement('div');
   label.className = 'key';
@@ -45,13 +45,6 @@ let audio = null;
 let audioStarted = false;
 let noteEngine = null;
 
-const MEDLEYS = {
-  M01: [
-    { title: 'エメラルドヒル', src: 'エメラルドヒル.m4a' },
-    { title: '創国の夜明け', src: '創国の夜明け.mp3' },
-    { title: 'グローイングムーン', src: 'グローイングムーン.mp3' }
-  ]
-};
 const playlist = MEDLEYS[medleyCode] || [];
 
 function playCurrentSong() {
@@ -71,7 +64,7 @@ function playCurrentSong() {
   }, { once:true });
   audio.play().then(() => {
     audioStarted = true;
-    statusEl.textContent = `${song.title} / A S D J K L`;
+    statusEl.textContent = `${song.title} / A S D SPACE J K L`;
   }).catch(err => console.error(err));
 }
 
@@ -97,8 +90,12 @@ function startGame() {
 document.getElementById('startButton').addEventListener('click', startGame);
 
 document.addEventListener('keydown', (event) => {
-  const lane = KEY_TO_LANE[event.key.toLowerCase()];
-  if (!audioStarted || lane === undefined || event.repeat) return;
+  if (!audioStarted || event.repeat) return;
+  let lane;
+  if (event.code === 'Space') lane = 3;
+  else lane = KEY_TO_LANE[event.key.toLowerCase()];
+  if (lane === undefined) return;
+  event.preventDefault();
   noteEngine?.hitLane(lane);
 });
 
