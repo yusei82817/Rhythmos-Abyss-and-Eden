@@ -26,9 +26,10 @@ function generateMathNotes(duration = 30000, interval = 250) {
   const count = Math.floor(duration / interval);
 
   for (let i = 0; i < count; i++) {
-    const t = i * 0.22;
-    const wave = 3 + Math.sin(t) * 3;
-    const lane = Math.max(0, Math.min(6, Math.round(wave)));
+    const t = i * 0.13;
+    const raw = Math.tan(t);
+    const normalized = Math.atan(raw) / Math.PI + 0.5;
+    const lane = Math.max(0, Math.min(6, Math.round(normalized * 6)));
     const type = lane === 3 ? 'space' : 'normal';
 
     notes.push({
@@ -43,11 +44,9 @@ function generateMathNotes(duration = 30000, interval = 250) {
 
 function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
   let notes = generateMathNotes();
-  let startTime = null;
+  let startTime = performance.now();
   let raf = 0;
   let finished = false;
-
-  startTime = performance.now();
 
   function frame(now) {
     if (finished) return;
