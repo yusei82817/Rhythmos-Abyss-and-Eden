@@ -116,7 +116,7 @@ document.addEventListener('keydown', (event) => {
 
   if (lane === undefined) return;
   event.preventDefault();
-  noteEngine?.hitLane(lane);
+  noteEngine?.hitLane(lane, event.rhythmosTouch === true);
 });
 
 window.addEventListener('beforeunload', () => {
