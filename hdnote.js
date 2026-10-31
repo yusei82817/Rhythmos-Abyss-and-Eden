@@ -13,27 +13,64 @@ function createHDNote(note, laneEl) {
   return el;
 }
 
-function generateMathNotes(duration = 30000, interval = 250) {
+// Build a fresh seven-lane chart on every play.
+// The chart mixes rests, single notes, chords, short stairs and alternating lanes.
+function generateRandomNotes(duration = 30000, beatInterval = 500) {
   const notes = [];
-  const count = Math.floor(duration / interval);
+  let previousLane = -1;
 
-  for (let i = 0; i < count; i++) {
-    const t = i * 0.13;
-    const normalized = Math.atan(Math.tan(t)) / Math.PI + 0.5;
-    const lane = Math.max(0, Math.min(6, Math.round(normalized * 6)));
-
+  function addNote(time, lane) {
     notes.push({
-      time: i * interval + 1000,
+      time,
       lane,
       type: lane === 3 ? 'space' : 'normal'
     });
+    previousLane = lane;
   }
 
-  return notes;
+  function randomLane(exclude = -1) {
+    let lane = Math.floor(Math.random() * 7);
+    if (lane === exclude) lane = (lane + 1 + Math.floor(Math.random() * 6)) % 7;
+    return lane;
+  }
+
+  const beats = Math.floor(duration / beatInterval);
+  for (let beat = 0; beat < beats; beat++) {
+    const baseTime = beat * beatInterval + 1000;
+    const roll = Math.random();
+
+    // Leave breathing room instead of filling every beat.
+    if (roll < 0.16) continue;
+
+    if (roll < 0.78) {
+      addNote(baseTime, randomLane(previousLane));
+      continue;
+    }
+
+    if (roll < 0.93) {
+      const first = randomLane(previousLane);
+      const second = randomLane(first);
+      addNote(baseTime, first);
+      addNote(baseTime, second);
+      continue;
+    }
+
+    // A short three-note stair, randomly ascending or descending.
+    const start = Math.floor(Math.random() * 5);
+    const direction = Math.random() < 0.5 ? 1 : -1;
+    const lanesInStair = direction === 1
+      ? [start, start + 1, start + 2]
+      : [start + 2, start + 1, start];
+    lanesInStair.forEach((lane, index) => {
+      addNote(baseTime + index * 145, lane);
+    });
+  }
+
+  return notes.sort((a, b) => a.time - b.time);
 }
 
 function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
-  const notes = generateMathNotes();
+  const notes = generateRandomNotes();
   const startTime = performance.now();
   let raf = 0;
   let finished = false;
