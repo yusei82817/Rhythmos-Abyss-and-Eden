@@ -1,5 +1,5 @@
 const HD_HIT_WINDOW = 140;
-const HD_MISS_WINDOW = 180;
+const HD_MISS_WINDOW = 190; // Slight grace after the widened touch hit window.
 const HD_SPAWN_LEAD = 1800;
 
 function createHDNote(note, laneEl) {
