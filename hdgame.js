@@ -128,7 +128,7 @@ statusEl.textContent = playlist.length ? 'STARTを押してください' : 'MEDL
 
 
 // Android Touch Edition: 7 lanes, including the wide Space lane.
-import('./TouchInput.js?v=2').then(({ attachTouchInput }) => {
+import('./TouchInput.js?v=3').then(({ attachTouchInput }) => {
   attachTouchInput({
     laneCount: 7,
     keyByLane: ['a', 's', 'd', 'Space', 'j', 'k', 'l'],
