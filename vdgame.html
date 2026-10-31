@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Rhythmos Abyss</title>
+<link rel="stylesheet" href="vdstyle.css">
+<style>
+#top-button{
+    position:fixed;
+    top:16px;
+    left:16px;
+    z-index:1000;
+    padding:8px 18px;
+    font-size:16px;
+    color:white;
+    background:rgba(5,2,0,.72);
+    border:2px solid #fff8dc;
+    border-radius:8px;
+    cursor:pointer;
+    box-shadow:0 0 10px rgba(255,215,0,.45);
+    backdrop-filter:blur(5px);
+}
+#top-button:hover{
+    background:rgba(220,20,60,.35);
+    box-shadow:0 0 18px gold;
+    transform:scale(1.04);
+}
+#menu-video-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    pointer-events: none;
+    background: #000;
+}
+#menu-video-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: -1;
+    pointer-events: none;
+}
+</style>
+<link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+
+<button id="top-button" onclick="location.href='title.html'">Top</button>
+<video id="menu-video-bg" autoplay muted playsinline></video>
+<div id="menu-video-overlay"></div>
+
+<div id="select-screen">
+<h1 class="gold-text">SELECT TRACK</h1>
+<div id="song-list">
+<div class="song-card" data-release="" onclick="initGame('odysseia.mp3','桜雨')"><img src="Jacket.png" class="jacket"><h3>オデュッセイア</h3><p>甘茶の音楽工房</p></div>
+</div>
+</div>
+
+<div id="game-container">
+<div id="game-bg"></div>
+<div id="flash-overlay"></div>
+<div id="ui">SCORE:<span id="score">000000</span></div>
+<div id="combo-container"><p id="combo-num"></p><div id="judge-text"></div></div>
+<div class="lane-container">
+<div class="lane" id="lane-0"></div>
+<div class="lane" id="lane-1"></div>
+<div class="lane" id="lane-2"></div>
+<div class="lane" id="lane-3"></div>
+<div class="lane" id="lane-4"></div>
+<div id="judge-line" class="judgment-line"></div>
+</div>
+</div>
+
+<audio id="bgm"></audio>
+<audio id="menu-bgm" src="Down%20the%20pass.mp3" loop preload="auto"></audio>
+
+<script type="module" src="vdgame.js"></script>
+
+<script>
+/*
+ * メニューBGM
+ */
+const menuBgm = document.getElementById('menu-bgm');
+
+if (menuBgm) {
+    document.addEventListener('click', () => {
+        if (menuBgm.paused) {
+            menuBgm.play().catch(err => {
+                console.error('メニューBGMの再生に失敗しました:', err);
+            });
+        }
+    }, { once: true });
+}
+
+/*
+ * ソングカード解禁日時設定
+ *
+ * data-release="" = 即時解禁
+ * data-release="2026-09-20T00:00:00+09:00" = 指定日時まで非表示
+ */
+function updateSongUnlocks() {
+    const now = new Date();
+
+    document.querySelectorAll('#song-list .song-card').forEach(card => {
+        const release = card.dataset.release;
+
+        if (!release) {
+            card.style.display = '';
+            return;
+        }
+
+        const releaseTime = new Date(release);
+
+        card.style.display =
+            Number.isNaN(releaseTime.getTime()) || now >= releaseTime
+                ? ''
+                : 'none';
+    });
+}
+
+updateSongUnlocks();
+</script>
+<div id="glitch"></div>
+</body>
+</html>
