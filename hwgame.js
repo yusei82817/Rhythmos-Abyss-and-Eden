@@ -1,4 +1,5 @@
 import { judgeNote } from './judgment.js?v=2';
+import { attachTouchInput } from './TouchInput.js';
 
 const bgm = document.getElementById('bgm');
 const selectScreen = document.getElementById('select-screen');
@@ -290,3 +291,7 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('focus', () => {
     if (isPlaying && bgm.paused) bgm.play().catch(() => {});
 });
+
+
+// Android Touch Edition: 4-lane Halloween input (A / S / K / L).
+attachTouchInput({ laneCount: 4, keyByLane: ['a', 's', 'k', 'l'] });
