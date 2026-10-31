@@ -37,6 +37,11 @@ const MEDLEYS = {
     { title: 'エメラルドヒル', src: 'エメラルドヒル.m4a' },
     { title: '創国の夜明け', src: '創国の夜明け.mp3' },
     { title: 'グローイングムーン', src: 'グローイングムーン.mp3' }
+  ],
+  M02: [
+    { title: 'Down the pass', src: 'Down the pass.mp3' },
+    { title: 'Velvet Hourglass - Device - Treblo', src: 'Velvet Hourglass - Device - Treblo.mp3' },
+    { title: 'Columns of Thunder OP1', src: 'columns-of-thunder-op1.mp3' }
   ]
 };
 
