@@ -157,7 +157,7 @@ function update() {
         const diff = note.targetTime - now;
         note.el.style.top = `${judgmentY - diff * noteSpeed}px`;
 
-        if (diff < -0.15 && !note.hit) {
+        if (diff < -0.20 && !note.hit) {
             note.hit = true;
             combo = 0;
             miss++;
@@ -224,7 +224,7 @@ window.addEventListener('keydown', event => {
 
     if (!note) return;
 
-    const result = judgeNote(note, now);
+    const result = judgeNote(note, now, event.rhythmosTouch === true);
     if (!result) return;
 
     note.hit = true;
