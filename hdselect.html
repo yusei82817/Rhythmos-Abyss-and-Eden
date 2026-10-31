@@ -21,6 +21,9 @@
     .title{font-family:Georgia,serif;font-size:clamp(34px,6vw,58px);line-height:.95;letter-spacing:.04em}
     .songs{margin-top:18px;padding:14px 16px;border:1px solid rgba(255,255,255,.28);border-radius:14px;background:rgba(0,0,0,.2);backdrop-filter:blur(7px);font-size:14px;line-height:1.7}
     .songs b{display:block;color:#dffaff;margin-bottom:4px;letter-spacing:.1em}
+    .stage-card.stage02{background:linear-gradient(145deg,#ffd9bd,#ff8a69 40%,#26152d 41%,#080b18)}
+    .stage-card.stage02 .songs b{color:#ffe6c8}
+    .stage-card:focus-visible{outline:3px solid #fff;outline-offset:5px}
     .footer{display:flex;justify-content:space-between;align-items:end;gap:12px}
     .difficulty{font-size:12px;letter-spacing:.16em;font-weight:800}
     .flip{font-size:11px;opacity:.75;letter-spacing:.12em}
@@ -53,17 +56,39 @@
           </div>
         </div>
       </article>
+      <article class="stage-card stage02" id="stage02" tabindex="0" role="button" aria-label="Stage 02 New Horizons を選択">
+        <div class="face">
+          <div><div class="stage-no">STAGE 02</div></div>
+          <div>
+            <div class="title">New<br>Horizons</div>
+            <div class="songs">
+              <b>NEW MEDLEY</b>
+              Down the pass<br>
+              Velvet Hourglass - Device - Treblo<br>
+              columns-of-thunder-op1
+            </div>
+          </div>
+          <div class="footer">
+            <span class="difficulty">NORMAL · 3 SONGS</span>
+            <span class="flip">▶ SELECT</span>
+          </div>
+        </div>
+      </article>
     </section>
   </main>
   <script>
-    const card = document.getElementById('stage01');
-    const open = () => {
-      window.location.href = 'hdgame.html?stage=HD01&medley=M01';
-    };
-    card.addEventListener('click', open);
-    card.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
-    });
+    const stages = [
+      { id: 'stage01', url: 'hdgame.html?stage=HD01&medley=M01' },
+      { id: 'stage02', url: 'hdgame.html?stage=HD02&medley=M02' }
+    ];
+    for (const stage of stages) {
+      const card = document.getElementById(stage.id);
+      const open = () => { window.location.href = stage.url; };
+      card.addEventListener('click', open);
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+      });
+    }
   </script>
 </body>
 </html>
