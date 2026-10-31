@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070713">
+<title>VOID | RESULT</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+:root {
+    color-scheme: dark;
+    --cyan: #83f6ff;
+    --violet: #b29aff;
+    --panel: rgba(12, 12, 31, .94);
+}
+* { box-sizing: border-box; }
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 24px;
+    display: grid;
+    place-items: center;
+    overflow-x: hidden;
+    color: #f3f0ff;
+    background: radial-gradient(ellipse at 50% 15%, #292052 0%, #0b0b20 48%, #03030a 100%);
+    font-family: "Yu Gothic", "Meiryo", sans-serif;
+}
+.grid {
+    position: fixed;
+    inset: -30%;
+    z-index: 0;
+    opacity: .25;
+    background-image: linear-gradient(rgba(131,246,255,.16) 1px, transparent 1px), linear-gradient(90deg, rgba(131,246,255,.16) 1px, transparent 1px);
+    background-size: 42px 42px;
+    transform: perspective(550px) rotateX(58deg);
+    animation: drift 8s linear infinite;
+}
+@keyframes drift { from { background-position: 0 0; } to { background-position: 0 42px; } }
+.result-box {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 470px);
+    padding: clamp(22px, 5vw, 36px);
+    text-align: center;
+    background: var(--panel);
+    border: 1px solid rgba(178,154,255,.8);
+    border-radius: 18px;
+    box-shadow: 0 0 35px rgba(131,246,255,.13), inset 0 0 28px rgba(178,154,255,.08);
+}
+.kicker { margin: 0 0 8px; color: var(--cyan); letter-spacing: .35em; font: 700 .8rem monospace; }
+h1 { margin: 0 0 24px; font: 700 clamp(2.4rem, 9vw, 3.4rem) monospace; letter-spacing: .16em; text-shadow: 0 0 18px rgba(178,154,255,.8); }
+.score-label { color: #aaa5c7; font-size: .8rem; letter-spacing: .2em; }
+.score { margin: 5px 0 8px; color: var(--cyan); font: 700 clamp(2.5rem, 10vw, 3.6rem) monospace; text-shadow: 0 0 18px rgba(131,246,255,.65); }
+.rank { display: inline-block; min-width: 70px; margin: 8px 0 22px; padding: 6px 18px; color: #e8e1ff; border: 1px solid var(--violet); border-radius: 999px; font: 700 1.1rem monospace; }
+.data { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; }
+.data div { display: flex; justify-content: space-between; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,.035); border: 1px solid rgba(178,154,255,.2); border-radius: 9px; }
+.data dt { color: #bdb7d5; }
+.data dd { margin: 0; color: #fff; font: 700 1.1rem monospace; }
+.accuracy { margin: 20px 0 0; color: #aaa5c7; }
+.accuracy strong { color: var(--cyan); font: 700 1.2rem monospace; }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
+button { min-width: 150px; padding: 12px 18px; color: #f3f0ff; background: #17152f; border: 1px solid var(--violet); border-radius: 9px; font-size: 1rem; cursor: pointer; transition: .2s; }
+button.primary { color: #071018; background: linear-gradient(100deg, var(--cyan), #c4b3ff); border: 0; font-weight: 700; }
+button:hover { transform: translateY(-2px); box-shadow: 0 0 18px rgba(131,246,255,.25); }
+@media (max-width: 390px) { .data { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="grid" aria-hidden="true"></div>
+<main class="result-box">
+    <p class="kicker">RHYTHMOS / ABYSS AND EDEN</p>
+    <h1>VOID</h1>
+    <p class="score-label">TOTAL SCORE</p>
+    <div class="score" id="score">000000</div>
+    <div class="rank" id="rank">--</div>
+    <dl class="data">
+        <div><dt>PERFECT</dt><dd id="perfect">0</dd></div>
+        <div><dt>SUCCESS</dt><dd id="success">0</dd></div>
+        <div><dt>GREAT</dt><dd id="great">0</dd></div>
+        <div><dt>SUPER</dt><dd id="super">0</dd></div>
+        <div><dt>GOOD</dt><dd id="good">0</dd></div>
+        <div><dt>BENE</dt><dd id="bene">0</dd></div>
+        <div><dt>MISS</dt><dd id="miss">0</dd></div>
+    </dl>
+    <p class="accuracy">HIT RATE <strong id="accuracy">0.00%</strong></p>
+    <div class="actions">
+        <button class="primary" type="button" onclick="location.href='vdgame.html'">SELECT TRACK</button>
+        <button type="button" onclick="location.href='title.html'">TITLE</button>
+    </div>
+</main>
+<script>
+const fields = ["score", "perfect", "success", "great", "super", "good", "bene", "miss"];
+const values = {};
+for (const field of fields) {
+    values[field] = Math.max(0, Number(localStorage.getItem(field)) || 0);
+    document.getElementById(field).textContent = field === "score"
+        ? String(values[field]).padStart(6, "0")
+        : String(values[field]);
+}
+const judged = ["perfect", "success", "great", "super", "good", "bene", "miss"]
+    .reduce((sum, field) => sum + values[field], 0);
+const hits = judged - values.miss;
+const rate = judged ? (hits / judged) * 100 : 0;
+document.getElementById("accuracy").textContent = rate.toFixed(2) + "%";
+document.getElementById("rank").textContent =
+    judged === 0 ? "--" : rate >= 98 ? "S" : rate >= 90 ? "A" : rate >= 80 ? "B" : rate >= 65 ? "C" : "D";
+</script>
+</body>
+</html>
