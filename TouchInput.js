@@ -33,6 +33,16 @@ function injectTouchStyles() {
         .rhythmos-touch-lane.rhythmos-touch-active {
             filter: brightness(1.35);
         }
+
+        /* Touch Edition: make notes visibly wider, but keep them inside their own lane. */
+        .rhythmos-touch-lane > .note {
+            width: 98% !important;
+            left: 1% !important;
+        }
+        .rhythmos-touch-lane > .note.space-note {
+            width: 96% !important;
+            left: 2% !important;
+        }
     `;
     document.head.appendChild(style);
 }
