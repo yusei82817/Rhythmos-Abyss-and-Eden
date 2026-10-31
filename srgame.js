@@ -1,4 +1,5 @@
 import { judgeNote } from './judgment.js?v=2';
+import { attachTouchInput } from './TouchInput.js';
 
 const glitch = document.getElementById("glitch");
 const bgm = document.getElementById('bgm');
@@ -432,3 +433,7 @@ window.addEventListener('keydown', (e) => {
     }
     createWave();
 });
+
+
+// Android Touch Edition: 8-lane Surpass input.
+attachTouchInput({ laneCount: 8, keyByLane: ['a', 's', 'd', 'f', 'j', 'k', 'l', ';'] });
