@@ -76,7 +76,8 @@ function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
     raf = requestAnimationFrame(frame);
   }
 
-  function hitLane(lane) {
+  function hitLane(lane, isTouch = false) {
+    const hitWindow = isTouch ? HD_HIT_WINDOW * 1.3 : HD_HIT_WINDOW;
     const now = performance.now() - startTime;
     let target = null;
     let best = Infinity;
@@ -84,7 +85,7 @@ function startHDNotes({ stageId, lanes, onHit, onMiss, onEnd }) {
     for (const note of notes) {
       if (!note.spawned || note.lane !== lane || !note.element || note.element.dataset.hit !== '0') continue;
       const delta = Math.abs(now - note.time);
-      if (delta <= HD_HIT_WINDOW && delta < best) {
+      if (delta <= hitWindow && delta < best) {
         best = delta;
         target = note;
       }
