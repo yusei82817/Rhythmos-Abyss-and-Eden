@@ -262,6 +262,7 @@ bgm.addEventListener('ended', () => {
 });
 
 window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && isPlaying) e.preventDefault();
     const keys = { KeyA: 0, KeyD: 1, Space: 2, KeyJ: 3, KeyL: 4 };
     const lane = keys[e.code];
 
