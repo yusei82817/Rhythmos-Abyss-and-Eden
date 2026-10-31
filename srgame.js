@@ -1,5 +1,5 @@
 import { judgeNote } from './judgment.js?v=3';
-import { attachTouchInput } from './TouchInput.js?v=2';
+import { attachTouchInput } from './TouchInput.js?v=3';
 
 const glitch = document.getElementById("glitch");
 const bgm = document.getElementById('bgm');
