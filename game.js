@@ -1,4 +1,5 @@
 import { judgeNote } from './judgment.js?v=2';
+import { attachTouchInput } from './TouchInput.js';
 
 const glitch = document.getElementById("glitch");
 const bgm = document.getElementById('bgm');
@@ -314,3 +315,7 @@ window.addEventListener('keydown', (e) => {
     }
     createWave();
 });
+
+
+// Android Touch Edition: 4-lane input (A / D / J / L).
+attachTouchInput({ laneCount: 4, keyByLane: ['a', 'd', 'j', 'l'] });
