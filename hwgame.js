@@ -1,5 +1,5 @@
-import { judgeNote } from './judgment.js?v=2';
-import { attachTouchInput } from './TouchInput.js';
+import { judgeNote } from './judgment.js?v=3';
+import { attachTouchInput } from './TouchInput.js?v=2';
 
 const bgm = document.getElementById('bgm');
 const selectScreen = document.getElementById('select-screen');
