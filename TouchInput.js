@@ -27,6 +27,7 @@ function injectTouchStyles() {
             touch-action: none !important;
             -webkit-user-select: none;
             user-select: none;
+            -webkit-touch-callout: none;
             -webkit-tap-highlight-color: transparent;
         }
         .rhythmos-touch-lane.rhythmos-touch-active {
@@ -57,6 +58,9 @@ export function attachTouchInput({
 
         attachedRoots.add(laneElement);
         laneElement.classList.add('rhythmos-touch-lane');
+        // Suppress the browser's long-press / context menu on playable lanes.
+        laneElement.addEventListener('contextmenu', event => event.preventDefault());
+        laneElement.addEventListener('dragstart', event => event.preventDefault());
 
         const key = keyByLane[laneIndex];
         laneElement.addEventListener('pointerdown', event => {
