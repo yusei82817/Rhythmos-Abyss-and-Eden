@@ -78,6 +78,8 @@ export function attachTouchInput({
                 bubbles: true,
                 cancelable: true
             });
+            // Mark synthetic input so Touch Edition can use its wider timing window.
+            keyboardEvent.rhythmosTouch = true;
             document.dispatchEvent(keyboardEvent);
 
             if (vibration > 0 && typeof navigator.vibrate === 'function') {
