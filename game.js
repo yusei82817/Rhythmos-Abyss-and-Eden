@@ -215,7 +215,7 @@ function update() {
             n.el.style.opacity = Math.max(0, diff * 4);
         }
 
-        if (diff < -0.15 && !n.hit) {
+        if (diff < -0.20 && !n.hit) {
             n.hit = true;
             combo = 0;
             comboEl.innerText = "";
@@ -266,7 +266,7 @@ window.addEventListener('keydown', (e) => {
         const note = activeNotes.find(n => n.lane === lane && !n.hit);
 
         if (note) {
-            const result = judgeNote(note, now);
+            const result = judgeNote(note, now, e.rhythmosTouch === true);
 
             if (result === 'PERFECT') {
                 note.hit = true;
