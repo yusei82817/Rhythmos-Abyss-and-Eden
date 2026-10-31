@@ -125,3 +125,13 @@ window.addEventListener('beforeunload', () => {
 });
 
 statusEl.textContent = playlist.length ? 'STARTを押してください' : 'MEDLEY DATA NOT FOUND';
+
+
+// Android Touch Edition: 7 lanes, including the wide Space lane.
+import('./TouchInput.js').then(({ attachTouchInput }) => {
+  attachTouchInput({
+    laneCount: 7,
+    keyByLane: ['a', 's', 'd', 'Space', 'j', 'k', 'l'],
+    selectorForLane: lane => `.lane[data-lane="${lane}"]`
+  });
+}).catch(error => console.error('Touch input could not be loaded:', error));
