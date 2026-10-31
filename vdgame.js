@@ -31,6 +31,9 @@ let combo = 0;
 let perfect = 0;
 let success = 0;
 let great = 0;
+let superCount = 0;
+let good = 0;
+let bene = 0;
 let miss = 0;
 let isPlaying = false;
 let activeNotes = [];
@@ -102,6 +105,9 @@ async function initGame(src, mode, bgImage = '') {
     perfect = 0;
     success = 0;
     great = 0;
+    superCount = 0;
+    good = 0;
+    bene = 0;
     miss = 0;
     activeNotes = [];
     scoreEl.innerText = "000000";
@@ -175,7 +181,7 @@ function generateRandomChart(mode) {
         if (Math.random() < 0.25) {
             chart.push({
                 time,
-                lane: Math.floor(Math.random() * 4),
+                lane: Math.floor(Math.random() * 5),
                 type: 'normal'
             });
         }
@@ -241,6 +247,9 @@ bgm.addEventListener('ended', () => {
     localStorage.setItem("perfect", perfect);
     localStorage.setItem("success", success);
     localStorage.setItem("great", great);
+    localStorage.setItem("super", superCount);
+    localStorage.setItem("good", good);
+    localStorage.setItem("bene", bene);
     localStorage.setItem("miss", miss);
 
     score = 0;
@@ -249,16 +258,14 @@ bgm.addEventListener('ended', () => {
     comboEl.innerText = "";
     judgeEl.innerText = "";
 
-    if (location.pathname.toLowerCase().endsWith('vdgame.html')) {
-        location.href = "vdresult.html";
-    }
+    location.href = "vdresult.html";
 });
 
 window.addEventListener('keydown', (e) => {
-    const keys = { 'a': 0, 'd': 1, 'space': 2, 'j': 3, 'l': 4};
-    const lane = keys[e.key.toLowerCase()];
+    const keys = { KeyA: 0, KeyD: 1, Space: 2, KeyJ: 3, KeyL: 4 };
+    const lane = keys[e.code];
 
-    if (lane !== undefined && isPlaying) {
+    if (lane !== undefined && isPlaying && !e.repeat) {
         const now = bgm.currentTime;
         const note = activeNotes.find(n => n.lane === lane && !n.hit);
 
@@ -294,6 +301,19 @@ window.addEventListener('keydown', (e) => {
                 scoreEl.innerText = score.toString().padStart(6, '0');
                 comboEl.innerText = combo;
                 judgeEl.innerText = "GREAT";
+                judgeEl.style.color = "#fff";
+            } else if (result === 'SUPER' || result === 'GOOD' || result === 'BENE') {
+                note.hit = true;
+                note.el.style.display = "none";
+                combo++;
+                const points = { SUPER: 35, GOOD: 20, BENE: 10 };
+                score += points[result];
+                if (result === 'SUPER') superCount++;
+                if (result === 'GOOD') good++;
+                if (result === 'BENE') bene++;
+                scoreEl.innerText = score.toString().padStart(6, '0');
+                comboEl.innerText = combo;
+                judgeEl.innerText = result;
                 judgeEl.style.color = "#fff";
             } else if (result === 'MISS') {
                 note.hit = true;
