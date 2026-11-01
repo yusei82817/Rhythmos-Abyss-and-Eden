@@ -2,9 +2,43 @@
 <html lang="ja">
 
 <head>
-<meta name="google-site-verification" content="ThpU4EwjQui2qWUmnd-4unhdgftlSj6HcsNWnh2ZPXM" />
-<meta charset="UTF-8">
-<meta name="description" content="これは現役高校1年生が作成した簡易的なリズムゲームで、最大で8キーを使用します。また、キーボードさえあればプレイ可能で、ダウンロードも不要です。">
+    <meta name="google-site-verification" content="ThpU4EwjQui2qWUmnd-4unhdgftlSj6HcsNWnh2ZPXM" />
+    <meta charset="UTF-8">
+    <meta name="description" content="これは現役高校1年生が作成した簡易的なリズムゲームで、最大で8キーを使用します。また、キーボードさえあればプレイ可能で、ダウンロードも不要です。">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Rhythmos Abyss and Eden(リュトモス アビスアンドエデン)">
+    <meta property="og:description" content="現役高校生が送る、ブラウザで今すぐ遊べるリズムゲーム。深淵を超え、楽園へ。その先に待つのは魔境かもしれない...。">
+    <meta name="twitter:site" content="@Noel_yozora">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="content-language" content="ja">
+    <script>
+window.addEventListener('DOMContentLoaded', () => {
+    // 1. 判定対象となるモバイル端末のキーワード
+    const mobileRegex = /Android|iPhone|iPad|iPod/i;
+
+    // 2. アクセスしてきたブラウザがモバイル環境かチェック
+    if (mobileRegex.test(navigator.userAgent)) {
+        
+        // 【重要】ご自身のBOOTHの商品ページURLに書き換えてください
+        const boothUrl = "https://rhythmosstudio.booth.pm/items/9076855"; 
+        
+        // 3. 警告ポップアップを表示
+        const message = "【ご注意】\n本作のプレイにはPC・スマホ共に「物理キーボード」が必要です。\n\nAndroid＋外付けキーボード環境向けのAPK/AAB版（200円）が販売されているBOOTHページへ移動しますか？";
+        
+        if (confirm(message)) {
+            // 「OK」が押されたらBOOTHへ転送
+            window.location.href = boothUrl;
+        } else {
+            // 「キャンセル」が押された場合はそのままページに残るが、
+            // プレイできない旨を画面に表示しておくなどの対策がおすすめ
+            alert("キーボードが無い環境では正常にプレイできませんのでご注意ください。");
+        }
+    }
+});
+    </script>
+
 <title>RhythmosAE OP</title>
 
 
